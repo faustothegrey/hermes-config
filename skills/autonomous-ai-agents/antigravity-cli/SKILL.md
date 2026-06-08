@@ -70,7 +70,7 @@ Local data lives under `/home/fausto/.gemini/antigravity-cli`. Useful non-secret
 - `brain/*/.system_generated/logs/transcript*.jsonl`: conversation steps, but no token usage fields were found.
 - `log/cli-*.log`: request/activity signals such as `streamGenerateContent`, `loadCodeAssist`, `fetchAvailableModels`, print-mode sessions, selected model labels, and explicit rate-limit errors if present.
 
-Do not read or print `/home/fausto/.gemini/antigravity-cli/antigravity-oauth-token`; it contains OAuth credentials. The `/home/fausto/bin/ai-cli-quotas` script includes a best-effort Antigravity section that reports local activity/request counts, not token totals or remaining quota percentages.
+Do not read or print `/home/fausto/.gemini/antigravity-cli/antigravity-oauth-token`; it contains OAuth credentials. Use `/home/fausto/bin/agy-quota` for the best-effort Antigravity-only local activity/request report. The combined `/home/fausto/bin/ai-cli-quotas` aggregator also includes an Antigravity section. These report local activity/request counts, not token totals or remaining quota percentages.
 
 ## Preferred mode: non-interactive print mode
 
@@ -101,10 +101,13 @@ Keep the prompt self-contained. Include:
 5. Expected deliverables.
 6. Required verification commands, or ask Antigravity to report what it ran.
 7. Any known baseline failures so Antigravity does not misattribute them.
+8. Any files that are already modified or explicitly out of scope, so Antigravity does not overwrite unrelated user/agent work.
+
+For ScienceClick2 scene creation, explicitly tell Antigravity to use the repository `create-scene` skill, give a confirmed scene direction when the user has already approved the topic, and ask it to report scene ID, files changed, term list, checks, and caveats.
 
 ## Controller responsibilities
 
-Hermes remains responsible for correctness:
+Hermes normally remains responsible for correctness:
 
 1. Do prerequisite discovery itself when useful: git status, project docs, baseline tests for substantial work.
 2. Run `agy` with a bounded timeout.
@@ -113,11 +116,15 @@ Hermes remains responsible for correctness:
 5. Run relevant tests or checks directly when feasible.
 6. Summarize what Antigravity did, what Hermes verified, and any remaining risks.
 
+Exception: for Fausto's ScienceClick2 scene workflow, follow `references/scienceclick2-create-scene-orchestration.md`: Antigravity implements with `create-scene`, Claude Code assesses, and Hermes verifies only orchestration/service restart rather than code/app behavior.
+
 ## Choosing Antigravity vs Claude Code CLI
 
 Prefer Antigravity when:
 
 - The user explicitly asks for Antigravity or `agy`.
+- The task is a ScienceClick2 scene creation/change in Fausto's current orchestrator workflow: Hermes scopes the task, Antigravity implements the scene using the repository `create-scene` skill, Claude Code assesses afterward, and Hermes only verifies orchestration/service restart — not code/app behavior.
+- The task is asset generation or asset preparation where a Google/Antigravity-flavored implementation pass is useful.
 - A second independent agent opinion is useful.
 - You want a Google/Antigravity-flavored implementation or review pass.
 - Claude Code is rate-limited, unavailable, or not ideal for the requested task.

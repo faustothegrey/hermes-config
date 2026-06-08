@@ -1,6 +1,6 @@
-External AI CLIs: Claude Code, Antigravity, and Codex are installed/authenticated; usage checks use /home/fausto/bin/ai-cli-quotas. Details live in Obsidian [[Hermes/External AI CLIs]] and [[Hermes/AI CLI Quotas]].
+External AI CLIs: Claude Code, Antigravity, and Codex are installed/authenticated. Per Codex quota, usare solo `codex` interattivo `/status`; non usare parsing dei log Codex perché meglio nessun dato che dati stale. Details: Obsidian [[Hermes/External AI CLIs]]/[[Hermes/AI CLI Quotas]].
 §
-Project ScienceClick2 lives at /home/fausto/Software/ScienceClick2; conventions are in PROJECT.md and Obsidian [[Projects/ScienceClick2]]. Prefer task-specific git worktrees for substantial implementation work.
+ScienceClick2 lives at /home/fausto/Software/ScienceClick2; conventions in PROJECT.md/Obsidian [[Projects/ScienceClick2]]. Prefer task worktrees for substantial work. Runtime server is already managed by system service `butler`; use it instead of starting duplicate dev servers.
 §
 System restarts daily at 00:00/06:00/12:00/18:00; avoid long tasks near restarts and checkpoint beforehand. Details in Obsidian [[System/Scheduled Restarts]].
 §
@@ -10,6 +10,8 @@ Discord voice and email operational details live in Obsidian [[Hermes/Discord Vo
 §
 Graphify can perform semantic extraction through the local Claude Code CLI using `graphify extract <path> --backend claude-cli`, without external LLM API keys; useful for Markdown/KB corpora and mixed code+docs.
 §
-Sul setup dell'utente, Claude Code CLI può avviarsi in modalità interattiva/tmux ma non è necessariamente autenticato per generare: `claude -p` fallisce con 401 e anche l'interattivo, quando riceve un prompt, può rispondere `Please run /login · API Error: 401 Invalid authentication credentials`. Prima di deleghe Claude, verificare con un prompt interattivo reale o far completare `/login` all'utente.
+Hermes configuration backup repo is git@github.com:faustothegrey/hermes-config.git, cloned locally at /home/fausto/Backups/hermes-config. It backs up sanitized ~/.hermes config/skills/cron/profiles/memories and /home/fausto/Documents/Obsidian Vault, plus encrypted Hermes secrets using OpenSSL envelope encryption to /home/fausto/.ssh/id_rsa.pub; restore requires matching /home/fausto/.ssh/id_rsa or another configured SSH_PRIVATE_KEY.
 §
-Hermes configuration backup repo is git@github.com:faustothegrey/hermes-config.git, cloned locally at /home/fausto/Backups/hermes-config. It backs up sanitized ~/.hermes config/skills/cron/profiles/memories plus encrypted secrets using OpenSSL envelope encryption to /home/fausto/.ssh/id_rsa.pub; restore requires matching /home/fausto/.ssh/id_rsa or another configured SSH_PRIVATE_KEY.
+Sul setup dell'utente, Claude Code CLI è delegabile in modalità interattiva via tmux: `claude` avvia la TUI, dopo workspace trust risponde correttamente a prompt reali. Preferire questa modalità per deleghe Claude. La modalità print `claude -p` va ancora smoke-testata separatamente prima dell'uso.
+§
+Sul setup dell'utente, Antigravity CLI `agy` è installato in `/home/fausto/.local/bin/agy`, versione 1.0.6, e la delega non interattiva print mode funziona: `agy -p 'Reply with exactly: antigravity-ok' --print-timeout 60s` restituisce `antigravity-ok`.

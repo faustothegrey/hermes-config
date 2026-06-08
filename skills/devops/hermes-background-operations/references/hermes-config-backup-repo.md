@@ -13,6 +13,7 @@ Track these as plaintext/sanitized config:
 - `profiles/`, but exclude per-profile plaintext secrets, sessions, logs, runtime databases, caches, sandboxes, rollback snapshots, and installed binaries.
 - `memories/` if the user wants operational/persona continuity and accepts the privacy tradeoff.
 - `hooks/` and `plugins/` when present.
+- Operational note vaults that are part of the user's durable harness. For this user, `/home/fausto/Documents/Obsidian Vault` is small and important enough to back up as `obsidian-vault/`; include `.obsidian` UI/config files but exclude `.git`, `.trash`, logs, locks, and temp files.
 - `inventory/` command outputs for restore/debugging: `hermes config check`, `hermes tools list`, `hermes skills list`, `hermes profile list`, `hermes cron list`, and `hermes status --all`, all redacted.
 
 Do not track plaintext:
@@ -36,6 +37,13 @@ hermes-config/
   profiles/
   memories/
   hooks/
+  obsidian-vault/
+    README.md
+    Hermes/
+    Projects/
+    System/
+    Inbox/
+    .obsidian/
   inventory/
   secrets/
     MANIFEST.json
@@ -48,6 +56,14 @@ hermes-config/
     backup-hermes.sh
     restore-hermes.sh
 ```
+
+## Documentation expectations
+
+The repo should include enough documentation that a future agent or the user can restore without re-reading the original chat:
+
+- `README.md`: what is included, what is excluded from plaintext, how secrets are encrypted, routine backup command, and the main operational harnesses in use.
+- `RESTORE.md`: step-by-step restore procedure, required tools, secret-key prerequisite, Hermes config restore, operational-vault restore, and verification commands.
+- Main harness examples for this user: Hermes Agent (`~/.hermes`), Obsidian operational memory (`/home/fausto/Documents/Obsidian Vault`), Git/GitHub backup repo, gateway/voice/email notes, and external AI CLI quota tooling.
 
 ## Secret handling
 
@@ -71,7 +87,8 @@ After creating or updating the repo:
 2. Use `git ls-files` to check no forbidden plaintext names are tracked: `.env`, `auth.json`, token files, raw `.tar.gz`, or profile `bin/` binaries.
 3. Scan non-encrypted tracked text files for obvious secret patterns such as API-key prefixes, GitHub tokens, Bearer tokens, and private-key PEM headers. Ignore obvious documentation placeholders like `sk-xxxxxxxx`.
 4. Test decrypt the encrypted secrets into a temp dir and list the tar members; do not restore over the live install during verification.
-5. Report exact local path, remote URL, branch/commit hash, what is included, what is intentionally excluded, and the key recovery warning.
+5. If an operational vault is backed up, smoke-restore it into a temp directory too and check for at least one expected note. Quote paths carefully: Obsidian vault paths often contain spaces, and unquoted environment assignments like `OBSIDIAN_VAULT_PATH=/tmp/Obsidian Vault ...` will fail.
+6. Report exact local path, remote URL, branch/commit hash, what is included, what is intentionally excluded, and the key recovery warning.
 
 ## Restore shape
 
@@ -79,6 +96,7 @@ A restore script should:
 
 1. Create `~/.hermes`.
 2. Copy sanitized non-secret config and directories into place.
-3. Optionally decrypt and copy secrets if the matching private key is provided.
-4. Run `hermes config check` and `hermes doctor`.
-5. If secrets cannot be decrypted, instruct the user to re-run `hermes setup`, `hermes auth`, and platform-specific gateway setup.
+3. Restore selected operational vaults, e.g. `obsidian-vault/` to `${OBSIDIAN_VAULT_PATH:-$HOME/Documents/Obsidian Vault}`; allow path overrides via environment variables.
+4. Optionally decrypt and copy secrets if the matching private key is provided.
+5. Run `hermes config check` and `hermes doctor`.
+6. If secrets cannot be decrypted, instruct the user to re-run `hermes setup`, `hermes auth`, and platform-specific gateway setup.

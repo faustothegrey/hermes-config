@@ -10,6 +10,6 @@ User avoids long tasks near restarts at 00/06/12/18. “Nightly tasks” run onl
 §
 User wants email checking to use Gmail by default; email sending uses the configured Virgilio account unless they specify otherwise.
 §
-User wants dispatcher mode: state delegate/non-delegate before tasks; delegate nontrivial; async stuck checks for large work; prefer Claude except Hermes/system.
+For ScienceClick2, user wants Hermes as orchestrator: Antigravity CLI implements using create-scene skill, Claude CLI assesses, then restart butler. Verify orchestration/service only, not code.
 §
 User expects Discord voice-channel conversations to be answered aloud in the voice channel, and prefers an Italian-sounding TTS voice/accent rather than a foreign/Portuguese-sounding accent.

@@ -2,8 +2,20 @@ $ hermes cron list
 exit=0
 
 STDOUT:
-No scheduled jobs.
-Create one with 'hermes cron create ...' or the /cron command in chat.
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         Scheduled Jobs                                  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  46e2b1f4aea4 [active]
+    Name:      Nightly Hermes configuration backup
+    Schedule:  30 0 * * *
+    Repeat:    ∞
+    Next run:  2026-06-10T00:30:00+02:00
+    Deliver:   local
+    Script:    hermes-config-backup-nightly.sh
+    Mode:      no-agent (script stdout delivered directly)
+
 
 
 STDERR:

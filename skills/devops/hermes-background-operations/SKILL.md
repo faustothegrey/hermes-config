@@ -31,19 +31,22 @@ Load the protected `hermes-agent` skill first for canonical current commands. Th
 Use when the user asks to preserve a Hermes installation in case the machine crashes, or asks to push Hermes configuration to a Git repository.
 
 1. Load the protected `hermes-agent` skill first for canonical path names and profile/export commands.
-2. Treat the backup as three classes of data:
+2. Treat the backup as four classes of data:
    - **Plain/sanitized config**: `config.yaml` with secret-like values redacted, `skills/`, `cron/`, selected `profiles/`, `plugins/`, `hooks/`, and optional `memories/`.
+   - **Operational knowledge bases**: small Obsidian vaults or other note folders that hold durable Hermes/project/system notes. Back these up as a first-class directory (for this user, `/home/fausto/Documents/Obsidian Vault` → `obsidian-vault/`) when they are compact and operationally important.
    - **Encrypted secrets**: `.env`, `auth.json`, OAuth token files, gateway/pairing state, and optional `state.db`.
    - **Excluded runtime junk**: logs, caches, audio/image caches, sandboxes, state snapshots, PID/lock/tmp files, per-profile sessions, and installed binaries such as `profiles/*/bin/`.
-3. Put a reusable `scripts/generate-backup.py`, `scripts/backup-hermes.sh`, and `scripts/restore-hermes.sh` in the repo so future updates are one-command, not a one-off manual copy.
-4. Add a defensive `.gitignore` before committing. Explicitly block plaintext secret file names and raw tarballs while allowing encrypted `secrets/*.enc` artifacts.
-5. If `age`/GPG are not already configured, an acceptable fallback is OpenSSL envelope encryption to an SSH public key. Immediately verify decryption into a temporary directory. Warn that losing the matching private key makes the encrypted bundle unrecoverable.
-6. Before reporting success, verify remote state and secret hygiene:
+3. Put a reusable `scripts/generate-backup.py`, `scripts/backup-hermes.sh`, and `scripts/restore-hermes.sh` in the repo so future updates are one-command, not a one-off manual copy. `generate-backup.py` should copy both Hermes config and any selected operational vaults; `restore-hermes.sh` should accept override paths such as `OBSIDIAN_VAULT_PATH`.
+4. Add README/RESTORE documentation as part of the deliverable, not as an afterthought: include what is backed up, what is deliberately excluded, the main harnesses in use (Hermes, Obsidian, gateway/voice/email, external AI CLIs, GitHub backup), and exact restore/verification commands.
+5. Add a defensive `.gitignore` before committing. Explicitly block plaintext secret file names and raw tarballs while allowing encrypted `secrets/*.enc` artifacts.
+6. If `age`/GPG are not already configured, an acceptable fallback is OpenSSL envelope encryption to an SSH public key. Immediately verify decryption into a temporary directory. Warn that losing the matching private key makes the encrypted bundle unrecoverable.
+7. Before reporting success, verify remote state, restore behavior, and secret hygiene:
    - `git status --short --branch`
    - `git ls-remote --heads origin <branch>`
    - `git ls-files` contains no `.env`, `auth.json`, token files, raw `.tar.gz`, or `profiles/*/bin/`.
    - A text scan of tracked non-encrypted files finds no non-placeholder API keys/tokens/private-key PEM blocks.
-7. Report the exact repo path, commit hash, included/excluded classes, encrypted-secret recovery requirement, and restore command.
+   - A smoke restore into temporary directories succeeds for non-secret config and vault contents; quote paths carefully because Obsidian vault paths often contain spaces.
+8. Report the exact repo path, commit hash, included/excluded classes, encrypted-secret recovery requirement, restore command, and any vault backup path.
 
 Detailed repo layout, encryption fallback, verification checks, and restore shape: `references/hermes-config-backup-repo.md`.
 

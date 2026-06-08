@@ -32,7 +32,14 @@ Hermes interacts with Claude Code in two fundamentally different ways. Choose ba
 
 ### Local setup override for Fausto
 
-On Fausto's current machine/profile, treat Claude Code CLI as **interactive/tmux-only** for delegation: `claude` interactive starts successfully, while `claude -p` can fail with `401 Invalid authentication credentials` even though the interactive TUI is authenticated. Before using print mode on this setup, explicitly re-smoke-test it; otherwise delegate through tmux interactive mode and monitor/capture the pane.
+On Fausto's current machine/profile, treat Claude Code CLI as **interactive/tmux-first** for delegation: `claude` interactive has been smoke-tested successfully via tmux with Claude Code 2.1.168 and a Claude Pro account, while `claude -p` has previously failed with `401 Invalid authentication credentials` even when the TUI was authenticated. Before using print mode on this setup, explicitly re-smoke-test it; otherwise delegate through tmux interactive mode and monitor/capture the pane.
+
+Validated interactive smoke pattern for this setup:
+1. Start a disposable tmux session in a scratch directory: `tmux new-session -d -s claude-smoke -x 140 -y 40 "cd /tmp/claude-interactive-smoke && claude"`.
+2. Capture the pane after a few seconds and handle the workspace trust dialog with Enter when present.
+3. Send a harmless exact-response prompt such as `Rispondi esattamente: CLAUDE_INTERACTIVE_OK`.
+4. Confirm the captured pane contains `CLAUDE_INTERACTIVE_OK` and the `❯` prompt has returned.
+5. Exit with `/exit` and kill the tmux session so smoke tests do not leak background sessions.
 
 ### Mode 1: Print Mode (`-p`) — Non-Interactive (only when verified working)
 
@@ -797,7 +804,9 @@ Use `/context` in interactive mode to see a colored grid of context usage. Key t
 9. **Use `--fallback-model haiku`** in print mode to gracefully handle model overload.
 10. **Start new sessions for distinct tasks** — sessions last 5 hours; fresh context is more efficient.
 11. **Use `--no-session-persistence`** in CI to avoid accumulating saved sessions on disk.
-12. **For usage/quota reports**, `claude -p '/usage' --max-turns 1 --output-format json` may only return a terse subscription sentence. To capture detailed limits (current session %, weekly all-models %, resets), automate the interactive TUI `/usage` through tmux or a PTY and parse the captured screen. Also aggregate local token usage from `~/.claude/projects/**/*.jsonl` when the user wants historical local usage. See `references/usage-quota.md`.
+- **For usage/quota reports**, `claude -p '/usage' --max-turns 1 --output-format json` may only return a terse subscription sentence. To capture detailed limits (current session %, weekly all-models %, resets), automate the interactive TUI `/usage` through tmux or a PTY and parse the captured screen. On Fausto's setup, `/home/fausto/bin/claude-quota` is intentionally noise-free and reports only current session plus current week. Aggregate local token usage from `~/.claude/projects/**/*.jsonl` only when the user explicitly asks for historical local usage. See `references/usage-quota.md`.
+11. **ScienceClick2 scene config delegation:** when Claude Code creates ScienceClick2 scene configs from an existing asset, follow the controller-side verification and `tsc` pitfalls in `references/scienceclick-scene-orchestration.md`.
+12. **ScienceClick2 Antigravity assessment workflow:** when Antigravity implements a ScienceClick2 scene under Fausto's orchestrator workflow, use Claude Code for a read-only assessment pass. Keep the prompt explicit: do not modify files, inspect `config.json` and `scene.png`, report in Italian on topic fit, config validity, A2 vocabulary/translations, drop-target plausibility, caveats, and final verdict. Hermes should not independently verify code/app behavior in this workflow.
 
 ## Pitfalls & Gotchas
 

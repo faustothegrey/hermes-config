@@ -121,27 +121,34 @@ terminal(command="gh pr comment 86 --body '<review>'", workdir="~/project")
 
 ## Usage / quota inspection
 
-When asked to report Codex usage or quota, inspect local session logs rather than guessing. Codex JSONL session files can contain `event_msg` payloads with `type: "token_count"`; those events may include `rate_limits.primary`, `rate_limits.secondary`, `plan_type`, `used_percent`, `window_minutes`, and `resets_at`.
+When asked to report current Codex usage or quota on Fausto's machine, use only the interactive TUI `/status` screen. Do not parse Codex logs/JSONL for quota or rate-limit data: better no Codex quota data than stale Codex quota data.
 
-**Staleness pitfall:** if the latest `resets_at` times are already in the past, the sample is stale and should not be reported as current. First generate a fresh tiny Codex session in a temporary git repo (for example `git init -q && codex exec 'Reply exactly: OK'`), then re-read the logs. On Fausto's machine, prefer the local aggregator `/home/fausto/bin/ai-cli-quotas` for Codex/Claude/Antigravity usage reports; still apply the fresh-sample rule when its Codex reset dates are stale.
-
-See `references/usage-quota.md` for a reusable parser pattern and caveats.
+Verified pattern:
 
 ```bash
-/home/fausto/bin/ai-cli-quotas
+SESSION=codex-status-$$
+WORKDIR=$(mktemp -d)
+git -C "$WORKDIR" init -q
+tmux new-session -d -s "$SESSION" -x 140 -y 40 "cd '$WORKDIR' && codex"
+sleep 5
+tmux send-keys -t "$SESSION" Enter   # accept trust prompt if present
+sleep 8                              # wait for model/MCP startup
+tmux send-keys -t "$SESSION" '/status'
+sleep 1
+tmux send-keys -t "$SESSION" Enter
+sleep 6
+tmux capture-pane -t "$SESSION" -p -S -120
+# then clean up: tmux kill-session -t "$SESSION"; rm -rf "$WORKDIR"
 ```
 
-If the Codex reset timestamps reported by the script are in the past or the latest Codex event is stale, do **not** present those values as current. First force a fresh quota sample with a tiny Codex session in a temporary git repo, then re-run the script:
+Read the `5h limit` and `Weekly limit` lines from the captured `/status` box. Example verified output shape:
 
-```bash
-TMP=$(mktemp -d)
-cd "$TMP"
-git init -q
-codex exec 'Reply exactly: OK'
-/home/fausto/bin/ai-cli-quotas
+```text
+5h limit:      [....] 69% left (resets 13:04)
+Weekly limit:  [... ] 68% left (resets 10:07 on 12 Jun)
 ```
 
-Codex JSONL session files can contain `event_msg` payloads with `type: "token_count"`; those events may include `rate_limits.primary`, `rate_limits.secondary`, `plan_type`, `used_percent`, `window_minutes`, and `resets_at`. See `references/usage-quota.md` for the parser pattern, stale-sample caveats, and the fresh-sample workflow.
+For Fausto's local quota tools, prefer `/home/fausto/bin/codex-quota` for Codex-only reports; `/home/fausto/bin/ai-cli-quotas` remains the combined aggregator. Both should report Codex quota only from this interactive `/status` path. If `/status` cannot be captured, show no Codex quota values.
 
 ## Rules
 
