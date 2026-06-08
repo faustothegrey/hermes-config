@@ -17,11 +17,11 @@ __pycache__/
 *.pyc
 .DS_Store
 
+# Installed executables are not config
+profiles/*/bin/
+
 # Allow encrypted secret artifacts
 !secrets/*.enc
 !secrets/*.pub
 !secrets/MANIFEST.json
 !secrets/README.md
-
-# Installed executables are not config
-profiles/*/bin/

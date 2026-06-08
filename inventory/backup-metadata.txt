@@ -1,4 +1,3 @@
-Created: 2026-06-08T06:12:04.649166+00:00
+Created: 2026-06-08T06:16:24.834009+00:00
 Source: /home/fausto/.hermes
-Host backup path: /home/fausto/Backups/hermes-config
-
+Repo: /home/fausto/Backups/hermes-config

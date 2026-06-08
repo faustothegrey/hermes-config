@@ -37,6 +37,8 @@ STDOUT:
 │ jupyter-live-kernel   │ data-science         │ builtin  │ builtin  │ enabled │
 │ discord-voice-gateway │ devops               │ local    │ local    │ enabled │
 │ hermes-background-op… │ devops               │ local    │ local    │ enabled │
+│ kanban-orchestrator   │ devops               │ builtin  │ builtin  │ enabled │
+│ kanban-worker         │ devops               │ builtin  │ builtin  │ enabled │
 │ webhook-subscriptions │ devops               │ local    │ local    │ enabled │
 │ himalaya              │ email                │ builtin  │ builtin  │ enabled │
 │ minecraft-modpack-se… │ gaming               │ official │ official │ enabled │
@@ -93,7 +95,7 @@ STDOUT:
 │ test-driven-developm… │ software-development │ builtin  │ builtin  │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 67 builtin, 13 local — 86 enabled, 0 disabled
+6 hub-installed, 69 builtin, 13 local — 88 enabled, 0 disabled
 
 
 
