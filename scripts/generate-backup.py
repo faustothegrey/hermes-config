@@ -19,7 +19,9 @@ from pathlib import Path
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
 REPO_DIR = Path(os.environ.get("REPO_DIR", Path(__file__).resolve().parents[1])).expanduser()
 
-MANAGED_DIRS = ["config", "skills", "cron", "profiles", "plugins", "memories", "hooks", "inventory", "secrets"]
+OBSIDIAN_VAULT = Path(os.environ.get("OBSIDIAN_VAULT_PATH", str(Path.home() / "Documents" / "Obsidian Vault"))).expanduser()
+
+MANAGED_DIRS = ["config", "skills", "cron", "profiles", "plugins", "memories", "hooks", "obsidian-vault", "inventory", "secrets"]
 SECRET_TOKENS = [
     "key",
     "token",
@@ -158,62 +160,269 @@ profiles/*/bin/
         encoding="utf-8",
     )
     (REPO_DIR / "README.md").write_text(
-        """# Hermes configuration backup
+        """# Hermes configuration and operational-memory backup
 
 This repository backs up the relevant configuration for the Hermes Agent installation on `fausto-N56VV`.
 
-Included:
+## What is included
 
 - `config/config.yaml` with secret-looking values redacted
-- `skills/`
-- `cron/`
+- `config/SOUL.md` and other small Hermes config sidecars
+- `skills/` for installed and agent-created Hermes skills
+- `cron/` for Hermes scheduled jobs
 - `profiles/` without per-profile plaintext secrets, runtime state, or installed binaries
 - `plugins/`, `memories/`, `hooks/` when present
+- `obsidian-vault/`, a copy of `/home/fausto/Documents/Obsidian Vault`
 - `inventory/` command outputs useful during restore/debugging
-- `scripts/backup-hermes.sh` and `scripts/restore-hermes.sh`
+- `scripts/backup-hermes.sh`, `scripts/generate-backup.py`, and `scripts/restore-hermes.sh`
+- `secrets/*.enc`, encrypted secret/state bundle
 
-Not committed in plaintext:
+## What is not committed in plaintext
 
 - `~/.hermes/.env`
 - `~/.hermes/auth.json`
 - Google OAuth token/client-secret files
 - gateway/pairing state
 - `state.db`
+- private SSH/GPG/API keys
 
 Secrets can be committed only as encrypted artifacts under `secrets/*.enc`.
 The current backup uses OpenSSL envelope encryption to the local SSH public key when `scripts/backup-hermes.sh` is run and an RSA SSH public key is available.
 
-Important: if the machine crashes and the matching SSH private key is lost, encrypted secrets cannot be decrypted. Keep a copy of the private key or use a different long-term encryption recipient.
+Important: if the machine crashes and the matching SSH private key is lost, encrypted secrets cannot be decrypted. Keep an offline copy of the private key, or migrate this repo to a long-term age/GPG recipient.
+
+## Main operational harnesses in use
+
+Hermes Agent:
+- Main home: `~/.hermes`
+- Config: `~/.hermes/config.yaml`
+- Secrets/env: `~/.hermes/.env` encrypted into `secrets/hermes-secrets.tar.gz.enc`
+- OAuth/credential pools: `~/.hermes/auth.json` encrypted into `secrets/hermes-secrets.tar.gz.enc`
+- Skills: `~/.hermes/skills/`
+- Cron jobs: `~/.hermes/cron/`
+- Profiles: `~/.hermes/profiles/`
+- Memories: `~/.hermes/memories/`
+
+Obsidian operational memory:
+- Vault path: `/home/fausto/Documents/Obsidian Vault`
+- Backed up in repo as: `obsidian-vault/`
+- Important folders: `Hermes/`, `Projects/`, `System/`, `Inbox/`
+- Used for detailed operational/project notes that do not fit Hermes compact memory.
+
+Git/GitHub backup harness:
+- Repo: `git@github.com:faustothegrey/hermes-config.git`
+- Local clone: `/home/fausto/Backups/hermes-config`
+- Update command: `cd /home/fausto/Backups/hermes-config && scripts/backup-hermes.sh`
+
+Gateway/voice/email harnesses:
+- Gateway state/secrets are encrypted, not plaintext.
+- Discord voice and email operational details are stored in Obsidian notes and copied under `obsidian-vault/`.
+- Gmail is the default checking account; Virgilio is the configured sending account unless overridden.
+
+External AI CLI harnesses:
+- Claude Code, Antigravity, and Codex CLI availability/quotas are documented in Obsidian.
+- Local quota helper: `/home/fausto/bin/ai-cli-quotas`.
+
+## Routine backup
+
+Run:
+
+```bash
+cd /home/fausto/Backups/hermes-config
+scripts/backup-hermes.sh
+```
+
+That regenerates the sanitized snapshot, updates the encrypted secrets bundle, commits if there are changes, and pushes to GitHub.
+
+## Restore
+
+See `RESTORE.md` for the complete restore procedure.
 """,
         encoding="utf-8",
     )
     (REPO_DIR / "RESTORE.md").write_text(
         """# Restore procedure
 
-On a new machine:
+This file documents how to restore the Hermes Agent setup and the operational-memory harnesses backed up in this repository.
 
-1. Install Hermes Agent.
-2. Clone this repo:
+## 0. Critical prerequisite: secret decryption key
 
-   git clone git@github.com:faustothegrey/hermes-config.git ~/Backups/hermes-config
+Encrypted secrets in `secrets/*.enc` were encrypted to the SSH public key from the original machine:
 
-3. Restore non-secret configuration:
+```text
+/home/fausto/.ssh/id_rsa.pub
+```
 
-   cd ~/Backups/hermes-config
-   scripts/restore-hermes.sh
+To restore `.env`, `auth.json`, OAuth tokens, gateway state, and `state.db`, you need the matching private key, usually:
 
-4. If encrypted secrets are present, set `SSH_PRIVATE_KEY` to the matching private key before running restore:
+```text
+~/.ssh/id_rsa
+```
 
-   SSH_PRIVATE_KEY=~/.ssh/id_rsa scripts/restore-hermes.sh
+If that key is lost, the plaintext configuration can still be restored, but secrets must be recreated with `hermes setup`, `hermes auth`, and gateway/platform setup.
 
-5. Verify:
+## 1. Install base software on the new machine
 
-   hermes config check
-   hermes doctor
-   hermes tools list
-   hermes gateway status
+Install Hermes Agent first:
 
-If secrets cannot be decrypted, re-run `hermes setup`, `hermes auth`, and platform setup manually.
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+```
+
+Required restore tools:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git openssh-client openssl rsync
+```
+
+## 2. Clone this backup repo
+
+```bash
+mkdir -p ~/Backups
+git clone git@github.com:faustothegrey/hermes-config.git ~/Backups/hermes-config
+cd ~/Backups/hermes-config
+```
+
+If SSH to GitHub is not ready yet, add your GitHub SSH key first, or clone via HTTPS temporarily.
+
+## 3. Restore Hermes config and secrets
+
+For full restore with encrypted secrets:
+
+```bash
+cd ~/Backups/hermes-config
+SSH_PRIVATE_KEY=~/.ssh/id_rsa scripts/restore-hermes.sh
+```
+
+For config-only restore without secrets:
+
+```bash
+cd ~/Backups/hermes-config
+scripts/restore-hermes.sh
+```
+
+The script restores:
+
+- `~/.hermes/config.yaml`
+- `~/.hermes/skills/`
+- `~/.hermes/cron/`
+- `~/.hermes/profiles/`
+- `~/.hermes/plugins/`
+- `~/.hermes/memories/`
+- `~/.hermes/hooks/`
+- encrypted secrets/state, if the private key works
+
+## 4. Restore Obsidian vault
+
+The restore script also restores the vault backup from:
+
+```text
+obsidian-vault/
+```
+
+to:
+
+```text
+~/Documents/Obsidian Vault
+```
+
+Override the destination if needed:
+
+```bash
+OBSIDIAN_VAULT_PATH="/path/to/Obsidian Vault" scripts/restore-hermes.sh
+```
+
+After restore, open that folder as an Obsidian vault. The key operational notes are under:
+
+- `Hermes/`
+- `Projects/`
+- `System/`
+- `Inbox/`
+
+## 5. Verify Hermes
+
+Run:
+
+```bash
+hermes config check
+hermes doctor
+hermes tools list
+hermes skills list
+hermes profile list
+hermes cron list
+```
+
+For gateway:
+
+```bash
+hermes gateway status
+```
+
+If needed:
+
+```bash
+hermes gateway setup
+hermes gateway restart
+```
+
+## 6. Verify operational harnesses
+
+Hermes Agent:
+
+```bash
+hermes config path
+hermes status --all
+```
+
+Obsidian:
+
+```bash
+test -d "$HOME/Documents/Obsidian Vault" && find "$HOME/Documents/Obsidian Vault" -maxdepth 2 -type f | sort | head
+```
+
+External AI CLI quota helper, if restored/installed:
+
+```bash
+/home/fausto/bin/ai-cli-quotas || true
+```
+
+GitHub backup repo:
+
+```bash
+cd ~/Backups/hermes-config
+git status --short --branch
+git ls-remote --heads origin master
+```
+
+## 7. Recreate anything that cannot be decrypted
+
+If encrypted secrets cannot be restored, recreate credentials manually:
+
+```bash
+hermes setup
+hermes auth
+hermes model
+hermes gateway setup
+```
+
+Then run a fresh backup:
+
+```bash
+cd ~/Backups/hermes-config
+scripts/backup-hermes.sh
+```
+
+## 8. Routine backup after restore
+
+Once the machine is working again, update the backup with:
+
+```bash
+cd ~/Backups/hermes-config
+scripts/backup-hermes.sh
+```
+
+This regenerates the Hermes snapshot, copies the Obsidian vault, refreshes the encrypted secrets bundle, commits changes, and pushes to GitHub.
 """,
         encoding="utf-8",
     )
@@ -243,6 +452,17 @@ def main() -> None:
     copy_tree(HERMES_HOME / "memories", REPO_DIR / "memories", exclude=("*.lock", "*.tmp", "*.db-shm", "*.db-wal"))
     copy_tree(HERMES_HOME / "hooks", REPO_DIR / "hooks", exclude=("*.log", "*.tmp"))
 
+    obsidian_excludes = (
+        ".trash",
+        ".git",
+        "*.tmp",
+        "*.lock",
+        "*.log",
+        "*.DS_Store",
+    )
+    copy_tree(OBSIDIAN_VAULT, REPO_DIR / "obsidian-vault", exclude=obsidian_excludes)
+    redact_copied_configs(REPO_DIR / "obsidian-vault" / ".obsidian")
+
     profile_excludes = (
         ".env",
         "auth.json",
@@ -270,7 +490,7 @@ def main() -> None:
     inv = REPO_DIR / "inventory"
     inv.mkdir(parents=True, exist_ok=True)
     (inv / "backup-metadata.txt").write_text(
-        f"Created: {datetime.now(timezone.utc).isoformat()}\nSource: {HERMES_HOME}\nRepo: {REPO_DIR}\n",
+        f"Created: {datetime.now(timezone.utc).isoformat()}\nSource: {HERMES_HOME}\nObsidian vault: {OBSIDIAN_VAULT}\nRepo: {REPO_DIR}\n",
         encoding="utf-8",
     )
     for cmd, name in [

@@ -11,3 +11,5 @@ Discord voice and email operational details live in Obsidian [[Hermes/Discord Vo
 Graphify can perform semantic extraction through the local Claude Code CLI using `graphify extract <path> --backend claude-cli`, without external LLM API keys; useful for Markdown/KB corpora and mixed code+docs.
 §
 Sul setup dell'utente, Claude Code CLI può avviarsi in modalità interattiva/tmux ma non è necessariamente autenticato per generare: `claude -p` fallisce con 401 e anche l'interattivo, quando riceve un prompt, può rispondere `Please run /login · API Error: 401 Invalid authentication credentials`. Prima di deleghe Claude, verificare con un prompt interattivo reale o far completare `/login` all'utente.
+§
+Hermes configuration backup repo is git@github.com:faustothegrey/hermes-config.git, cloned locally at /home/fausto/Backups/hermes-config. It backs up sanitized ~/.hermes config/skills/cron/profiles/memories plus encrypted secrets using OpenSSL envelope encryption to /home/fausto/.ssh/id_rsa.pub; restore requires matching /home/fausto/.ssh/id_rsa or another configured SSH_PRIVATE_KEY.

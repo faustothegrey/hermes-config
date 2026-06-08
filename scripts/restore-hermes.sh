@@ -4,6 +4,7 @@ set -euo pipefail
 REPO_DIR="${REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY:-$HOME/.ssh/id_rsa}"
+OBSIDIAN_VAULT_PATH="${OBSIDIAN_VAULT_PATH:-$HOME/Documents/Obsidian Vault}"
 
 mkdir -p "$HERMES_HOME"
 cd "$REPO_DIR"
@@ -15,6 +16,11 @@ cp -a config/config.yaml "$HERMES_HOME/config.yaml" 2>/dev/null || true
 [ -d plugins ] && rsync -a plugins/ "$HERMES_HOME/plugins/"
 [ -d memories ] && rsync -a memories/ "$HERMES_HOME/memories/"
 [ -d hooks ] && rsync -a hooks/ "$HERMES_HOME/hooks/"
+if [ -d obsidian-vault ]; then
+  mkdir -p "$(dirname "$OBSIDIAN_VAULT_PATH")"
+  rsync -a --delete obsidian-vault/ "$OBSIDIAN_VAULT_PATH/"
+  echo "Obsidian vault restored to $OBSIDIAN_VAULT_PATH"
+fi
 
 if [ -f secrets/hermes-secrets.tar.gz.enc ] && [ -f secrets/hermes-secrets.key.enc ]; then
   if [ ! -f "$SSH_PRIVATE_KEY" ]; then

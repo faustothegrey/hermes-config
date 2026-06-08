@@ -12,7 +12,7 @@ metadata:
 
 # Hermes Background Operations
 
-Use this skill when the user asks to run Hermes outside the foreground CLI: Gateway as a long-lived service, messaging-platform integrations, durable cron jobs, script-only watchdogs, recurring reminders, voice/text gateway operation, or background notification workflows.
+Use this skill when the user asks to run Hermes outside the foreground CLI: Gateway as a long-lived service, messaging-platform integrations, durable cron jobs, script-only watchdogs, recurring reminders, voice/text gateway operation, background notification workflows, or disaster-recovery backups of Hermes configuration/state.
 
 Load the protected `hermes-agent` skill first for canonical current commands. This skill adds operational playbooks, decision criteria, and pitfalls learned from setup sessions.
 
@@ -25,6 +25,27 @@ Load the protected `hermes-agent` skill first for canonical current commands. Th
 | Mechanical threshold/watchdog alert | `cronjob(no_agent=True, script=...)` | Cheap, deterministic, and silent when there is nothing to report. |
 | Long bounded local command (build/test/deploy) | `terminal(background=True, notify_on_complete=True)` | Process output is tracked and one completion notice is sent. |
 | Long-lived dev server/daemon inside a task | `terminal(background=True)` with rare `watch_patterns` only for readiness | The process is expected not to exit. |
+
+## Hermes configuration disaster recovery
+
+Use when the user asks to preserve a Hermes installation in case the machine crashes, or asks to push Hermes configuration to a Git repository.
+
+1. Load the protected `hermes-agent` skill first for canonical path names and profile/export commands.
+2. Treat the backup as three classes of data:
+   - **Plain/sanitized config**: `config.yaml` with secret-like values redacted, `skills/`, `cron/`, selected `profiles/`, `plugins/`, `hooks/`, and optional `memories/`.
+   - **Encrypted secrets**: `.env`, `auth.json`, OAuth token files, gateway/pairing state, and optional `state.db`.
+   - **Excluded runtime junk**: logs, caches, audio/image caches, sandboxes, state snapshots, PID/lock/tmp files, per-profile sessions, and installed binaries such as `profiles/*/bin/`.
+3. Put a reusable `scripts/generate-backup.py`, `scripts/backup-hermes.sh`, and `scripts/restore-hermes.sh` in the repo so future updates are one-command, not a one-off manual copy.
+4. Add a defensive `.gitignore` before committing. Explicitly block plaintext secret file names and raw tarballs while allowing encrypted `secrets/*.enc` artifacts.
+5. If `age`/GPG are not already configured, an acceptable fallback is OpenSSL envelope encryption to an SSH public key. Immediately verify decryption into a temporary directory. Warn that losing the matching private key makes the encrypted bundle unrecoverable.
+6. Before reporting success, verify remote state and secret hygiene:
+   - `git status --short --branch`
+   - `git ls-remote --heads origin <branch>`
+   - `git ls-files` contains no `.env`, `auth.json`, token files, raw `.tar.gz`, or `profiles/*/bin/`.
+   - A text scan of tracked non-encrypted files finds no non-placeholder API keys/tokens/private-key PEM blocks.
+7. Report the exact repo path, commit hash, included/excluded classes, encrypted-secret recovery requirement, and restore command.
+
+Detailed repo layout, encryption fallback, verification checks, and restore shape: `references/hermes-config-backup-repo.md`.
 
 ## Gateway service operations
 
@@ -254,4 +275,5 @@ Key points:
 - `references/discord-voice-autojoin-implementation.md` — implementation and verification notes for an always-on Discord voice room: startup auto-join, text-channel binding, idle-timeout handling, reconnect loop, and rollback trail.
 - `references/reboot-prewarning-watchdog.md` — script-only cron watchdog pattern for warning before scheduled reboot windows.
 - `references/hermes-update-with-local-patches.md` — preserving local Hermes source commits/uncommitted patches while updating upstream `main` and rebuilding the patched branch.
+- `references/hermes-config-backup-repo.md` — disaster-recovery pattern for backing up `~/.hermes` to Git with sanitized config, encrypted secrets, one-command backup/restore scripts, and secret-hygiene verification.
 - `references/nightly-task-window.md` — this user's 00:30–05:50 local-time nightly-task window, including cron prompt text and script guard pattern.

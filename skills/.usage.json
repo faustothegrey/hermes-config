@@ -107,27 +107,27 @@
     "archived_at": null,
     "created_at": "2026-05-29T08:08:23.495721+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-07T13:58:53.661473+00:00",
-    "last_used_at": "2026-06-07T13:57:59.075338+00:00",
-    "last_viewed_at": "2026-06-07T13:57:59.020310+00:00",
-    "patch_count": 25,
+    "last_patched_at": "2026-06-08T06:18:52.468913+00:00",
+    "last_used_at": "2026-06-08T06:17:59.612793+00:00",
+    "last_viewed_at": "2026-06-08T06:17:59.556893+00:00",
+    "patch_count": 29,
     "pinned": false,
     "state": "active",
-    "use_count": 19,
-    "view_count": 19
+    "use_count": 20,
+    "view_count": 20
   },
   "obsidian": {
     "archived_at": null,
     "created_at": "2026-06-07T14:39:35.132604+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-07T14:51:26.567380+00:00",
-    "last_used_at": "2026-06-07T16:10:02.732507+00:00",
-    "last_viewed_at": "2026-06-07T16:10:02.587424+00:00",
+    "last_used_at": "2026-06-08T06:22:38.631297+00:00",
+    "last_viewed_at": "2026-06-08T06:22:38.582658+00:00",
     "patch_count": 1,
     "pinned": false,
     "state": "active",
-    "use_count": 4,
-    "view_count": 4
+    "use_count": 5,
+    "view_count": 5
   },
   "systematic-debugging": {
     "archived_at": null,
