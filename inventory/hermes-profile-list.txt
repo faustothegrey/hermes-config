@@ -1,0 +1,14 @@
+$ hermes profile list
+exit=0
+
+STDOUT:
+
+ Profile          Model                        Gateway      Alias        Distribution
+ ───────────────    ───────────────────────────    ───────────    ───────────    ────────────────────
+ ◆default         gpt-5.5                      running      —            —
+  cpia1           gpt-5.5                      stopped      cpia1        —
+
+
+
+STDERR:
+

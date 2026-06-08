@@ -1,0 +1,97 @@
+$ hermes status --all
+exit=0
+
+STDOUT:
+
+┌─────────────────────────────────────────────────────────┐
+│                 ⚕ Hermes Agent Status                  │
+└─────────────────────────────────────────────────────────┘
+
+◆ Environment
+  Project:      /home/fausto/.hermes/hermes-agent
+  Python:       3.11.5
+  .env file:    ✓ exists
+  Model:        gpt-5.5
+  Provider:     OpenAI Codex
+
+◆ API Keys
+  OpenRouter    ✗ 
+  OpenAI        ✗ 
+  Google / Gemini  ✗ 
+  DeepSeek      ✗ 
+  xAI / Grok    ✗ 
+  NVIDIA NIM    ✗ 
+  Z.AI / GLM    ✗ 
+  Kimi          ✗ 
+  StepFun Step Plan  ✗ 
+  MiniMax       ✗ 
+  MiniMax-CN    ✗ 
+  Firecrawl     ✗ 
+  Tavily        ✗ 
+  Browser Use   ✗ 
+  Browserbase   ✗ 
+  FAL           ✗ 
+  ElevenLabs    ✗ 
+  GitHub        ✗ 
+  Anthropic     ✗ 
+
+◆ Auth Providers
+  Nous Portal   ✗ not logged in (run: hermes portal)
+  OpenAI Codex  ✓ logged in
+    Auth file:  /home/fausto/.hermes/auth.json
+    Refreshed:  2026-06-02 12:52:18 CEST
+  Qwen OAuth    ✗ not logged in (run: qwen auth qwen-oauth)
+    Auth file:  /home/fausto/.qwen/oauth_creds.json
+    Error:      Qwen CLI credentials not found. Run 'qwen auth qwen-oauth' first.
+  MiniMax OAuth  ✗ not logged in (run: hermes auth add minimax-oauth)
+  xAI OAuth     ✗ not logged in (run: hermes auth add xai-oauth)
+    Auth file:  /home/fausto/.hermes/auth.json
+    Error:      No xAI OAuth credentials stored. Select xAI Grok OAuth (SuperGrok / Premium+) in `hermes model`.
+
+◆ API-Key Providers
+  Z.AI / GLM       ✗ not configured (run: hermes model)
+  Kimi / Moonshot  ✗ not configured (run: hermes model)
+  StepFun Step Plan ✗ not configured (run: hermes model)
+  MiniMax          ✗ not configured (run: hermes model)
+  MiniMax (China)  ✗ not configured (run: hermes model)
+
+◆ Terminal Backend
+  Backend:      local
+  Sudo:         ✗ disabled
+
+◆ Messaging Platforms
+  Telegram      ✓ configured (home: 8508115936)
+  Discord       ✓ configured (home: 1508809523459133581)
+  WhatsApp      ✗ not configured
+  Signal        ✗ not configured
+  Slack         ✗ not configured
+  Email         ✗ not configured
+  SMS           ✗ not configured
+  DingTalk      ✗ not configured
+  Feishu        ✗ not configured
+  WeCom         ✗ not configured
+  WeCom Callback  ✗ not configured
+  Weixin        ✗ not configured
+  BlueBubbles   ✗ not configured
+  QQBot         ✗ not configured
+  Yuanbao       ✗ not configured
+
+◆ Gateway Service
+  Status:       ✓ running
+  Manager:      systemd (user)
+  PID(s):       2052
+
+◆ Scheduled Jobs
+  Jobs:         0 active, 0 total
+
+◆ Sessions
+  Active:       3 session(s)
+
+────────────────────────────────────────────────────────────
+  Run 'hermes doctor' for detailed diagnostics
+  Run 'hermes setup' to configure
+
+
+
+STDERR:
+

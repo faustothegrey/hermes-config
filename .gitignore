@@ -1,0 +1,27 @@
+# Never commit plaintext secrets
+.env
+auth.json
+google_token.json
+google_client_secret.json
+*.pem
+*.key
+*.key.plain
+*.tar.gz
+
+# Runtime junk
+*.tmp
+*.lock
+*.pid
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+
+# Allow encrypted secret artifacts
+!secrets/*.enc
+!secrets/*.pub
+!secrets/MANIFEST.json
+!secrets/README.md
+
+# Installed executables are not config
+profiles/*/bin/

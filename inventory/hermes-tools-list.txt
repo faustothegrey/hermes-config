@@ -1,0 +1,34 @@
+$ hermes tools list
+exit=0
+
+STDOUT:
+Built-in toolsets (cli):
+  ✓ enabled  web  🔍 Web Search & Scraping
+  ✓ enabled  browser  🌐 Browser Automation
+  ✓ enabled  terminal  💻 Terminal & Processes
+  ✓ enabled  file  📁 File Operations
+  ✓ enabled  code_execution  ⚡ Code Execution
+  ✓ enabled  vision  👁️  Vision / Image Analysis
+  ✓ enabled  video  🎬 Video Analysis
+  ✓ enabled  image_gen  🎨 Image Generation
+  ✓ enabled  video_gen  🎬 Video Generation
+  ✓ enabled  x_search  🐦 X (Twitter) Search
+  ✓ enabled  moa  🧠 Mixture of Agents
+  ✓ enabled  tts  🔊 Text-to-Speech
+  ✓ enabled  skills  📚 Skills
+  ✓ enabled  todo  📋 Task Planning
+  ✓ enabled  memory  💾 Memory
+  ✗ disabled  context_engine  🧩 Context Engine
+  ✓ enabled  session_search  🔎 Session Search
+  ✓ enabled  clarify  ❓ Clarifying Questions
+  ✓ enabled  delegation  👥 Task Delegation
+  ✓ enabled  cronjob  ⏰ Cron Jobs
+  ✓ enabled  messaging  📨 Cross-Platform Messaging
+  ✓ enabled  homeassistant  🏠 Home Assistant
+  ✓ enabled  spotify  🎵 Spotify
+  ✓ enabled  yuanbao  🤖 Yuanbao
+  ✓ enabled  computer_use  🖱️  Computer Use (macOS)
+
+
+STDERR:
+

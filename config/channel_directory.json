@@ -1,0 +1,86 @@
+{
+  "updated_at": "2026-06-08T08:11:18.347963",
+  "platforms": {
+    "discord": [
+      {
+        "id": "1508760155637026888",
+        "name": "benvenuto-e-regole",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508760155637026889",
+        "name": "note-risorse",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508760155637026891",
+        "name": "generale",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508760155637026892",
+        "name": "assistenza-compiti",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508760155637026893",
+        "name": "pianificazione-sessioni",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508760155637026894",
+        "name": "off-topic",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508809523459133581",
+        "name": "hermes-chat",
+        "guild": "Settembre 2",
+        "type": "channel"
+      },
+      {
+        "id": "1508809523459133581",
+        "name": "Settembre 2 / #hermes-chat",
+        "type": "group",
+        "thread_id": null
+      }
+    ],
+    "telegram": [
+      {
+        "id": "8508115936",
+        "name": "Fausto Lelli",
+        "type": "dm",
+        "thread_id": null
+      }
+    ],
+    "whatsapp": [],
+    "slack": [],
+    "signal": [],
+    "mattermost": [],
+    "matrix": [],
+    "homeassistant": [],
+    "email": [],
+    "sms": [],
+    "dingtalk": [],
+    "msgraph_webhook": [],
+    "feishu": [],
+    "wecom": [],
+    "wecom_callback": [],
+    "weixin": [],
+    "bluebubbles": [],
+    "qqbot": [],
+    "yuanbao": [],
+    "google_chat": [],
+    "irc": [],
+    "line": [],
+    "ntfy": [],
+    "simplex": [],
+    "teams": []
+  }
+}

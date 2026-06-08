@@ -1,0 +1,10 @@
+$ hermes cron list
+exit=0
+
+STDOUT:
+No scheduled jobs.
+Create one with 'hermes cron create ...' or the /cron command in chat.
+
+
+STDERR:
+
