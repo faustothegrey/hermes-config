@@ -48,9 +48,26 @@ Claude Code can assess read-only via interactive tmux on Fausto's setup. Prompt 
 
 If Claude asks permission for safe read-only shell inspection, approve only the needed read commands. Do not ask Claude to edit unless the user explicitly requests a fix pass.
 
+## Post-assessment cleanup and controller checks
+
+After Antigravity returns, do not assume it edited the repository/worktree named in the prompt. Immediately check the actual repo(s):
+
+```bash
+git status --short --branch
+find public/scenes -maxdepth 3 -path '*<scene-id>*' -print 2>/dev/null | sort
+```
+
+For generated scene assets, include these cheap controller-level checks before restart:
+
+- Confirm the playable category path exists (normally `public/scenes/jobs/<scene-id>/` for job scenes).
+- Remove accidental duplicate/orphan direct paths like `public/scenes/<scene-id>/` when the app discovers scenes only through category directories.
+- Run `file public/scenes/.../scene.png`; if the file is JPEG data with a `.png` extension, convert it to a real PNG (for example with ImageMagick `convert input PNG32:tmp && mv tmp input`) before final delivery.
+- Re-run a JSON/config consistency check after any cleanup.
+- If Claude's read-only assessment finds minor fixable hygiene issues (duplicate orphan directory, mislabeled image format), the controller may apply those cleanup fixes directly and re-run validation; keep code/app behavior verification limited to orchestration-level checks unless the user asked for deeper validation.
+
 ## Service restart
 
-After both delegations finish:
+After both delegations and any cleanup finish:
 
 ```bash
 sudo -n systemctl restart butler && systemctl is-active butler
