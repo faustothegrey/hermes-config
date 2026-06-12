@@ -6,8 +6,14 @@ Note operative locali per Hermes Agent sul PC di Fausto.
 
 ## Collegamenti
 
+- [[External AI CLIs]]
 - [[AI CLI Quotas]]
+- [[Configuration Backup]]
+- [[Peer Mesh]]
+- [[Discord Voice]]
 - [[../Projects/ScienceClick2]]
+- [[../System/Email]]
+- [[../System/Scheduled Restarts]]
 - [[../System/Services]]
 
 ## Regola memoria permanente

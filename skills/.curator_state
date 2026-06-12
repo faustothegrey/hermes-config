@@ -1,9 +1,9 @@
 {
-  "last_report_path": "/home/fausto/.hermes/logs/curator/20260605-080650",
-  "last_run_at": "2026-06-05T08:06:50.561078+00:00",
-  "last_run_duration_seconds": 27.243182,
-  "last_run_summary": "auto: no changes; llm: Processed the full candidate list provided.\n\nOnly one agent-created, unpinned skill was available:\n\n- `discord-voice-gateway`\n\nDecision: kept as-is. It is already a class-level umbrella skill for operating and troubleshooting Hermes Discord…",
-  "last_run_summary_shown_at": "2026-06-05T08:06:50.561078+00:00",
+  "last_report_path": "/home/fausto/.hermes/logs/curator/20260612-090617",
+  "last_run_at": "2026-06-12T09:06:17.752667+00:00",
+  "last_run_duration_seconds": 847.437855,
+  "last_run_summary": "auto: no changes; llm: Completed an umbrella-building consolidation pass.\n\nCreated these new class-level umbrella skills:\n\n- `apple-ecosystem-automation`\n- `external-coding-agents`\n- `github-workflow-operations`\n- `creative-web-visuals`\n- `media-content-productio…\narchived 69 skill(s):\n  • airtable — pruned (stale)\n  • apple-notes — pruned (stale)\n  • apple-reminders — pruned (stale)\n  • architecture-diagram — pruned (stale)\n  • arxiv — pruned (stale)\n  • ascii-art — pruned (stale)\n  • ascii-video — pruned (stale)\n  • audiocraft-audio-generation — pruned (stale)\n  • baoyu-infographic — pruned (stale)\n  • blogwatcher — pruned (stale)\n  … and 59 more\nfull report: hermes curator status",
+  "last_run_summary_shown_at": "2026-06-12T09:06:17.752667+00:00",
   "paused": false,
-  "run_count": 2
+  "run_count": 3
 }

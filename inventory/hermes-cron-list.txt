@@ -15,7 +15,7 @@ STDOUT:
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-11T00:32:16.855111+02:00  ok
+    Last run:  2026-06-12T00:32:29.656666+02:00  ok
 
 
 

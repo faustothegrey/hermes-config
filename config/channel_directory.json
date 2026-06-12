@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-12T00:30:51.695530",
+  "updated_at": "2026-06-12T16:31:33.795792",
   "platforms": {
     "discord": [
       {
@@ -60,6 +60,7 @@
       }
     ],
     "whatsapp": [],
+    "whatsapp_cloud": [],
     "slack": [],
     "signal": [],
     "mattermost": [],
@@ -80,6 +81,7 @@
     "irc": [],
     "line": [],
     "ntfy": [],
+    "photon": [],
     "simplex": [],
     "teams": []
   }

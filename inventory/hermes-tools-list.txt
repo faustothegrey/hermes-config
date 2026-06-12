@@ -29,6 +29,9 @@ Built-in toolsets (cli):
   ✓ enabled  yuanbao  🤖 Yuanbao
   ✓ enabled  computer_use  🖱️  Computer Use (macOS)
 
+MCP servers:
+  hermes_peers  all tools enabled
+
 
 STDERR:
 

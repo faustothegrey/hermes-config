@@ -24,10 +24,9 @@ github-code-review:b771855b5c56b5e3a2546167a51667ba
 github-issues:429ec06cde7578e4ebba451d8106f008
 github-pr-workflow:48b6aceaae5333f6d3ed2d72f595331b
 github-repo-management:c5c05bc85dfcda2b7ac2f2006be9efe0
-godmode:630115b2ea1e331a960fc49817b6affc
 google-workspace:97c3ade5668d6eeaf95be1996f57921e
 heartmula:96a5927a5f221065260ddb2e0f1d77ec
-hermes-agent:e5778a116c7f17693758d6b0fb53fef7
+hermes-agent:18f4d5578162739663b0af42c013db3c
 hermes-agent-skill-authoring:4fefd83beeea0a8a32f5ae006f10f00d
 himalaya:3f05533dcd15be9d89cc86ab13c94a83
 huggingface-hub:da338c5152d72db030bb81d923d1c64d
@@ -44,7 +43,6 @@ maps:75eb39eca308ae4defa6ee2f14499428
 nano-pdf:6c643bd0cfb0548ff0ddaf367d4da6d1
 node-inspect-debugger:55501511963a3a6410fc767b5ed3e21c
 notion:930f6c7d327dd86553f45e2da9d9901e
-obliteratus:d3333944ef536dbe9238766f2f626eae
 obsidian:be02894afa45a908623ad6f9b7594199
 ocr-and-documents:af5fba9fa8ef003951ff5fe5a0a04adf
 opencode:d2a166c7f2c74f6e47d548ed1290c458
@@ -60,6 +58,7 @@ requesting-code-review:f7e902570802e21f340955384385abda
 research-paper-writing:dbe2d301baeaab5c5b0539a733233a34
 segment-anything-model:7f1317da421fb8eada27aeacdbb21d30
 serving-llms-vllm:92d66ae1f1112924634fcdcff2f86bc7
+simplify-code:400de5f892617a4f1e82c8b799142272
 sketch:f8833126112824f6a916c69630cfd042
 songsee:644dc0f267b6661a3df6c76ce80d7f1f
 songwriting-and-ai-music:52be403c894c7bd7d6fe70f7eeaf9460

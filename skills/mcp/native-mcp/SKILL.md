@@ -26,6 +26,8 @@ Use this whenever you want to:
 
 For ad-hoc, one-off MCP tool calls from the terminal without configuring anything, see the `mcporter` skill instead.
 
+For multiple Hermes instances on different LAN machines, a useful pattern is to expose each worker through Hermes API Server and consume them through a thin MCP wrapper on the orchestrator. See `references/hermes-peer-api-wrapper.md` for the peer/worker architecture, reusable implementation shape, auth/key handling, and verification pitfalls.
+
 ## Prerequisites
 
 - **mcp Python package** -- optional dependency; install with `pip install mcp`. If not installed, MCP support is silently disabled.

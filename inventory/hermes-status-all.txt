@@ -39,7 +39,7 @@ STDOUT:
   Nous Portal   ✗ not logged in (run: hermes portal)
   OpenAI Codex  ✓ logged in
     Auth file:  /home/fausto/.hermes/auth.json
-    Refreshed:  2026-06-02 12:52:18 CEST
+    Refreshed:  2026-06-12 13:58:36 CEST
   Qwen OAuth    ✗ not logged in (run: qwen auth qwen-oauth)
     Auth file:  /home/fausto/.qwen/oauth_creds.json
     Error:      Qwen CLI credentials not found. Run 'qwen auth qwen-oauth' first.
@@ -79,7 +79,7 @@ STDOUT:
 ◆ Gateway Service
   Status:       ✓ running
   Manager:      systemd (user)
-  PID(s):       1874
+  PID(s):       30414
 
 ◆ Scheduled Jobs
   Jobs:         1 active, 1 total
