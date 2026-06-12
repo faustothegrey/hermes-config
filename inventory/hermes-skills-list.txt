@@ -31,6 +31,7 @@ STDOUT:
 │ dspy                  │ mlops                │ official │ official │ enabled │
 │ mlops-model-operatio… │ mlops                │ local    │ local    │ enabled │
 │ linear                │ productivity         │ local    │ local    │ enabled │
+│ linux-desktop-automa… │ productivity         │ local    │ local    │ enabled │
 │ productivity-platfor… │ productivity         │ local    │ local    │ enabled │
 │ godmode               │ red-teaming          │ local    │ local    │ enabled │
 │ research-intelligenc… │ research             │ local    │ local    │ enabled │
@@ -43,7 +44,7 @@ STDOUT:
 │ subagent-driven-deve… │ software-development │ local    │ local    │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 6 builtin, 24 local — 36 enabled, 0 disabled
+6 hub-installed, 6 builtin, 25 local — 37 enabled, 0 disabled
 
 
 

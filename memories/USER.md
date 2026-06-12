@@ -9,3 +9,5 @@ User avoids long tasks near daily restarts at 00/06/12/18; nightly task policy i
 Email preference: check Gmail by default, send via configured Virgilio unless specified; details in Obsidian [[System/Email]].
 §
 ScienceClick2 orchestration preference lives in Obsidian [[Projects/ScienceClick2]].
+§
+User prefers natural Hermes TTS voice (Edge TTS worked well) over mechanical system speech such as spd-say for local speaker output.

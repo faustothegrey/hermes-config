@@ -11,7 +11,7 @@ STDOUT:
     Name:      Nightly Hermes configuration backup
     Schedule:  30 0 * * *
     Repeat:    ∞
-    Next run:  2026-06-13T00:30:00+02:00
+    Next run:  2026-06-14T00:30:00+02:00
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)

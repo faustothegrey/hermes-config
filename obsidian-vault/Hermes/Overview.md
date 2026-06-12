@@ -11,6 +11,7 @@ Note operative locali per Hermes Agent sul PC di Fausto.
 - [[Configuration Backup]]
 - [[Peer Mesh]]
 - [[Discord Voice]]
+- [[Chrome secondary display fullscreen]]
 - [[../Projects/ScienceClick2]]
 - [[../System/Email]]
 - [[../System/Scheduled Restarts]]

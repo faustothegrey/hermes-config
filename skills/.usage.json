@@ -446,13 +446,13 @@
     "created_at": "2026-06-06T13:48:50.505891+00:00",
     "created_by": null,
     "last_patched_at": null,
-    "last_used_at": "2026-06-12T13:34:36.785625+00:00",
-    "last_viewed_at": "2026-06-12T13:34:36.733668+00:00",
+    "last_used_at": "2026-06-12T17:08:28.953930+00:00",
+    "last_viewed_at": "2026-06-12T17:08:28.869705+00:00",
     "patch_count": 0,
     "pinned": false,
     "state": "active",
-    "use_count": 11,
-    "view_count": 11
+    "use_count": 12,
+    "view_count": 12
   },
   "hermes-agent-skill-authoring": {
     "archived_at": null,
@@ -484,14 +484,14 @@
     "archived_at": null,
     "created_at": "2026-06-12T09:15:07.571159+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-12T14:32:52.675839+00:00",
-    "last_used_at": "2026-06-12T14:32:29.311043+00:00",
-    "last_viewed_at": "2026-06-12T14:32:29.266826+00:00",
-    "patch_count": 6,
+    "last_patched_at": "2026-06-12T17:10:58.469707+00:00",
+    "last_used_at": "2026-06-12T17:21:55.518683+00:00",
+    "last_viewed_at": "2026-06-12T17:21:55.466072+00:00",
+    "patch_count": 7,
     "pinned": false,
     "state": "active",
-    "use_count": 2,
-    "view_count": 2
+    "use_count": 5,
+    "view_count": 5
   },
   "himalaya": {
     "archived_at": null,
@@ -583,6 +583,19 @@
     "state": "active",
     "use_count": 0,
     "view_count": 0
+  },
+  "linux-desktop-automation": {
+    "archived_at": null,
+    "created_at": "2026-06-12T17:16:56.155738+00:00",
+    "created_by": "agent",
+    "last_patched_at": "2026-06-12T17:28:57.764592+00:00",
+    "last_used_at": "2026-06-12T17:28:37.070163+00:00",
+    "last_viewed_at": "2026-06-12T17:28:36.984021+00:00",
+    "patch_count": 8,
+    "pinned": false,
+    "state": "active",
+    "use_count": 5,
+    "view_count": 5
   },
   "llama-cpp": {
     "archived_at": null,
@@ -888,13 +901,13 @@
     "created_at": "2026-06-12T09:14:58.198880+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-12T09:18:52.514824+00:00",
-    "last_used_at": null,
-    "last_viewed_at": null,
+    "last_used_at": "2026-06-12T22:30:21.104405+00:00",
+    "last_viewed_at": "2026-06-12T22:30:21.046291+00:00",
     "patch_count": 3,
     "pinned": false,
     "state": "active",
-    "use_count": 0,
-    "view_count": 0
+    "use_count": 2,
+    "view_count": 2
   },
   "python-debugpy": {
     "archived_at": null,

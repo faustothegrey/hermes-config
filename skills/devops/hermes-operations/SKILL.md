@@ -35,13 +35,21 @@ When the user asks to update Hermes and the checkout has local modifications:
 5. If conflicts occur, stop immediately unless the user already authorized conflict resolution. Report unmerged files, applied/staged files, current `HEAD`/`origin/main`, and confirm the stash is still present.
 6. Verify with `hermes --version` and `git status --short --branch` before final response.
 
-## Gateway and Discord voice
+## Gateway, voice, and local audio I/O
 
 Use gateway workflows for Telegram/Discord/Slack/etc. For Discord voice:
 
 - Voice inbound replies should usually be normal final text; the gateway handles auto-TTS routing.
 - Do not manually call TTS unless the user explicitly asks for an audio attachment.
 - Debug STT, TTS, auto-join, routing, and permissions separately.
+
+For local speaker/microphone checks from a Hermes CLI session:
+
+1. Inspect audio routing before assuming TTS is broken: `pactl list short sinks`, `pactl get-default-sink`, `pactl get-sink-volume @DEFAULT_SINK@`, and `pactl get-sink-mute @DEFAULT_SINK@`.
+2. If the user hears nothing, check for the simple failure mode first: default sink muted or volume at 0%. Fix with `pactl set-sink-mute @DEFAULT_SINK@ 0` and a moderate `pactl set-sink-volume @DEFAULT_SINK@ 50-60%`, then verify with `pactl get-sink-volume` and `pactl get-sink-mute`.
+3. Prefer Hermes `text_to_speech` output for natural voice tests; system speech like `spd-say` can sound mechanical. Play the generated audio with `mpv --no-video`, or fallback to `ffplay`, or convert MP3 to WAV with `ffmpeg` and play via `paplay`.
+4. For external microphone confirmation, inspect `pactl list short sources`, `pactl get-default-source`, `pactl list sources`, `arecord -l`, and USB identity (`lsusb` when available). Report whether the external USB source is detected and whether it is the default source.
+5. Verification should include an actual audible test or capture/routing check, not just listing devices.
 
 ## Background operations and cron
 
