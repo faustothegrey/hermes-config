@@ -116,9 +116,14 @@ git diff
 
 - `references/claude-antigravity-codex-2026-06-14.md` — verified local delegation details for Claude Code via tmux, Antigravity `agy` print-mode smoke test, Codex quota script consolidation, and Claude `/usage` interpretation.
 
+## Session-specific reference notes
+
+- `references/claude-antigravity-codex-2026-06-14.md` — local smoke tests and operating notes for Claude Code via tmux, Antigravity `agy`, and Codex quota checks.
+
 ## Verification standard
 
 External agents are collaborators, not sources of truth. Verify with:
+
 
 - Targeted tests or build commands.
 - Static review of diffs.

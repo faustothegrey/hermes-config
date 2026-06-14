@@ -11,6 +11,8 @@ STDOUT:
 │ antigravity-cli       │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ external-coding-agen… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ hermes-agent          │ autonomous-ai-agents │ builtin  │ builtin  │ enabled │
+│ hermes-peer-experien… │ autonomous-ai-agents │ local    │ local    │ enabled │
+│ hermes-peer-mesh-ope… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ kanban-codex-lane     │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ baoyu-article-illust… │ creative             │ official │ official │ enabled │
 │ baoyu-comic           │ creative             │ official │ official │ enabled │
@@ -45,7 +47,7 @@ STDOUT:
 │ subagent-driven-deve… │ software-development │ local    │ local    │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 6 builtin, 26 local — 38 enabled, 0 disabled
+6 hub-installed, 6 builtin, 28 local — 40 enabled, 0 disabled
 
 
 

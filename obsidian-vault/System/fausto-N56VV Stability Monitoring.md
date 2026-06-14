@@ -127,7 +127,7 @@ systemctl status temp-reboot-monitor.service --no-pager
 journalctl -u temp-reboot-monitor.service --since '1 hour ago' --no-pager
 ```
 
-Configurazione aggiornata 2026-06-14:
+Configurazione aggiornata 2026-06-14 sera:
 
 ```bash
 REBOOT_AT_C=95
@@ -137,22 +137,30 @@ COOLDOWN_C=5
 MATCH_TYPES_REGEX='^(x86_pkg_temp|acpitz)$'
 TELEGRAM_NOTIFY=1
 TELEGRAM_ENV_FILE=/home/fausto/.hermes/.env
+EMAIL_NOTIFY=1
+EMAIL_TO=fausto.lelli@gmail.com
+EMAIL_FROM=fausto.lelli@virgilio.it
+EMAIL_SMTP_HOST=smtp.virgilio.it
+EMAIL_SMTP_PORT=465
+EMAIL_SMTP_LOGIN=fausto.lelli@virgilio.it
+EMAIL_PASSWORD_CMD=/home/fausto/.config/himalaya/virgilio-password
 DRY_RUN=0
 ```
 
 Comportamento:
 
 - legge solo thermal zones CPU-like: `x86_pkg_temp` e `acpitz`;
-- se la temperatura resta `>=95°C` per 30 letture consecutive, cioè circa 5 minuti, pianifica un reboot;
-- il reboot non è immediato: viene pianificato con `systemd-run --on-active=2min`;
+- se la temperatura resta `>=95°C` per 30 letture consecutive, cioè circa 5 minuti, pianifica uno spegnimento completo;
+- lo spegnimento non è immediato: viene pianificato con `systemd-run --on-active=2min` per dare tempo agli alert;
 - invia messaggio Telegram, se possibile, usando token/chat Hermes da `/home/fausto/.hermes/.env`;
-- crea marker `/run/temp-reboot-monitor.scheduled` per non schedulare reboot ripetuti;
+- invia anche email da Virgilio a `fausto.lelli@gmail.com` usando SMTP e il password command Himalaya;
+- crea marker `/run/temp-reboot-monitor.scheduled` per non schedulare azioni ripetute;
 - se la temperatura scende sotto cooldown (`REBOOT_AT_C - COOLDOWN_C`, quindi <=90°C), resetta il contatore e cancella il marker.
 
 Comando configurato:
 
 ```bash
-/usr/bin/systemd-run --unit=temp-safety-delayed-powercycle --on-active=2min /usr/bin/systemctl reboot --message="Temperature safety reboot: sustained CPU temperature above 95C"
+/usr/bin/systemd-run --unit=temp-safety-delayed-powercycle --on-active=2min /usr/bin/systemctl poweroff --message="Temperature safety poweroff: sustained CPU temperature above 95C"
 ```
 
 ### system-freeze-monitor
@@ -406,3 +414,71 @@ sudo smartctl -A /dev/sda | egrep 'Reallocated|Current_Pending|Offline_Uncorrect
 - Preferire monitoraggio leggero via `/proc`, `smartctl -A`, `journalctl`, systemd status, PSI.
 - Se il sistema mostra temperatura sostenuta o IO pressure, privilegiare riduzione carico e notifiche rispetto a diagnosi invasive.
 - Ricordare che nuovo hardware non è disponibile subito: lavorare con mitigazioni software e backup prudente.
+
+## Verifica policy senza riavvii fissi — 2026-06-14 19:42 CEST
+
+Richiesta utente: ricontrollare stato, compattare memoria Hermes, e tenere i dettagli nel vault.
+
+### Stato live verificato
+
+- Uptime: circa 1h41m.
+- Load average: `0.02 0.07 0.10`.
+- Memoria: 7.6 GiB totali, circa 5.0 GiB disponibili.
+- Swap: 2.0 GiB totali, 0 usata.
+- Disco root `/`: 916G totali, 352G usati, 518G liberi, 41% uso.
+- PSI CPU/memoria: 0.00; PSI IO presente ma basso (`avg60` circa 0.38).
+- Temperature thermal zone: `acpitz` circa 74°C, `x86_pkg_temp` circa 76°C.
+- Failed units di sistema e user: 0.
+
+### Riavvii programmati
+
+Root crontab ricontrollato: non contiene più le vecchie righe di riavvio giornaliero a 00/06/12/18.
+
+### Monitor termico safety
+
+Servizio:
+
+```text
+temp-reboot-monitor.service - Temperature safety poweroff monitor
+```
+
+Stato verificato:
+
+```text
+active (running)
+```
+
+Configurazione confermata:
+
+```bash
+REBOOT_AT_C=95
+CHECK_INTERVAL_SEC=10
+CONSECUTIVE_HITS=30
+SAFETY_ACTION_COMMAND='/usr/bin/systemd-run --unit=temp-safety-delayed-powercycle --on-active=2min /usr/bin/systemctl poweroff --message="Temperature safety poweroff: sustained CPU temperature above 95C"'
+TELEGRAM_NOTIFY=1
+EMAIL_NOTIFY=1
+EMAIL_TO=fausto.lelli@gmail.com
+EMAIL_FROM=fausto.lelli@virgilio.it
+EMAIL_SMTP_HOST=smtp.virgilio.it
+EMAIL_SMTP_PORT=465
+EMAIL_SMTP_LOGIN=fausto.lelli@virgilio.it
+EMAIL_PASSWORD_CMD=/home/fausto/.config/himalaya/virgilio-password
+DRY_RUN=0
+```
+
+Nota: il test alert manuale Telegram + email è stato confermato riuscito dall'utente. Il test non ha creato marker `/run/temp-reboot-monitor.scheduled` e non ha pianificato spegnimento.
+
+### Monitor leggeri ancora attivi
+
+- Hermes cron `heavy-load-watchdog`: ogni 5 minuti, `no_agent=true`, delivery Telegram, ultimo stato `ok`.
+- `system-freeze-monitor.timer`: attivo, campionamento circa ogni minuto.
+- `hermes-gateway.service`: necessario per delivery/cron Hermes, precedentemente verificato attivo.
+
+### Memoria Hermes compattata
+
+La user memory è stata ridotta rimuovendo dettagli duplicati sulla voce/TTS e sostituendo la policy riavvii con una frase compatta che punta a queste note:
+
+- `[[System/Scheduled Restarts]]`
+- `[[System/fausto-N56VV Stability Monitoring]]`
+
+Principio futuro: mantenere nel prompt solo policy brevi e link Obsidian; lasciare soglie, comandi, output e test nel vault.

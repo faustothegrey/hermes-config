@@ -35,7 +35,7 @@ Use when the user asks to preserve a Hermes installation in case the machine cra
    - **Plain/sanitized config**: `config.yaml` with secret-like values redacted, `skills/`, `cron/`, selected `profiles/`, `plugins/`, `hooks/`, and optional `memories/`.
    - **Operational knowledge bases**: small Obsidian vaults or other note folders that hold durable Hermes/project/system notes. Back these up as a first-class directory (for this user, `/home/fausto/Documents/Obsidian Vault` → `obsidian-vault/`) when they are compact and operationally important.
    - **Encrypted secrets**: `.env`, `auth.json`, OAuth token files, gateway/pairing state, and optional `state.db`.
-   - **Excluded runtime junk**: logs, caches, audio/image caches, sandboxes, state snapshots, PID/lock/tmp files, per-profile sessions, and installed binaries such as `profiles/*/bin/`.
+   - **Excluded runtime junk**: logs, caches, audio/image caches, sandboxes, state snapshots, PID/lock/tmp files, per-profile sessions, cron runtime outputs such as `cron/output/`, and installed binaries such as `profiles/*/bin/`.
 3. Put a reusable `scripts/generate-backup.py`, `scripts/backup-hermes.sh`, and `scripts/restore-hermes.sh` in the repo so future updates are one-command, not a one-off manual copy. `generate-backup.py` should copy both Hermes config and any selected operational vaults; `restore-hermes.sh` should accept override paths such as `OBSIDIAN_VAULT_PATH`.
 4. Add README/RESTORE documentation as part of the deliverable, not as an afterthought: include what is backed up, what is deliberately excluded, the main harnesses in use (Hermes, Obsidian, gateway/voice/email, external AI CLIs, GitHub backup), and exact restore/verification commands.
 5. Add a defensive `.gitignore` before committing. Explicitly block plaintext secret file names and raw tarballs while allowing encrypted `secrets/*.enc` artifacts.
@@ -204,6 +204,17 @@ Use only when the user explicitly asks for persistent no-confirmation command ex
 
 Use when the user asks Hermes to monitor something asynchronously, send a reminder, run a recurring check, or notify before a predictable system event.
 
+### Auditing whether monitoring is already active
+
+When the user asks whether Hermes is monitoring system health in the background, do not answer from memory alone. Verify the live durable mechanisms and report concrete evidence:
+
+1. List Hermes cron jobs with `cronjob(action="list")`; identify enabled watchdog-like jobs, cadence, last run, last status, delivery target, script, and whether `no_agent=True`.
+2. Check relevant user and system services/timers with systemd, especially names containing `watchdog`, `monitor`, `freeze`, `temp`, and `hermes`. Verify active/waiting states and recent status/log lines.
+3. If a watchdog script is safe/read-only, run it once manually and note whether it exits silently with status 0; silence usually means "healthy / no alert due" for script-only watchdogs.
+4. Take a small current health snapshot before summarizing: uptime/load, memory/swap, root disk usage, temperatures if `sensors` is available, and failed units.
+5. Distinguish passive evidence collection from alerting/action layers. For this user's fausto-N56VV setup, the typical layers are: Hermes cron heavy-load alerts, a user-level freeze sampler timer, a root temperature safety monitor, and Hermes Gateway for delivery.
+6. Report in a compact yes/no form first, then list each active monitor with status and what it covers. Avoid implying continuous chatty reporting when the configured behavior is silent-unless-problem.
+
 ### Core pattern
 
 1. Prefer Hermes `cronjob` for durable async checks instead of background terminal processes.
@@ -221,14 +232,14 @@ Use when the user asks Hermes to monitor something asynchronously, send a remind
 - Do not poll every minute by default. Choose the coarsest cadence that still catches the event reliably.
 - For predictable events on a 10-minute boundary, `*/10 * * * *` is usually enough.
 - If the user asks for an initial/startup check, run the script once manually immediately after creating/updating the job, then schedule the recurring cadence.
-- For long-running user work on this machine, remember the daily reboot windows at 00:00, 06:00, 12:00, and 18:00 and avoid starting long tasks shortly before them.
+- For long-running user work on this machine, the old fixed daily reboot windows at 00:00, 06:00, 12:00, and 18:00 are disabled as of 2026-06-14. Do not avoid those windows by default unless scheduled restarts are reintroduced after future freezes.
 
 ### Nightly tasks
 
 When this user says "nightly task", treat it as a bounded overnight work window, not merely "run sometime at night":
 
-1. Valid local-time window: start no earlier than 00:30 and stop no later than 05:50.
-2. Keep the 00:00 restart and 06:00 restart buffers clear: do not start work immediately after midnight or run into the 10 minutes before 06:00.
+1. Valid local-time window when fixed restarts are active: start no earlier than 00:30 and stop no later than 05:50. If fixed restarts have been disabled for the machine (as on fausto-N56VV after 2026-06-14), do not enforce these reboot buffers by default; still bound long tasks to a sensible overnight window if the user specifically asks for “nightly”.
+2. When fixed restarts are active, keep the 00:00 restart and 06:00 restart buffers clear: do not start work immediately after midnight or run into the 10 minutes before 06:00. When fixed restarts are disabled, checkpoint normally but do not avoid the old windows solely because of historical restart policy.
 3. For cron jobs, prefer a start schedule like `30 0 * * *`, but put the hard-stop rule in the prompt/script because cron start time alone does not enforce stop time.
 4. For LLM-driven cron, include: "Work only during 00:30–05:50 local time. If the task is not finished by 05:50, stop, checkpoint/save state, summarize remaining work, and do not continue." 
 5. For long or uncertain work, make it checkpointable and resumable across multiple nights. Do not begin a subtask if it cannot reasonably checkpoint before 05:50.
@@ -259,8 +270,10 @@ Use this pattern when the user reports desktop/server freezes and wants evidence
 3. For a runaway user service, prefer a systemd drop-in with `Nice=10`, `CPUQuota=<conservative percent>`, and numeric-library thread caps such as `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`; then daemon-reload, restart, and verify effective properties.
 4. For intermittent freezes, install a lightweight systemd timer that logs bounded samples under `~/.local/state/...` rather than relying on a foreground terminal process.
 5. If the user asks for temperature-based protective rebooting, use a sustained-threshold guard rather than an immediate reboot: count consecutive readings above threshold, reset below a cooldown band, notify Telegram best-effort, and schedule the reboot via `systemd-run --on-active=...` so it is cancelable/observable.
-6. When the user changes the thermal policy/threshold, update every active layer that can alert or act on the same temperature class, not just the reboot guard. On this machine that has meant: root monitor config (`/etc/temp-reboot-monitor.conf`), the Hermes cron alert script (`~/.hermes/scripts/heavy_load_watchdog.sh`), service restart/status verification, and the operational notes in the Obsidian vault. This prevents the reboot policy and Telegram alert policy from drifting (for example, reboot at 95C but alert noisily at 80C).
-7. Hardline command scanning may block shell text that literally contains reboot/shutdown terms even when the intent is only inspection or service management. If a legitimate systemd operation is blocked by the scanner, keep the action narrow and auditable and construct sensitive unit names/paths inside a short script (for example string concatenation) rather than putting the blocked word in the shell command text; then verify with status/log output.
+6. When the user changes the thermal policy/threshold, update every active layer that can alert or act on the same temperature class, not just the reboot/poweroff guard. On this machine that has meant: root monitor config (`/etc/temp-reboot-monitor.conf`), the Hermes cron alert script (`~/.hermes/scripts/heavy_load_watchdog.sh`) when alert thresholds change, service restart/status verification, and the operational notes in the Obsidian vault. This prevents the safety-action policy and Telegram alert policy from drifting (for example, poweroff at 95C but alert noisily at 80C).
+7. If the user disables fixed preventive restarts and switches to safety-only shutdown/poweroff, verify the old restart source (root crontab in the 2026-06-14 session), remove only the fixed power-action lines, keep monitoring active, test Telegram + email delivery without scheduling the real action, and write the exact policy/details to Obsidian. See `references/fausto-n56vv-no-fixed-restarts-thermal-poweroff.md`.
+8. For watchdog email from Virgilio, prefer Python stdlib SMTP with the existing password command over Himalaya template/message send when scripting deterministic alerts; this avoids CLI template parsing/panic issues while preserving the configured credential source. See `references/fausto-n56vv-no-fixed-restarts-thermal-poweroff.md`.
+9. Hardline command scanning may block shell text that literally contains reboot/shutdown terms even when the intent is only inspection or service management. If a legitimate systemd operation is blocked by the scanner, keep the action narrow and auditable and construct sensitive unit names/paths inside a short script (for example string concatenation) rather than putting the blocked word in the shell command text; then verify with status/log output.
 
 Detailed checklist and a reusable sampler are in `references/local-system-freeze-monitoring.md` and `scripts/system-freeze-monitor.sh`. Sustained thermal reboot with Telegram notification is covered in `references/sustained-thermal-reboot-watchdog.md`. When the machine has a fragile/degraded disk and the user wants low-risk monitoring rather than invasive diagnostics, use `references/heavy-load-fragile-disk-watchdog.md` and `scripts/heavy-load-watchdog.sh`.
 
@@ -305,5 +318,6 @@ Key points:
 - `references/local-system-freeze-monitoring.md` — Linux freeze diagnosis pattern using thermal readings, PSI, iowait, process attribution, and systemd resource-limit drop-ins.
 - `references/sustained-thermal-reboot-watchdog.md` — root systemd thermal guard pattern: sustained threshold, cooldown reset, delayed reboot scheduling, Telegram best-effort notification, marker-file dedupe, and hardline-command workaround.
 - `references/heavy-load-fragile-disk-watchdog.md` — low-risk monitoring for machines with degraded disks: avoid long SMART/self-tests and use PSI/iowait/load/temp watchdog alerts instead.
+- `references/fausto-n56vv-no-fixed-restarts-thermal-poweroff.md` — session pattern for disabling fixed daily restarts, keeping monitoring active, testing Telegram + Virgilio email delivery, and using delayed thermal safety poweroff.
 - `scripts/system-freeze-monitor.sh` — reusable minute-sampler for bounded local freeze evidence logs and alert logs.
 - `scripts/heavy-load-watchdog.sh` — script-only Hermes cron watchdog template that emits Telegram-ready alerts for sustained/critical load, thermal, memory, and IO-pressure conditions while staying silent otherwise.

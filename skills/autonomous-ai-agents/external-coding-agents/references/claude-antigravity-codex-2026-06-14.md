@@ -1,55 +1,57 @@
-# Session notes: Claude Code, Antigravity, and Codex delegation (2026-06-14)
+# Claude / Antigravity / Codex local delegation notes — 2026-06-14
 
-## Context
+Session-specific details distilled for future Hermes external-agent delegation.
 
-The user wanted Hermes to delegate work directly to external coding CLIs, especially interactive Claude Code and Antigravity, and to keep implementation detail out of first-level Hermes memory. First-level memory should contain compact pointers; detailed recipes belong in the Obsidian vault and this skill's references/scripts.
+## Claude Code
 
-## Claude Code delegation
+Local Claude Code is installed and usable via TTY/tmux. A smoke test launched an interactive Claude session in tmux, accepted workspace trust, sent an Italian prompt, and got the exact response:
 
-Verified local facts:
+```text
+ciao da Claude
+```
 
-- `claude` is installed and authenticated.
-- Claude Code banner observed: `Claude Code v2.1.177`, `Claude Pro`, `Sonnet 4.6`.
-- `tmux 3.2a` is available.
-- Interactive Claude delegation works via tmux.
+Useful local facts observed:
 
-Smoke test:
+- Command: `/home/fausto/.nvm/versions/node/v24.15.0/bin/claude`
+- Claude Code banner observed: `v2.1.177`
+- Account/model banner observed: `Claude Pro`, `Sonnet 4.6`
+- `tmux` available: `3.2a`
 
-1. Start a tmux Claude session with the helper script.
-2. Accept workspace trust if the TUI prompts.
-3. Send: `Rispondi soltanto con: ciao da Claude`.
-4. Expected Claude response: `ciao da Claude`.
-
-Use `scripts/claude_tmux_worker.py` rather than raw tmux when possible.
-
-## Claude Code subscription usage
-
-Claude Code current quota is visible through the interactive TUI command `/usage`, not by asking the model in natural language.
-
-Observed fields from `/usage`:
-
-- current session/window percent and reset time;
-- current week percent and reset time;
-- usage credits state;
-- session token/cost-equivalent telemetry.
-
-Interpretation pitfall:
-
-- If login method is `Claude Pro account` and `Usage credits are off`, the dollar value shown by Claude Code is an API-equivalent estimate, not an extra charge beyond the subscription.
-- `Total duration (API)` is model/API time; `Total duration (wall)` is elapsed interactive session time.
-
-## Antigravity delegation
-
-Verified local facts:
-
-- `agy` path: `/home/fausto/.local/bin/agy`.
-- Observed version: `1.0.6`.
-- Non-interactive print mode works.
-
-Smoke test:
+Preferred Hermes orchestration pattern:
 
 ```bash
-agy -p 'Reply with exactly: antigravity-ok' --print-timeout 60s
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  start --session claude-worker --workdir /path/to/repo --name hermes-delegate --yolo
+
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  send --session claude-worker --prompt "<self-contained task>"
+
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  capture --session claude-worker --lines 160
+```
+
+Claude Code `/usage` is the direct subscription/quota view. It showed:
+
+- current session/window percent + reset time;
+- current week percent + reset time;
+- usage credits state;
+- per-session token/cost-equivalent stats.
+
+Interpretation: when login is `Claude Pro account` and usage credits are off, dollar cost shown in `/usage` is an API-equivalent estimate/telemetry, not a separate charge beyond subscription. `Total duration (API)` is model/API time; `Total duration (wall)` is elapsed interactive time.
+
+## Antigravity
+
+Antigravity CLI `agy` is installed and works in print mode.
+
+Observed:
+
+- Command: `/home/fausto/.local/bin/agy`
+- Version: `1.0.6`
+
+Known-good smoke test:
+
+```bash
+/home/fausto/.local/bin/agy -p 'Reply with exactly: antigravity-ok' --print-timeout 60s
 ```
 
 Expected output:
@@ -58,20 +60,8 @@ Expected output:
 antigravity-ok
 ```
 
-## Codex quota
+## Codex
 
-Codex subscription usage can be read through Codex app-server JSON-RPC method `account/rateLimits/read`. A script already exists in this skill:
+Codex quota is best checked via the `codex-usage-status` skill/script using Codex app-server JSON-RPC `account/rateLimits/read`, not by parsing stale logs.
 
-```text
-scripts/codex_usage_status.py
-```
-
-The previously-created narrow `codex-usage-status` skill was consolidated into this umbrella skill so external AI CLI workflows stay class-level.
-
-## Memory hygiene pattern
-
-For these external CLI workflows:
-
-- first-level Hermes memory: keep only a short pointer to Obsidian and the umbrella skill;
-- Obsidian vault: store local paths, smoke tests, quota snapshots, interpretation notes;
-- skill references/scripts: store reusable recipes and deterministic helpers.
+Observed shape returned plan, 5-hour usage, 7-day usage, credits, and rate-limit status. Treat exact percentages as snapshots only.
