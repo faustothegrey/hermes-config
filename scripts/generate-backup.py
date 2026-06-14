@@ -447,7 +447,7 @@ def main() -> None:
             copy_file(src, REPO_DIR / "config" / fname, redact=src.suffix.lower() in {".yaml", ".yml", ".json"})
 
     copy_tree(HERMES_HOME / "skills", REPO_DIR / "skills", exclude=("*.pyc", "__pycache__", "*.lock"))
-    copy_tree(HERMES_HOME / "cron", REPO_DIR / "cron", exclude=("*.lock", "*.log", "*.pid", "__pycache__", "*.pyc"))
+    copy_tree(HERMES_HOME / "cron", REPO_DIR / "cron", exclude=("output", "*.lock", "*.log", "*.pid", "__pycache__", "*.pyc"))
     copy_tree(HERMES_HOME / "plugins", REPO_DIR / "plugins", exclude=("*.pyc", "__pycache__"))
     copy_tree(HERMES_HOME / "memories", REPO_DIR / "memories", exclude=("*.lock", "*.tmp", "*.db-shm", "*.db-wal"))
     copy_tree(HERMES_HOME / "hooks", REPO_DIR / "hooks", exclude=("*.log", "*.tmp"))
