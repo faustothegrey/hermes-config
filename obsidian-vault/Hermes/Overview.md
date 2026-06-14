@@ -16,6 +16,7 @@ Note operative locali per Hermes Agent sul PC di Fausto.
 - [[../System/Email]]
 - [[../System/Scheduled Restarts]]
 - [[../System/Services]]
+- [[../System/fausto-N56VV Stability Monitoring]]
 
 ## Regola memoria permanente
 

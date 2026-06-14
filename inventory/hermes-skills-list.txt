@@ -21,6 +21,7 @@ STDOUT:
 │ jupyter-live-kernel   │ data-science         │ builtin  │ builtin  │ enabled │
 │ hermes-background-op… │ devops               │ local    │ local    │ enabled │
 │ hermes-operations     │ devops               │ local    │ local    │ enabled │
+│ linux-system-mainten… │ devops               │ local    │ local    │ enabled │
 │ webhook-subscriptions │ devops               │ local    │ local    │ enabled │
 │ minecraft-modpack-se… │ gaming               │ official │ official │ enabled │
 │ pokemon-player        │ gaming               │ official │ official │ enabled │
@@ -44,7 +45,7 @@ STDOUT:
 │ subagent-driven-deve… │ software-development │ local    │ local    │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 6 builtin, 25 local — 37 enabled, 0 disabled
+6 hub-installed, 6 builtin, 26 local — 38 enabled, 0 disabled
 
 
 

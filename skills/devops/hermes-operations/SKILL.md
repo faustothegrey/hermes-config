@@ -43,6 +43,16 @@ Use gateway workflows for Telegram/Discord/Slack/etc. For Discord voice:
 - Do not manually call TTS unless the user explicitly asks for an audio attachment.
 - Debug STT, TTS, auto-join, routing, and permissions separately.
 
+For messaging-platform voice mode changes, verify the actual per-chat gateway state instead of only changing global config:
+
+1. Inspect `~/.hermes/gateway_voice_mode.json`; keys are platform-prefixed, e.g. `telegram:<chat_id>` or `discord:<channel_id>`, and values are `off`, `voice_only`, or `all`.
+2. Remember that `voice.auto_tts` in `config.yaml` is only the global default. A per-chat `off` entry suppresses auto-TTS even if the global default is true.
+3. `/voice off` writes the per-chat hard override and syncs adapter `_auto_tts_disabled_chats`; `/voice on` or `/voice tts` writes an explicit opt-in.
+4. For Discord live voice channels, separately inspect `discord.voice_auto_join.enabled` and any running gateway/voice services. Telegram voice notes are not Discord voice-channel auto-join.
+5. Verification should include the persisted JSON state plus live service/process status when the user asks to disable a channel or voice feature.
+
+For local wake-word daemons that should summon Hermes into Discord voice, use a local atomic trigger file watched by the Gateway after Discord connects; see `references/discord-local-wakeword-bridge.md` for the pattern, stale-trigger guard, and verification checklist.
+
 For local speaker/microphone checks from a Hermes CLI session:
 
 1. Inspect audio routing before assuming TTS is broken: `pactl list short sinks`, `pactl get-default-sink`, `pactl get-sink-volume @DEFAULT_SINK@`, and `pactl get-sink-mute @DEFAULT_SINK@`.

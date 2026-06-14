@@ -38,6 +38,18 @@ On this Hermes Discord setup, voice-channel replies are handled by gateway auto-
 
 Important: the assistant should reply with plain text, not call `text_to_speech` and not include `MEDIA:...`, because agent TTS/media tags suppress voice-channel playback.
 
+## Local wake-word bridge
+
+`quasar-voice-detection.service` runs `/home/fausto/quasar-voice-detection/hey_hermes.py` and listens for “Hey Quasar”. On detection it writes `~/.hermes/discord_voice_wake_trigger.json`.
+
+Hermes Gateway has a local patch that watches that trigger file after Discord connects and calls the configured Discord voice auto-join path with `reason="wake-word"`, using:
+
+- text channel: `#hermes-chat` / `1508809523459133581`
+- voice channel: `Hermes Voice` / `1508809595949420608`
+- mode: `all`
+
+The watcher ignores stale trigger files on gateway startup, so old wake events do not auto-join after restarts. Manual verification on 2026-06-13 showed: detector dispatch writes the trigger, gateway logs `Discord voice wake trigger received: hey quasar`, and join result is `True`.
+
 ## User preference
 
 Fausto expects Discord voice-channel conversations to be answered aloud in the voice channel, preferably with an Italian-sounding TTS voice/accent rather than a foreign/Portuguese-sounding accent.

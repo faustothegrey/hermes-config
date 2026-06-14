@@ -40,6 +40,8 @@ Use this class-level skill for user productivity systems: Google Workspace, Airt
 
 Use for Gmail, Calendar, Drive, Docs, and Sheets. Prefer the configured Google Workspace CLI or Python client. Confirm account, document IDs, sheet names, calendar, and sharing settings before changes.
 
+For Gmail access checks, do not stop at “account/token file exists”. Verify usable OAuth with a real Gmail API call. Check `~/.hermes/google_token.json` metadata safely, try token refresh, then call `gmail.users().getProfile(userId='me')` or list one inbox message. If refresh returns `invalid_grant` / `Token has been expired or revoked`, report that OAuth was configured but must be re-authorized. See `references/google-gmail-oauth-diagnostics.md`.
+
 ## Email via Himalaya
 
 Use Himalaya for terminal IMAP/SMTP: search/read mail, draft/send messages, and manage folders. Confirm recipients and final body before sending sensitive mail.

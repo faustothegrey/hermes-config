@@ -79,10 +79,10 @@ STDOUT:
 ◆ Gateway Service
   Status:       ✓ running
   Manager:      systemd (user)
-  PID(s):       1981
+  PID(s):       1753
 
 ◆ Scheduled Jobs
-  Jobs:         1 active, 1 total
+  Jobs:         2 active, 2 total
 
 ◆ Sessions
   Active:       3 session(s)

@@ -48,12 +48,34 @@ For bounded but long work, use `terminal(background=true, notify_on_complete=tru
 
 ## Interactive/TUI workers
 
-Some CLIs require a TTY. Use `tmux` rather than raw foreground terminal sessions:
+Some CLIs require a TTY. Use `tmux` rather than raw foreground terminal sessions.
+For Claude Code specifically, this profile has a helper script at `scripts/claude_tmux_worker.py`:
 
 ```bash
-tmux new-session -d -s coding-worker -x 120 -y 40 'claude'
-tmux send-keys -t coding-worker 'Your self-contained task prompt here' Enter
-tmux capture-pane -t coding-worker -p
+# Start a durable interactive Claude worker in a repo/worktree.
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  start --session claude-worker --workdir /path/to/repo --name hermes-delegate --yolo
+
+# Send a self-contained task prompt.
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  send --session claude-worker --prompt "Implement ...; run tests; summarize changes."
+
+# Inspect progress/output.
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  capture --session claude-worker --lines 160
+
+# Stop when done.
+python3 ~/.hermes/skills/autonomous-ai-agents/external-coding-agents/scripts/claude_tmux_worker.py \
+  stop --session claude-worker
+```
+
+Raw tmux equivalent:
+
+```bash
+tmux new-session -d -s coding-worker -x 140 -y 45 -c /path/to/repo 'claude --name hermes-delegate'
+tmux send-keys -t coding-worker -l 'Your self-contained task prompt here'
+tmux send-keys -t coding-worker Enter
+tmux capture-pane -t coding-worker -p -S -160
 ```
 
 ## Worktree discipline
@@ -74,9 +96,25 @@ git diff
 
 ## Quota and auth pitfalls
 
-- Claude Code can have usage/quota states that only appear in interactive output; inspect the CLI status when calls fail unexpectedly.
+- Claude Code usage/quota is visible in the interactive TUI with `/usage` (shows current session/window percent, weekly percent, reset times, credits state, and per-session token/cost stats). `/status` also has a Usage tab with historical usage stats, but `/usage` is the direct quota/limit view. Do not ask Claude in natural language for account quota: it may say it cannot access account data even though the TUI slash command can show local subscription usage.
 - Codex interactive quota/status may not be visible from a single failed command; run the CLI status/login flow when needed.
+- To check Codex subscription consumption without opening the TUI, prefer the bundled helper `scripts/codex_usage_status.py`. It starts `codex app-server --listen stdio://` and calls JSON-RPC `account/rateLimits/read`, which returns the ChatGPT-plan Codex bucket (`planType`, 5-hour `primary.usedPercent`, 7-day `secondary.usedPercent`, reset timestamps, credits, and `rateLimitReachedType`).
 - Browser/OAuth auth flows often require a real TTY or user intervention. Do not loop blindly on auth failures.
+
+## Notes from `claude-wrapper`
+
+`ChrisColeTech/claude-wrapper` is mainly an OpenAI-compatible HTTP API wrapper, but several implementation ideas are useful for Hermes → Claude CLI delegation:
+
+- Use Claude Code's real session controls rather than API wrapping: `--resume <session-id>`, `--continue`, `--session-id <uuid>`, and interactive sessions in tmux.
+- For one-shot bootstrap or status extraction, `claude -p --output-format json` can return structured output including the Claude session id; save that id if a later interactive worker should resume it.
+- For non-interactive streaming diagnostics, `claude -p --output-format stream-json --include-partial-messages` is better than fake SSE chunking; the wrapper's HTTP streaming buffers the full response and then chunks it, so do not copy that part for true first-token streaming.
+- Avoid constructing commands as `echo 'prompt' | claude ...` for large prompts. Prefer Python `subprocess.run(..., input=prompt)` in non-interactive wrappers, or tmux `send-keys -l` for interactive workers.
+- Preserve role/context explicitly in the prompt given to Claude. The wrapper concatenates OpenAI messages without role labels, which is lossy; Hermes prompts should include task, context, constraints, acceptance criteria, and required output format.
+- Tool calling in the wrapper is prompt-level JSON, not a robust tool bridge. For Hermes delegation, let Claude use its own tools inside the repo/worktree and have Hermes verify diffs/tests afterward.
+
+## Session-specific references
+
+- `references/claude-antigravity-codex-2026-06-14.md` — verified local delegation details for Claude Code via tmux, Antigravity `agy` print-mode smoke test, Codex quota script consolidation, and Claude `/usage` interpretation.
 
 ## Verification standard
 

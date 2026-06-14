@@ -2,39 +2,71 @@
 
 ## Policy
 
-For Codex quota, prefer the interactive Codex `/status` screen. Do not rely on stale local log parsing for Codex quota: better no data than stale data.
+Keep exact quota percentages as snapshots only. For current values, query the CLI live.
 
 ## Codex
 
-Use a real TTY/tmux session and run `/status`:
+Preferred reliable method: Codex app-server JSON-RPC via Hermes skill `codex-usage-status`.
 
-```bash
-SESSION=codex_status_check
-(tmux kill-session -t "$SESSION" 2>/dev/null || true)
-tmux new-session -d -s "$SESSION" -x 140 -y 50 'codex'
-sleep 8
-tmux send-keys -t "$SESSION" '/status' Enter
-sleep 8
-tmux capture-pane -t "$SESSION" -p -S -200 | tail -120
-tmux send-keys -t "$SESSION" C-c || true
-tmux kill-session -t "$SESSION" 2>/dev/null || true
+Skill path:
+
+```text
+~/.hermes/skills/devops/codex-usage-status/
 ```
 
-The status screen shows model, account, 5h limit, weekly limit, and reset times.
+Core mechanism:
 
-Observed 2026-06-12 before peer-mesh work:
+- Start `codex app-server --listen stdio://`
+- JSON-RPC `initialize`
+- JSON-RPC `account/rateLimits/read`
 
-- Codex CLI: `v0.137.0`
-- model: `gpt-5.5`, reasoning medium
-- account: Plus
-- 5h limit: 61% left, reset 16:06
-- weekly limit: 94% left, reset 19 Jun 11:06
+The response includes:
 
-Treat observed quota values as historical only.
+- `rateLimits.planType`
+- `primary.usedPercent`, `primary.resetsAt` — rolling 5-hour window
+- `secondary.usedPercent`, `secondary.resetsAt` — 7-day window
+- `credits`
+- `rateLimitReachedType`
+
+Observed 2026-06-14:
+
+- Login: ChatGPT auth OK
+- Plan: `plus`
+- 5-hour usage: `17% used`
+- 7-day usage: `49% used`
+- Credits: none / balance `0`
+- Rate limited: no
+
+Treat observed values as historical only.
+
+Fallback method: interactive Codex `/status` in tmux can show account/model/quota state if app-server JSON-RPC changes.
 
 ## Claude Code
 
-Claude Code can have usage/quota states that only appear in interactive output. Inspect the CLI status/usage in a TTY/tmux session when needed.
+Preferred live method: run `/usage` inside an interactive Claude Code TUI session.
+
+`/usage` shows:
+
+- Current session/window percent and reset time.
+- Current week percent and reset time.
+- Usage credits state.
+- Session token/cost-equivalent stats.
+
+Important interpretation:
+
+- With `Login method: Claude Pro account` and `Usage credits are off`, the dollar cost shown by Claude Code is an API-equivalent estimate/telemetry, not an extra charge beyond the subscription.
+- `Total duration (API)` is time spent in model/API calls.
+- `Total duration (wall)` is real elapsed interactive session time.
+
+Observed 2026-06-14 via `/usage`:
+
+- Account: Claude Pro
+- Model: Sonnet 4.6
+- Current session/window: `41% used`, reset `15:59 Europe/Rome`
+- Current week: `41% used`, reset `Jun 17, 08:59 Europe/Rome`
+- Usage credits: off
+
+Treat observed values as historical only.
 
 ## Antigravity
 
