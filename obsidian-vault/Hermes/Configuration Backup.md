@@ -57,7 +57,7 @@ The backup generator excludes cron runtime output (`cron/output/`) from the Git 
 Result:
 
 - pushed `master` to GitHub;
-- final verified commit: `6a1a902`;
+- final commit is visible with `git -C /home/fausto/Backups/hermes-config rev-parse --short HEAD` and should match `git ls-remote --heads origin master`;
 - encrypted secrets bundle decrypt-smoke-test succeeded with `/home/fausto/.ssh/id_rsa`;
 - no forbidden plaintext names tracked (`.env`, `auth.json`, token files, raw tarballs, `state.db`, profile `bin/`, or `cron/output/`).
 
