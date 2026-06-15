@@ -11,21 +11,21 @@ STDOUT:
     Name:      Nightly Hermes configuration backup
     Schedule:  30 0 * * *
     Repeat:    ∞
-    Next run:  2026-06-16T00:30:00+02:00
+    Next run:  2026-06-17T00:30:00+02:00
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-13T00:32:40.103962+02:00  ok
+    Last run:  2026-06-15T00:31:50.423088+02:00  ok
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-06-15T00:35:37.558961+02:00
+    Next run:  2026-06-16T00:32:19.322255+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-15T00:30:37.558961+02:00  ok
+    Last run:  2026-06-16T00:27:19.322255+02:00  ok
 
   21ce62ec1c6f [active]
     Name:      Hermes peer experience exchange round 002

@@ -628,13 +628,13 @@
     "created_at": "2026-06-13T14:34:32.662547+00:00",
     "created_by": "agent",
     "last_patched_at": "2026-06-14T04:26:38.344617+00:00",
-    "last_used_at": "2026-06-14T17:41:46.770218+00:00",
-    "last_viewed_at": "2026-06-14T17:41:46.716247+00:00",
+    "last_used_at": "2026-06-15T18:40:46.215642+00:00",
+    "last_viewed_at": "2026-06-15T18:40:46.154946+00:00",
     "patch_count": 3,
     "pinned": false,
     "state": "active",
-    "use_count": 5,
-    "view_count": 5
+    "use_count": 7,
+    "view_count": 7
   },
   "llama-cpp": {
     "archived_at": null,
