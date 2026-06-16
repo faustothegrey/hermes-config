@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-16T00:28:18.209490",
+  "updated_at": "2026-06-17T00:28:57.713158",
   "platforms": {
     "discord": [
       {
@@ -56,6 +56,12 @@
         "id": "8508115936",
         "name": "Fausto Lelli",
         "type": "dm",
+        "thread_id": null
+      },
+      {
+        "id": "-5404255399",
+        "name": "Fausto, Settembre2 e MacProFausto",
+        "type": "group",
         "thread_id": null
       }
     ],
