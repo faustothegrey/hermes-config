@@ -11,8 +11,8 @@ STDOUT:
   Project:      /home/fausto/.hermes/hermes-agent
   Python:       3.11.5
   .env file:    ✓ exists
-  Model:        gpt-5.5
-  Provider:     OpenAI Codex
+  Model:        deepseek/deepseek-v4-pro
+  Provider:     Nous Portal
 
 ◆ API Keys
   OpenRouter    ✗ 
@@ -36,7 +36,12 @@ STDOUT:
   Anthropic     ✗ 
 
 ◆ Auth Providers
-  Nous Portal   ✗ not logged in (run: hermes portal)
+  Nous Portal   ✓ logged in
+    Portal URL: https://portal.nousresearch.com
+    Inference:  https://inference-api.nousresearch.com/v1
+    Access exp: 2026-06-18 00:45:47 CEST
+    Key exp: "<REDACTED>"
+    Refresh:    yes
   OpenAI Codex  ✓ logged in
     Auth file:  /home/fausto/.hermes/auth.json
     Refreshed:  2026-06-12 13:58:36 CEST
@@ -47,6 +52,16 @@ STDOUT:
   xAI OAuth     ✗ not logged in (run: hermes auth add xai-oauth)
     Auth file:  /home/fausto/.hermes/auth.json
     Error:      No xAI OAuth credentials stored. Select xAI Grok OAuth (SuperGrok / Premium+) in `hermes model`.
+
+◆ Nous Tool Gateway
+  Nous Portal   ✓ managed tools available
+  Web tools       ✓ active via Nous subscription
+  Image generation ✓ active via Nous subscription
+  Video generation ✓ active via Nous subscription
+  OpenAI TTS      ✓ active via Nous subscription
+  Speech-to-text  ✓ active via Nous subscription
+  Browser automation ✓ active via Nous subscription
+  Modal execution ✓ active via local
 
 ◆ API-Key Providers
   Z.AI / GLM       ✗ not configured (run: hermes model)
