@@ -190,6 +190,35 @@ Delegation:
 - Ask for verifiable handles: file path, URL, HTTP status, command output, diff summary.
 - Verify subagent side-effect claims before reporting success.
 
+## Constrained peer resilience
+
+When a peer runs on severely limited hardware (low-RAM ARM, old kernel, already swapping at baseline) with an unstable free-tier model that suffers transient 401s from quota exhaustion:
+
+### Watchdog pattern
+
+Deploy a minimal bash watchdog via systemd timer — no Python, zero extra memory:
+
+1. **Watchdog script** (`~/.hermes/scripts/watchdog.sh`): checks `/health`, restarts gateway on failure with a cooldown lock file to prevent restart storms. See `references/constrained-peer-watchdog.sh` for the template.
+
+2. **Systemd service** (oneshot) + **timer** (e.g. every 10 min, `OnCalendar=*:0/10` with `Persistent=true` so missed ticks fire after reboot).
+
+3. **Cooldown**: lock file at `/tmp/hermes-watchdog.lock` with a configurable cooldown (default 900s) — use the lock file's mtime, NOT the system clock, because constrained SBCs often have broken RTCs that reset on reboot.
+
+4. **Log to file** (`~/.hermes/watchdog.log`) for later inspection.
+
+This v1 only catches gateway crashes (health=down). For the "agent frozen but gateway alive" case, add a `/v1/runs` ping probe with short timeout in v2 — but note that every LLM call on a free-tier peer consumes quota, so design the probe to be cheap or avoid it until the quota pattern is well understood.
+
+### SSH deployment (preferred over call_peer for unstable peers)
+
+When a peer's model is unstable, using `call_peer` to deploy scripts or configs triggers LLM calls that may hit the quota ceiling and freeze the agent mid-deployment. Prefer:
+
+1. Set up SSH key from orchestrator to peer: `ssh-copy-id user@peer-ip`
+2. Copy files via `scp` or pipe through `ssh`
+3. Execute systemctl commands directly via `ssh`
+
+Only use `call_peer` / `start_peer_run` for lightweight queries, not for multi-step deployments.
+
 ## Reference files
 
 - `references/round-001-lessons.md` — condensed lessons from the first local peer exchange round, including readiness/auth pitfalls and peer feedback.
+- `references/constrained-peer-watchdog.sh` — minimal bash watchdog template for resource-constrained peers with transient model failures.

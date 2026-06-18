@@ -297,7 +297,8 @@ Key points:
 - Some systemd keys are version-dependent. If `systemctl status` reports `Unknown key name`, patch/remove only those unsupported keys and run `systemctl --user daemon-reload`.
 - `systemd-analyze --user verify` may fail in an agent/non-login environment even when the unit works; prefer actual `systemctl --user status` and journal verification when the user manager is running.
 - Do not create LLM-driven cron jobs for simple threshold/watchdog alerts; script-only jobs are cheaper, quieter, and more deterministic.
-- For safety watchdogs that can reboot/shut down the system, distinguish “immediate emergency action” from “scheduled action”: when the user says schedule, prefer a delayed `systemd-run --on-active=...` job plus a marker file to prevent duplicate scheduling.
+- For safety watchdogs that can reboot/shut down the system, distinguish "immediate emergency action" from "scheduled action": when the user says schedule, prefer a delayed `systemd-run --on-active=...` job plus a marker file to prevent duplicate scheduling.
+- For peer resilience against free-tier 401 quota failures (watchdog + heartbeat layering), see `hermes-operations` → `references/constrained-peer-resilience.md`.
 - Terminal hardline protections may block commands whose shell text contains shutdown/reboot strings, even when embedded in script content. If you need to install a watchdog script containing those strings, stage content with file tools and copy via a neutral command; then validate syntax/status without exercising the dangerous branch.
 - Do not spam the user: empty stdout should be the normal path.
 - If a cron job must survive a reboot, rely on Hermes cron/gateway/service operation rather than a terminal background process.

@@ -81,6 +81,46 @@ Use native MCP configuration for stdio/HTTP MCP servers. Add, test, list, and co
 
 For s6-overlay or gateway service problems, inspect supervisor logs and process state first. Restart only the affected service when possible and preserve logs for root-cause analysis.
 
+## Model/provider mismatch pitfall
+
+The Hermes interactive model picker (`hermes model` without arguments) may show models from multiple providers. If the user selects a model whose slug belongs to a different provider than the active one, every API call fails permanently — not transient throttling, but a hard config error.
+
+**Symptom signature** (provider `nous` + OpenRouter `:free` slug):
+```
+⚠️  API call failed: AuthenticationError [HTTP 401]
+   🔌 Provider: nous  Model: nvidia/nemotron-3-ultra:free
+   📝 Error: HTTP 401: Your API key is invalid, blocked or out of funds.
+   ⚠️  Note: `nvidia/nemotron-3-ultra:free` looks like an OpenRouter slug (`:free` suffix).
+        Nous Portal won't recognize that model name. Either switch to a
+        Nous catalog model, or run `/model openrouter:nvidia/nemotron-3-ultra:free` to use OpenRouter.
+```
+
+**Diagnosis**: check `hermes model` to see the active provider and model. If the model slug has `:free` but the provider is `nous`, it's a mismatch. The 401 is permanent — no amount of retry or waiting will fix it.
+
+**Fix (two options)**:
+A. Switch provider to match the model: `hermes model openrouter:<model-slug>` (requires OpenRouter API key).
+B. Keep the current provider and pick a model from its catalog: `hermes model` → select a Nous-native model.
+
+**Do not** treat this as transient throttling with retry loops — that wastes resources and never resolves.
+
+### Transient 401 from free-tier quota exhaustion (NOT the same as above)
+
+Some free-tier models (especially via Nous Portal's free inference tier) return HTTP 401 when the tier's quota is exhausted, then recover silently when quota resets. This looks similar to the permanent mismatch but the symptom is **intermittent** — the peer responds sometimes and freezes other times with the same 401 message. When Hermes hits a 401 it aborts the agent loop; the gateway stays up (`/health` returns 200) but the agent is dead until restarted or until the user sends a new prompt.
+
+**How to tell them apart**:
+- **Permanent mismatch**: the model slug belongs to a different provider (e.g. `:free` OpenRouter slug with `nous` provider). 401 on EVERY call. No amount of waiting helps.
+- **Free-tier quota exhaustion**: the model/provider pairing is correct. The peer *sometimes* responds normally (when quota is available) and sometimes 401s (when exhausted). The user will report "a volte funziona, a volte no."
+
+**Do NOT** change the model/provider for the free-tier case — the pairing is correct, the quota is the bottleneck.
+
+**Do NOT** implement retry loops that keep calling the LLM — they burn quota credits without fixing anything, and Hermes itself already retries before aborting.
+
+**What to do instead**: deploy a multi-layer resilience architecture (see `references/constrained-peer-resilience.md`):
+1. **Local watchdog** on the peer — systemd timer + bash script that checks `/health` and restarts the gateway if it's down. Cooldown prevents restart storms.
+2. **Remote heartbeat** from the orchestrator — cron `no_agent=True` script that polls `/health` hourly and logs to JSONL. Silent data collection, no alerts unless the user asks for them.
+3. **Autonomous project loop** (optional) — agent-driven cron on the orchestrator that wakes every 4-6 hours, reads an Obsidian project note, takes one atomic step, documents progress, and self-regulates. Use when the user wants to be completely out of the loop for a multi-phase project.
+4. **SSH key setup** for direct orchestrator→peer access, because the peer API is unreliable when the agent is frozen.
+
 ## Verification
 
 Every operational change should end with a real status check: `hermes status`, `hermes doctor`, gateway logs, cron list/status, webhook test, kanban board state, MCP test, or service health output.

@@ -1,13 +1,15 @@
-Hermes operational details index lives in Obsidian [[Hermes/Overview]]: external CLIs, quotas, peer mesh, backup, Discord voice, email, system/service notes.
+OpIndex: [[Hermes/Overview]], [[Hermes/Peer105 Resilience Project]]
 §
 ScienceClick2 path is /home/fausto/Software/ScienceClick2; details in Obsidian [[Projects/ScienceClick2]].
 §
 Obsidian vault path is /home/fausto/Documents/Obsidian Vault; use it as external operational memory for detailed Hermes/project/system notes.
 §
-fausto-N56VV Chrome/desktop automation details live in Obsidian [[Hermes/Chrome secondary display fullscreen]].
+Chrome automation: [[Hermes/Chrome secondary display fullscreen]]
 §
-fausto-N56VV service/stability details, including quasar-voice-detection, temp-reboot-monitor, and heavy-load-watchdog, live in Obsidian [[System/Services]] and [[System/fausto-N56VV Stability Monitoring]].
+N56VV services/stability: [[System/Services]], [[System/fausto-N56VV Stability Monitoring]]
 §
-External AI CLI delegation details live in Obsidian [[Hermes/External AI CLIs]] and [[Hermes/AI CLI Quotas]]; use Hermes skill `external-coding-agents` for Claude/Antigravity delegation and `codex-usage-status` for Codex quota.
+External AI CLIs: [[Hermes/External AI CLIs]], [[Hermes/AI CLI Quotas]]
 §
-Hermes peer experience exchange details live in Obsidian [[Hermes/Peer Experience Exchange]]; round artifacts live under /home/fausto/.hermes/peer-exchange/.
+Peer exchange: [[Hermes/Peer Experience Exchange]]; artifacts ~/.hermes/peer-exchange/
+§
+peer105 (192.168.178.105): Fedora 30 aarch64, SSH root@. Watchdog + loop attivi. [[Hermes/Peer105 Resilience Project]], [[Hermes/Peer Mesh]]
