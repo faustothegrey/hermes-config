@@ -5,7 +5,7 @@ STDOUT:
 
  Profile          Model                        Gateway      Alias        Distribution
  ───────────────    ───────────────────────────    ───────────    ───────────    ────────────────────
- ◆default         deepseek/deepseek-v4-pro     running      —            —
+ ◆default         deepseek/deepseek-v4-flash   running      —            —
   cpia1           gpt-5.5                      stopped      cpia1        —
 
 

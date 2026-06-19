@@ -11,21 +11,21 @@ STDOUT:
     Name:      Nightly Hermes configuration backup
     Schedule:  30 0 * * *
     Repeat:    ∞
-    Next run:  2026-06-20T00:30:00+02:00
+    Next run:  2026-06-21T00:30:00+02:00
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-18T00:31:43.339983+02:00  ok
+    Last run:  2026-06-19T00:31:15.527381+02:00  ok
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-06-19T00:34:17.936978+02:00
+    Next run:  2026-06-20T00:34:33.320756+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-19T00:29:17.936978+02:00  ok
+    Last run:  2026-06-20T00:29:33.320756+02:00  ok
 
   21ce62ec1c6f [active]
     Name:      Hermes peer experience exchange round 002
@@ -38,19 +38,29 @@ STDOUT:
     Name:      Peer105 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-06-19T01:00:00+02:00
+    Next run:  2026-06-20T01:00:00+02:00
     Deliver:   local
     Script:    peer105-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-19T00:00:16.240694+02:00  ok
+    Last run:  2026-06-20T00:00:31.616628+02:00  ok
 
-  9b0201d29487 [active]
-    Name:      Peer105 Autonomous Loop
+  5814f1c59e75 [active]
+    Name:      Peer106 Heartbeat
+    Schedule:  0 * * * *
+    Repeat:    ∞
+    Next run:  2026-06-20T01:00:00+02:00
+    Deliver:   local
+    Script:    peer106-heartbeat.py
+    Mode:      no-agent (script stdout delivered directly)
+    Last run:  2026-06-20T00:00:31.572938+02:00  ok
+
+  19c9f58c1c43 [active]
+    Name:      Peer105+106 Autonomous Loop
     Schedule:  0 6,10,14,18,22 * * *
     Repeat:    ∞
-    Next run:  2026-06-19T06:00:00+02:00
+    Next run:  2026-06-20T06:00:00+02:00
     Deliver:   local
-    Skills:    hermes-agent
+    Last run:  2026-06-19T22:05:29.583160+02:00  ok
 
 
 

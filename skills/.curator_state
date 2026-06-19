@@ -1,9 +1,9 @@
 {
-  "last_report_path": "/home/fausto/.hermes/logs/curator/20260612-090617",
-  "last_run_at": "2026-06-12T09:06:17.752667+00:00",
-  "last_run_duration_seconds": 847.437855,
-  "last_run_summary": "auto: no changes; llm: Completed an umbrella-building consolidation pass.\n\nCreated these new class-level umbrella skills:\n\n- `apple-ecosystem-automation`\n- `external-coding-agents`\n- `github-workflow-operations`\n- `creative-web-visuals`\n- `media-content-productio…\narchived 69 skill(s):\n  • airtable — pruned (stale)\n  • apple-notes — pruned (stale)\n  • apple-reminders — pruned (stale)\n  • architecture-diagram — pruned (stale)\n  • arxiv — pruned (stale)\n  • ascii-art — pruned (stale)\n  • ascii-video — pruned (stale)\n  • audiocraft-audio-generation — pruned (stale)\n  • baoyu-infographic — pruned (stale)\n  • blogwatcher — pruned (stale)\n  … and 59 more\nfull report: hermes curator status",
+  "last_report_path": "/home/fausto/.hermes/logs/curator/20260619-094205",
+  "last_run_at": "2026-06-19T09:42:05.939846+00:00",
+  "last_run_duration_seconds": 188.525862,
+  "last_run_summary": "auto: no changes; llm: ## Curator consolidation pass — summary\n\n**Candidate set:** 10 agent-created skills.\n\n**Clusters found:** 1 prefix cluster (`hermes-peer-*` with 2 members). All other 8 skills are singleton class-level umbrellas in distinct domains with no …\narchived 1 skill(s):\n  • hermes-peer-experience-exchange → hermes-peer-mesh-operations\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin hermes-peer-mesh-operations",
   "last_run_summary_shown_at": "2026-06-12T09:06:17.752667+00:00",
   "paused": false,
-  "run_count": 3
+  "run_count": 4
 }

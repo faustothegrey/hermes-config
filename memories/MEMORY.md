@@ -1,15 +1,11 @@
-OpIndex: [[Hermes/Overview]], [[Hermes/Peer105 Resilience Project]]
+Peer128: MBP Fausto 192.168.178.128:8642, SSH fausto+id_rsa OK, API OK. OpIndex: [[Hermes/Overview]], [[Projects/ScienceClick2]]. Cron/loop in Obsidian. MEMORY.md e USER.md in ~/.hermes/memories/ (entry separate da §).
 §
-ScienceClick2 path is /home/fausto/Software/ScienceClick2; details in Obsidian [[Projects/ScienceClick2]].
+"Mandami una email" = usa himalaya message send con raw message (From: fausto.lelli@virgilio.it, To: fausto.lelli@gmail.com). Scrivi il contenuto in /tmp/*.eml, poi `cat /tmp/file.eml | himalaya message send -- -`. Account virgilio configurato e funzionante.
 §
-Obsidian vault path is /home/fausto/Documents/Obsidian Vault; use it as external operational memory for detailed Hermes/project/system notes.
+Memory 5-layer: HOT (built-in), WARM (Holographic HRR+SQLite attivo 2026-06-19), COLD (session_search), PROCEDURAL (skills), VAULT (Obsidian). Rollback: hermes memory off. Dettagli in skill hermes-memory-architecture.
 §
-Chrome automation: [[Hermes/Chrome secondary display fullscreen]]
+Peer105 e Peer106 sono host con risorse estremamente ristrette. Quando installo qualcosa di nuovo (pacchetti, dipendenze, tool) su questi host devo tenere d'occhio il carico di sistema (load, RAM, I/O) e non saturarli. Privilegiare installazioni leggere e sequenziali, mai in parallelo.
 §
-N56VV services/stability: [[System/Services]], [[System/fausto-N56VV Stability Monitoring]]
+PRINCIPIO FONDAMENTALE: prima di qualsiasi azione (tool call, comando, API call), controllare SEMPRE le fonti di conoscenza esistenti in quest'ordine: (1) memoria HOT (memory tool), (2) memoria WARM (fact_store — probe/reason), (3) session_search, (4) Obsidian vault (~/Documents/Obsidian Vault/). Solo se l'informazione manca o è palesemente datata, procedere con indagini live. Se è datata, chiedere conferma all'utente prima di agire. Questo evita di rifare lavoro già fatto.
 §
-External AI CLIs: [[Hermes/External AI CLIs]], [[Hermes/AI CLI Quotas]]
-§
-Peer exchange: [[Hermes/Peer Experience Exchange]]; artifacts ~/.hermes/peer-exchange/
-§
-peer105 (192.168.178.105): Fedora 30 aarch64, SSH root@. Watchdog + loop attivi. [[Hermes/Peer105 Resilience Project]], [[Hermes/Peer Mesh]]
+Research Queue in Obsidian [[Hermes/Research Queue.md]]: input per il loop dual-peer. YouTube URL → peer105, `web "query"` → peer106. Ritmo: 3-4 video/giorno, ~10 articoli/giorno su peer105/106. Niente batch pesanti.

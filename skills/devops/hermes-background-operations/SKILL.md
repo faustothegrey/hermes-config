@@ -299,6 +299,9 @@ Key points:
 - Do not create LLM-driven cron jobs for simple threshold/watchdog alerts; script-only jobs are cheaper, quieter, and more deterministic.
 - For safety watchdogs that can reboot/shut down the system, distinguish "immediate emergency action" from "scheduled action": when the user says schedule, prefer a delayed `systemd-run --on-active=...` job plus a marker file to prevent duplicate scheduling.
 - For peer resilience against free-tier 401 quota failures (watchdog + heartbeat layering), see `hermes-operations` → `references/constrained-peer-resilience.md`.
+- For autonomous LLM-driven project loops (cron agent that reads/writes Obsidian, self-regulates, and sends recap emails), see `references/autonomous-project-loop.md`.
+- Do NOT load large documentation skills (~200KB+) into cron jobs. The inline skill content can overflow context limits or hit the 3-minute cron hard interrupt before the agent responds. For autonomous loops, keep the cron job `skills: []` and embed all operational instructions in the prompt itself.
+- Cron jobs with `deliver: local` will NOT show output in the CLI. The user won't see results unless they check the session store or an external knowledge base (Obsidian). If the user wants visibility, either (a) add a recap-email step to the prompt (via himalaya), (b) configure the gateway email platform, or (c) change delivery to a channel the user monitors.
 - Terminal hardline protections may block commands whose shell text contains shutdown/reboot strings, even when embedded in script content. If you need to install a watchdog script containing those strings, stage content with file tools and copy via a neutral command; then validate syntax/status without exercising the dangerous branch.
 - Do not spam the user: empty stdout should be the normal path.
 - If a cron job must survive a reboot, rely on Hermes cron/gateway/service operation rather than a terminal background process.
@@ -320,5 +323,6 @@ Key points:
 - `references/sustained-thermal-reboot-watchdog.md` — root systemd thermal guard pattern: sustained threshold, cooldown reset, delayed reboot scheduling, Telegram best-effort notification, marker-file dedupe, and hardline-command workaround.
 - `references/heavy-load-fragile-disk-watchdog.md` — low-risk monitoring for machines with degraded disks: avoid long SMART/self-tests and use PSI/iowait/load/temp watchdog alerts instead.
 - `references/fausto-n56vv-no-fixed-restarts-thermal-poweroff.md` — session pattern for disabling fixed daily restarts, keeping monitoring active, testing Telegram + Virgilio email delivery, and using delayed thermal safety poweroff.
+- `references/autonomous-project-loop.md` — LLM-driven cron loop pattern: Obsidian as durable memory, himalaya recap emails, skill-overflow pitfall, and the attempt-count/pointer memory strategy.
 - `scripts/system-freeze-monitor.sh` — reusable minute-sampler for bounded local freeze evidence logs and alert logs.
 - `scripts/heavy-load-watchdog.sh` — script-only Hermes cron watchdog template that emits Telegram-ready alerts for sustained/critical load, thermal, memory, and IO-pressure conditions while staying silent otherwise.

@@ -139,6 +139,47 @@ Suggested fixes for peer105:
 - Configure API keys/platform tokens if web search or messaging platforms should work.
 - Install `ripgrep` if faster search is desired.
 
+## Peer 106
+
+Peer name in config: `peer106`
+
+Network:
+
+- URL: `http://192.168.178.106:8642`
+- Key env var on orchestrator: `HERMES_PEER_106_KEY`
+- Key stored in `/home/fausto/.hermes/.env`
+
+Config shape:
+
+```yaml
+  peer106:
+    url: http://192.168.178.106:8642
+    api_key_env: HERMES_PEER_106_KEY
+    role: worker
+    capabilities:
+      - hermes
+      - lan
+    timeout: 300
+```
+
+System info:
+
+- OS: Fedora 30 aarch64, kernel 5.6.13-100.fc30
+- Hermes v0.15.1, model nvidia/nemotron-3-ultra:free via nous portal
+- Gateway: systemd user service, linger enabled
+- Uptime at setup: 19 days
+
+Setup performed 2026-06-19:
+
+1. SSH key installed via ssh-copy-id
+2. `hermes config set api_server.*` for host/port/key
+3. `API_SERVER_KEY` and `API_SERVER_HOST=0.0.0.0` added to `.env` (required — config.yaml values ignored by API server)
+4. Firewall: `firewall-cmd --add-port=8642/tcp --permanent && firewall-cmd --reload`
+5. `hermes gateway install` (echo Y | … for prompts)
+6. Peer added to `peer-mesh.yaml`, env var in `.env`
+
+Same limitations as peer105: free-tier model, no browser tools, no web search, no messaging platforms.
+
 ## Verification commands used locally
 
 ```bash

@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 9
+        "completed": 10
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-06-20T00:30:00+02:00",
-      "last_run_at": "2026-06-18T00:31:43.339983+02:00",
+      "next_run_at": "2026-06-21T00:30:00+02:00",
+      "last_run_at": "2026-06-19T00:31:15.527381+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 1114
+        "completed": 1348
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-06-19T00:34:17.936978+02:00",
-      "last_run_at": "2026-06-19T00:29:17.936978+02:00",
+      "next_run_at": "2026-06-20T00:34:33.320756+02:00",
+      "last_run_at": "2026-06-20T00:29:33.320756+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -136,15 +136,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 27
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-06-19T01:00:00+02:00",
-      "last_run_at": "2026-06-19T00:00:16.240694+02:00",
+      "next_run_at": "2026-06-20T01:00:00+02:00",
+      "last_run_at": "2026-06-20T00:00:31.616628+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -154,13 +154,48 @@
       "workdir": null
     },
     {
-      "id": "9b0201d29487",
-      "name": "Peer105 Autonomous Loop",
-      "prompt": "You are the Peer105 Resilience autonomous loop. Your job is to advance the project defined in Obsidian note [[Hermes/Peer105 Resilience Project]] one small step at a time.\n\nPROTOCOL (follow strictly):\n\n1. READ the project note:\n   /home/fausto/Documents/Obsidian Vault/Hermes/Peer105 Resilience Project.md\n   This is your memory across runs. Understand the current phase and what's been done.\n\n2. CHECK peer105 health:\n   Use the mcp_hermes_peers tools to check /health.\n   Also read the heartbeat log: /home/fausto/.hermes/peer-monitor/peer105-health.jsonl (last 5 lines)\n   Assess the situation: is peer105 alive? Has it been restarted recently?\n\n3. DECIDE:\n   - If peer105 is in trouble (down for 2+ checks), your priority is diagnosis, not new features.\n   - If all is stable, pick ONE small task from the current phase.\n   - The task must be atomic and completable in one run.\n   - Prefer tooling/monitoring improvements over risky changes.\n\n4. EXECUTE:\n   - Use SSH: ssh root@192.168.178.105 \"<command>\" (key auth works)\n   - Use mcp_hermes_peers for API-level checks\n   - Never run heavy commands on peer105 (it swaps easily)\n   - Respect the watchdog's cooldown \u2014 don't manually restart unless truly needed\n\n5. DOCUMENT:\n   - Update the Operation Log section in the Obsidian note\n   - Add timestamp and what you did\n   - If you discovered something important, add it to the relevant phase\n\n6. SELF-REGULATE:\n   - If you completed a task: mark it done, note what's next\n   - If peer105 health is poor: note it, do NOT attempt fixes beyond diagnosis\n   - If everything is fine but you've done enough: just log \"stable, nothing to do\"\n   - NEVER rush. One step per wake-up is plenty.\n   - NEVER break things. Diagnosis first, action second.\n\nCONSTRAINTS:\n- Peer105 is ARM, Fedora 30, very low RAM, swaps easily\n- Its free-tier LLM gets 401 when quota exhausted \u2014 that's EXPECTED, not an emergency\n- The watchdog on peer105 already handles gateway-down restarts\n- NEVER send alerts to the user (delivery is local only)\n- The user reads the Obsidian note to catch up \u2014 make it informative\n- This is a marathon, not a sprint. Steady, slow progress.\n",
-      "skills": [
-        "hermes-agent"
-      ],
-      "skill": "hermes-agent",
+      "id": "5814f1c59e75",
+      "name": "Peer106 Heartbeat",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "peer106-heartbeat.py",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 * * * *",
+        "display": "0 * * * *"
+      },
+      "schedule_display": "0 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 19
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-19T06:59:16.678157+02:00",
+      "next_run_at": "2026-06-20T01:00:00+02:00",
+      "last_run_at": "2026-06-20T00:00:31.572938+02:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null
+    },
+    {
+      "id": "19c9f58c1c43",
+      "name": "Peer105+106 Autonomous Loop",
+      "prompt": "You are the dual-peer autonomous loop. Your job is to advance BOTH projects \u2014 one step each \u2014 per run.\n\nPEER105: YouTube video transcript digest\nPEER106: Web research\n\nPACE: Slow and steady. Max 3-4 videos/day for peer105, ~10 articles/day for peer106. No batch processing, no stress tests. These are tiny ARM machines that swap at idle.\n\nPROTOCOL:\n\n1. READ both project notes:\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Peer105 YouTube.md\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Peer106 Web Research.md\n   Understand current phases for both.\n\n2. READ the Research Queue:\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Research Queue.md\n   Pick ONE item from \"Da fare\" section (first `[ ]` item).\n   - If it's a YouTube URL \u2192 assign to peer105 step\n   - If it's `web \"query\"` \u2192 assign to peer106 step\n   - If queue is empty \u2192 proceed with autonomous initiative as usual\n   - Move the picked item to \"In corso\" section\n\n3. CHECK health of both peers:\n   - mcp_hermes_peers peer_health peer=peer105\n   - mcp_hermes_peers peer_health peer=peer106\n   Read heartbeat logs: ~/.hermes/peer-monitor/peer105-health.jsonl and peer106-health.jsonl (last 5 each)\n\n4. DECIDE \u2014 pick ONE small step for EACH peer:\n   PEER105 (YouTube):\n   - If queue has a YouTube URL \u2192 process that video (fetch transcript via Node.js, produce digest)\n   - Otherwise: Phase 1 tasks \u2014 search for videos, collect metadata, build queue\n   - Phase 2: download transcripts, clean text, Hermes digest (summary + key concepts + keywords)\n   - Phase 3: batch processing, structured output\n   - Constraint: concise digests (peer105 has limited context)\n\n   PEER106 (Web Research):\n   - If queue has a `web \"...\"` item \u2192 execute that query (web_search \u2192 web_extract \u2192 summary)\n   - Otherwise: Phase 1 \u2192 2 transition \u2014 iterate on approach, define research topics\n   - Phase 2: batch search \u2192 extract \u2192 summarize pipeline\n   - Phase 3: cross-peer work with peer105\n\n5. EXECUTE both steps:\n   - SSH: ssh root@192.168.178.105 and ssh root@192.168.178.106\n   - mcp_hermes_peers call_peer for API-level tasks\n   - Never run heavy commands (both peers swap easily)\n   - Respect watchdogs \u2014 don't manually restart unless truly needed\n   - If call_peer on peer106 times out (2GB RAM swap), research directly from orchestrator instead\n\n6. DOCUMENT both in their Obsidian notes:\n   - Update Operation Log in each note\n   - Timestamp, what was done, outcome\n\n7. ARCHIVE DIGEST TO KNOWLEDGE BASE (when a digest is produced):\n   For peer105 video digests:\n   a. Save JSON to peer105 in ~/transcript-worker/digests/ for local rolling window\n   b. BUILD an Obsidian note at /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/YYYY-MM-DD \u2014 Title.md\n      Use the format from the template: /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/.template-digest.md\n      Include: frontmatter (source, type, video_id, tags, date), summary, key concepts, keywords, takeaway, related research links\n   c. On peer105, clean up digests older than 7 days: find ~/transcript-worker/digests/ -mtime +7 -delete\n\n   For peer106 research summaries:\n   a. Write a note at /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/YYYY-MM-DD \u2014 Research \u2014 Topic.md\n   b. Format: frontmatter (source: peer106, type: research, tags, date), query, key findings, sources, key takeaways\n   c. If the research relates to a peer105 video digest, add a backlink in both notes\n\n8. UPDATE the Research Queue in Obsidian:\n   - Mark the consumed item `[x]` and move to \"Completati\"\n   - Update \"In corso\" section\n\n9. SEND ONE RECAP EMAIL covering both peers:\n   - Write to /tmp/peers-recap-<run_number>.eml\n   - From: fausto.lelli@virgilio.it, To: fausto.lelli@gmail.com\n   - Subject: Peers Loop #N \u2014 HH:MM CEST (OK/FAIL)\n   - Body:\n     Peer105: action done, outcome, next\n     Peer106: action done, outcome, next\n   - Send: cat /tmp/peers-recap-<run_number>.eml | himalaya message send -- -\n\n10. SELF-REGULATE:\n   - One step per peer per wake-up. No rushing.\n   - If a peer is down: diagnose only, skip its task, report in email.\n   - If queue is empty, the loop continues with autonomous initiative (finding videos, choosing research topics).\n   - NEVER break things. Diagnosis first, action second.\n\nCONSTRAINTS:\n- Both peers: ARM, Fedora 30, very low RAM, swap easily.\n- Free-tier LLM on both \u2014 401 expected, not emergency.\n- Watchdogs handle gateway-down restarts on both.\n- User reads Obsidian AND gets ONE recap email covering both peers.\n- Knowledge Base lives in Obsidian: [[Hermes/Knowledge/]]\n- Research Queue lives in Obsidian: [[Hermes/Research Queue.md]]\n- Marathon, not sprint. Steady, slow progress.\n- Re-read Obsidian notes before and after every task.",
+      "skills": [],
+      "skill": null,
       "model": null,
       "provider": null,
       "base_url": null,
@@ -175,16 +210,16 @@
       "schedule_display": "0 6,10,14,18,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 0
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
-      "created_at": "2026-06-18T23:10:11.636047+02:00",
-      "next_run_at": "2026-06-19T06:00:00+02:00",
-      "last_run_at": null,
-      "last_status": null,
+      "created_at": "2026-06-19T07:10:24.679245+02:00",
+      "next_run_at": "2026-06-20T06:00:00+02:00",
+      "last_run_at": "2026-06-19T22:05:29.583160+02:00",
+      "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
       "deliver": "local",
@@ -193,5 +228,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-06-19T00:30:16.793628+02:00"
+  "updated_at": "2026-06-20T00:30:32.177771+02:00"
 }

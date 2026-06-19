@@ -1,4 +1,5 @@
 context_lengths:
+  deepseek/deepseek-v4-flash@https://inference-api.nousresearch.com/v1: 1048576
   deepseek/deepseek-v4-pro@https://inference-api.nousresearch.com/v1: 1048576
   gpt-5.4@https://chatgpt.com/backend-api/codex: 272000
   gpt-5.5@https://chatgpt.com/backend-api/codex: 272000

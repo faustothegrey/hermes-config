@@ -65,6 +65,10 @@ For local speaker/microphone checks from a Hermes CLI session:
 
 Use cron jobs for durable scheduled tasks. Use background terminal processes with `notify_on_complete=true` for bounded long commands. Keep prompts self-contained because scheduled jobs run in fresh sessions.
 
+**Pitfall — `cronjob action='run'` on LLM-driven jobs silently fails when agent slot is occupied**: If the parent session is active (you're in a conversation), the cron scheduler cannot spawn a new agent. The `action='run'` call returns `success: true` but the job never executes — `last_run_at` and `last_status` stay null. Fallback: read the job's prompt from `~/.hermes/cron/jobs.json`, extract the protocol, and execute it inline in the current session. Example: `python3 -c "import json; data=json.load(open('~/.hermes/cron/jobs.json')); [print(j['prompt']) for j in data['jobs'] if j['id']=='<job_id>']"`. This is particularly important for autonomous project loops — the user expects progress, not a silent no-op.
+
+**Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
+
 ## Kanban workers and orchestrators
 
 Use kanban workflows for multi-agent/multi-profile work queues. Orchestrators decompose and route tasks; workers execute scoped tasks and update the board with comments, blockers, heartbeats, and completion evidence.
@@ -120,6 +124,22 @@ Some free-tier models (especially via Nous Portal's free inference tier) return 
 2. **Remote heartbeat** from the orchestrator — cron `no_agent=True` script that polls `/health` hourly and logs to JSONL. Silent data collection, no alerts unless the user asks for them.
 3. **Autonomous project loop** (optional) — agent-driven cron on the orchestrator that wakes every 4-6 hours, reads an Obsidian project note, takes one atomic step, documents progress, and self-regulates. Use when the user wants to be completely out of the loop for a multi-phase project.
 4. **SSH key setup** for direct orchestrator→peer access, because the peer API is unreliable when the agent is frozen.
+
+### Model 404: Nous removed the model from their inference API (NOT the same as 401)
+
+When a provider removes a model from their catalog, every API call returns HTTP 404 "Model not found." This looks like a configuration error or a misspelled model ID, but the real cause is the provider retired the model. The previously-working model simply ceases to exist.
+
+**Symptom signature**:
+```
+Error code: 404 - {'status': 404, 'message': "Model 'nvidia/nemotron-3-ultra:free' not found. 
+The requested model does not exist in our configuration or OpenRouter catalog."}
+```
+
+**Diagnosis**: Check if the same model/provider pair ever worked before. Search the web for the provider's current model catalog. The Nous inference API currently serves `Hermes-4.3-36B`, `Hermes-4-70B`, `Hermes-4-405B`, and `deepseek/deepseek-chat` (among others). Free-tier models like `nvidia/nemotron-3-ultra:free` may be retired without notice.
+
+**Fix**: Switch to a model the provider currently serves. For Nous provider, `deepseek/deepseek-chat` is a reliable fallback that works without an additional API key. Verify with a lightweight call_peer test prompt before declaring it fixed.
+
+**Pitfall — `hermes config set models.default` writes to the wrong key**: The command `hermes config set models.default <model>` writes to YAML key `models:` (plural), but the gateway and API server read from `model:` (singular). The result is a successful config write that the gateway silently ignores — the old model keeps being used. Fix: use `sed` to directly edit the `model:` section, or run `hermes config set model.default <model>` (singular).
 
 ## Verification
 

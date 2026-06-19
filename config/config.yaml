@@ -1,5 +1,5 @@
 model:
-  default: deepseek/deepseek-v4-pro
+  default: deepseek/deepseek-v4-flash
   provider: nous
   base_url: https://inference-api.nousresearch.com/v1
 providers: {}
@@ -393,7 +393,7 @@ memory:
   write_approval: false
   memory_char_limit: 2200
   user_char_limit: 1375
-  provider: ''
+  provider: holographic
   nudge_interval: 10
   flush_min_turns: 6
 delegation:

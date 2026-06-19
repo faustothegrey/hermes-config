@@ -11,7 +11,7 @@ STDOUT:
 │ antigravity-cli       │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ external-coding-agen… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ hermes-agent          │ autonomous-ai-agents │ builtin  │ builtin  │ enabled │
-│ hermes-peer-experien… │ autonomous-ai-agents │ local    │ local    │ enabled │
+│ hermes-memory-archit… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ hermes-peer-mesh-ope… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ kanban-codex-lane     │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ baoyu-article-illust… │ creative             │ official │ official │ enabled │
