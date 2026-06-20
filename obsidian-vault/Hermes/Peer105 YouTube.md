@@ -86,6 +86,9 @@ Infrastructure only — not the goal, just the prerequisite:
 ### 2026-06-19
 - 22:00 CEST — **Loop #4**. Autonomous initiative (queue empty). Processed ExplainingComputers "Consumer SBCs in 2026" (7G8uC4Ri720). Node.js fetch.cjs returned 334 segments, 11,481 chars. Digest produced: summary, 7 key concepts, 10 keywords, takeaway. Key themes: DRAM pricing crisis (Pi 5 16GB at $299.99), 70% industrial sales shift, three consumer categories pricing analysis, ExplainingComputers' channel pivot to sub-$100 boards + microcontrollers. Digest JSON saved to peer105 (~/transcript-worker/digests/). Old digests >7 days cleaned. Obsidian Knowledge Base note created with backlinks to peer106 research. Phase 1 milestone: two videos processed (Electromaker + ExplainingComputers). Next: find a third video topic to queue.
 
+### 2026-06-20
+- 09:56 CEST — **Loop #5**. Autonomous initiative (queue empty). Processed ExplainingComputers "RISC-V 2026 Update" (`z6gHC-R59lw`). Node.js fetch.cjs returned 454 segments, 14,939 chars. Digest produced covering RVA23 profile, Spacemit K3/Milk-V Jupiter 2, RISC-V International ecosystem, automotive/AI use cases, and major industry acquisitions (Meta/Rivos, Qualcomm/Ventana). Digest JSON saved to peer105 (`~/transcript-worker/digests/peer105-digest-z6gHC-R59lw.json`). Old digests >7 days cleaned (none aged out). Obsidian Knowledge Base note created: `Hermes/Knowledge/2026-06-20 — RISC-V 2026 Update.md` with backlink to peer106 research. Next: RISC-V hardware hands-on reviews or edge AI inference on SBCs.
+
 ### 2026-06-18
 - 21:04 UTC — Heartbeat test: peer105 OK
 - 16:56 EDT — Watchdog v1 deployed and tested on peer105

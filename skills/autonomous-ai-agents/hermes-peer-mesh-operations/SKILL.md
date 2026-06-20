@@ -284,18 +284,23 @@ For cron jobs that advance multiple peers in lockstep — one small step per pee
 3. Check health of both peers (MCP + heartbeat logs).
 4. Decide one step for each peer based on their current phase or queue item.
 5. Execute both: SSH for deployments, `call_peer` for API-level tasks.
-6. Archive digests as Obsidian notes in [[Hermes/Knowledge/]] with frontmatter, tags, and backlinks.
-7. Update the queue: move consumed items from "Da fare" → "In corso" → "Completati".
-8. Update both project notes' Operation Logs.
-9. Send ONE recap email covering both peers via `himalaya message send`.
-10. Self-regulate — one step per wake-up, no rushing, diagnosis before action.
+6. **Verify peer side-effects before trusting self-reports.** After delegation returns with "file created", confirm the outcome. If the peer runs on the same filesystem (same machine or NFS mount), stat the file locally with `read_file` or `ls -la`. If the peer is on a separate physical host (different IP), the file lives only on the peer's filesystem — verify via the `get_peer_run` output (look for explicit success evidence like "Nota creata: Projects/..."). For cross-machine peers, include an instruction in the delegation prompt asking the peer to "confirm the file path in your final response." See `references/dual-peer-autonomous-loop.md` → "Peer self-reports" pitfall.
+7. Archive digests as Obsidian notes in [[Hermes/Knowledge/]] with frontmatter, tags, and backlinks. **Use the absolute path** `/home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/` in delegation instructions — peers sometimes use a wrong relative or project-specific path.
+8. Update the queue: move consumed items from "Da fare" → "In corso" → "Completati".
+9. Update both project notes' Operation Logs.
+10. Send ONE recap email covering both peers via `himalaya message send` (retry once on transient DNS failure).
+11. Self-regulate — one step per wake-up, no rushing, diagnosis before action.
 11. On peer105, clean digests older than 7 days (rolling window).
 
 Pace limits: 3-4 videos/day max, ~10 articles/day max. No batch processing, no stress tests. These are tiny ARM machines that swap at idle.
 
+Autonomous initiative (queue empty): When the Research Queue's "Da fare" section is empty (only placeholder `- [ ] ...`), search for a YouTube video with `web_search("topic YouTube review 2026")` for peer105 and use peer105's topic as a springboard for peer106 research. The reference file documents the full decision tree and the specific find-video → verify-transcript → fetch → digest → complementary-research pipeline.
+
 Full protocol, queue format, pace limits, and Knowledge Base template in `references/dual-peer-autonomous-loop.md`.
 
 Key constraints for old ARM peers (Fedora 30, Python 3.7): prefer SSH over call_peer for deployments, use `pip --no-deps` when gcc is unavailable, Python 3.7 can't run modern yt-dlp — install 3.9+ via dnf/pyenv, OR use Node.js `youtube-transcript` npm package (bypasses Python entirely, uses its own HTTP fetcher — confirmed working on ARM Fedora 30). npm global prefix on Hermes-managed Node.js is /root/.hermes/node/lib — use full require path.
+
+**fetch.cjs output quirk**: The third argument to the Node.js fetcher is a **directory path**, not a file path. Passing `/tmp/peer105/<name>` creates a directory with that name, and writes two files inside it: `transcript-<VIDEO_ID>.json` and `transcript-<VIDEO_ID>.txt`. Always `ls -la` the output dir to discover filenames, and read the `.txt` file for clean joined text. See reference for details.
 
 ### Email delivery pitfall
 

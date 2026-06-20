@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 10
+        "completed": 11
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-06-21T00:30:00+02:00",
-      "last_run_at": "2026-06-19T00:31:15.527381+02:00",
+      "next_run_at": "2026-06-22T00:30:00+02:00",
+      "last_run_at": "2026-06-20T00:32:00.224282+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 1348
+        "completed": 1471
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-06-20T00:34:33.320756+02:00",
-      "last_run_at": "2026-06-20T00:29:33.320756+02:00",
+      "next_run_at": "2026-06-21T00:34:23.676427+02:00",
+      "last_run_at": "2026-06-21T00:29:23.676427+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -136,15 +136,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 27
+        "completed": 40
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-06-20T01:00:00+02:00",
-      "last_run_at": "2026-06-20T00:00:31.616628+02:00",
+      "next_run_at": "2026-06-21T01:00:00+02:00",
+      "last_run_at": "2026-06-21T00:00:22.040725+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -173,15 +173,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 19
+        "completed": 32
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-06-20T01:00:00+02:00",
-      "last_run_at": "2026-06-20T00:00:31.572938+02:00",
+      "next_run_at": "2026-06-21T01:00:00+02:00",
+      "last_run_at": "2026-06-21T00:00:21.951313+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -193,7 +193,7 @@
     {
       "id": "19c9f58c1c43",
       "name": "Peer105+106 Autonomous Loop",
-      "prompt": "You are the dual-peer autonomous loop. Your job is to advance BOTH projects \u2014 one step each \u2014 per run.\n\nPEER105: YouTube video transcript digest\nPEER106: Web research\n\nPACE: Slow and steady. Max 3-4 videos/day for peer105, ~10 articles/day for peer106. No batch processing, no stress tests. These are tiny ARM machines that swap at idle.\n\nPROTOCOL:\n\n1. READ both project notes:\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Peer105 YouTube.md\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Peer106 Web Research.md\n   Understand current phases for both.\n\n2. READ the Research Queue:\n   - /home/fausto/Documents/Obsidian Vault/Hermes/Research Queue.md\n   Pick ONE item from \"Da fare\" section (first `[ ]` item).\n   - If it's a YouTube URL \u2192 assign to peer105 step\n   - If it's `web \"query\"` \u2192 assign to peer106 step\n   - If queue is empty \u2192 proceed with autonomous initiative as usual\n   - Move the picked item to \"In corso\" section\n\n3. CHECK health of both peers:\n   - mcp_hermes_peers peer_health peer=peer105\n   - mcp_hermes_peers peer_health peer=peer106\n   Read heartbeat logs: ~/.hermes/peer-monitor/peer105-health.jsonl and peer106-health.jsonl (last 5 each)\n\n4. DECIDE \u2014 pick ONE small step for EACH peer:\n   PEER105 (YouTube):\n   - If queue has a YouTube URL \u2192 process that video (fetch transcript via Node.js, produce digest)\n   - Otherwise: Phase 1 tasks \u2014 search for videos, collect metadata, build queue\n   - Phase 2: download transcripts, clean text, Hermes digest (summary + key concepts + keywords)\n   - Phase 3: batch processing, structured output\n   - Constraint: concise digests (peer105 has limited context)\n\n   PEER106 (Web Research):\n   - If queue has a `web \"...\"` item \u2192 execute that query (web_search \u2192 web_extract \u2192 summary)\n   - Otherwise: Phase 1 \u2192 2 transition \u2014 iterate on approach, define research topics\n   - Phase 2: batch search \u2192 extract \u2192 summarize pipeline\n   - Phase 3: cross-peer work with peer105\n\n5. EXECUTE both steps:\n   - SSH: ssh root@192.168.178.105 and ssh root@192.168.178.106\n   - mcp_hermes_peers call_peer for API-level tasks\n   - Never run heavy commands (both peers swap easily)\n   - Respect watchdogs \u2014 don't manually restart unless truly needed\n   - If call_peer on peer106 times out (2GB RAM swap), research directly from orchestrator instead\n\n6. DOCUMENT both in their Obsidian notes:\n   - Update Operation Log in each note\n   - Timestamp, what was done, outcome\n\n7. ARCHIVE DIGEST TO KNOWLEDGE BASE (when a digest is produced):\n   For peer105 video digests:\n   a. Save JSON to peer105 in ~/transcript-worker/digests/ for local rolling window\n   b. BUILD an Obsidian note at /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/YYYY-MM-DD \u2014 Title.md\n      Use the format from the template: /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/.template-digest.md\n      Include: frontmatter (source, type, video_id, tags, date), summary, key concepts, keywords, takeaway, related research links\n   c. On peer105, clean up digests older than 7 days: find ~/transcript-worker/digests/ -mtime +7 -delete\n\n   For peer106 research summaries:\n   a. Write a note at /home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/YYYY-MM-DD \u2014 Research \u2014 Topic.md\n   b. Format: frontmatter (source: peer106, type: research, tags, date), query, key findings, sources, key takeaways\n   c. If the research relates to a peer105 video digest, add a backlink in both notes\n\n8. UPDATE the Research Queue in Obsidian:\n   - Mark the consumed item `[x]` and move to \"Completati\"\n   - Update \"In corso\" section\n\n9. SEND ONE RECAP EMAIL covering both peers:\n   - Write to /tmp/peers-recap-<run_number>.eml\n   - From: fausto.lelli@virgilio.it, To: fausto.lelli@gmail.com\n   - Subject: Peers Loop #N \u2014 HH:MM CEST (OK/FAIL)\n   - Body:\n     Peer105: action done, outcome, next\n     Peer106: action done, outcome, next\n   - Send: cat /tmp/peers-recap-<run_number>.eml | himalaya message send -- -\n\n10. SELF-REGULATE:\n   - One step per peer per wake-up. No rushing.\n   - If a peer is down: diagnose only, skip its task, report in email.\n   - If queue is empty, the loop continues with autonomous initiative (finding videos, choosing research topics).\n   - NEVER break things. Diagnosis first, action second.\n\nCONSTRAINTS:\n- Both peers: ARM, Fedora 30, very low RAM, swap easily.\n- Free-tier LLM on both \u2014 401 expected, not emergency.\n- Watchdogs handle gateway-down restarts on both.\n- User reads Obsidian AND gets ONE recap email covering both peers.\n- Knowledge Base lives in Obsidian: [[Hermes/Knowledge/]]\n- Research Queue lives in Obsidian: [[Hermes/Research Queue.md]]\n- Marathon, not sprint. Steady, slow progress.\n- Re-read Obsidian notes before and after every task.",
+      "prompt": "You are the dual-peer research loop. Your job is to advance research on topics the user added to the Research Queue \u2014 one step per run.\n\n## Instructions\n1. Read the Research Queue: `cat ~/Documents/Obsidian\\ Vault/Hermes/Research\\ Queue.md`\n2. Parse the \"Da fare\" section. For each incomplete item, determine its type:\n   - **YouTube URL** (starts with https://youtube.com or https://youtu.be) \u2192 delegate to peer105 with this goal: \"Transcribe this YouTube video and summarize it. Save a note to Obsidian under the appropriate project (e.g. [[Projects/ScienceClick 2/Research/YYYY-MM-DD-title]]) and update the research queue marking this item as done.\"\n   - **`video \"topic\"`** (starts with \"video \") \u2192 delegate to peer105 with this goal: \"Search YouTube for a recent video about this topic, pick the best one, transcribe it and summarize it. Save a note to Obsidian under the appropriate project (e.g. [[Projects/ScienceClick 2/Research/YYYY-MM-DD-topic]]) and update the research queue marking this item as done.\"\n   - **`web \"query\"`** (starts with \"web \") \u2192 delegate to peer106 with this goal: \"Use web_search and web_extract to research this query. Save findings as a note in Obsidian under the appropriate project (e.g. [[Projects/ScienceClick 2/Research/YYYY-MM-DD-topic]]) and update the research queue marking this item as done.\"\n3. Process at most ONE video item and ONE web item per run (2 total). If nothing in queue, skip silently.\n4. After processing, update the Research Queue file: move processed items from \"Da fare\" to \"Completati\" using the patch tool.\n5. Finally, send an email summary to the user with the results of this run.\n\n## Email sending procedure\nUse himalaya to send the email:\n1. Write the email content to /tmp/research-loop-report-$(date +%s).eml\n2. Format as a raw MIME message:\n   - From: fausto.lelli@virgilio.it\n   - To: fausto.lelli@gmail.com\n   - Subject: \"Research Loop \u2014 [date]\"\n   - Body: concise summary of what was processed, key findings, links to Obsidian notes\n3. Send with: `cat /tmp/*.eml | himalaya message send -- -`\n\n## Constraints\n- Be slow and deliberate. One item per peer per run is enough.\n- If peer105 or peer106 is unreachable, note it and retry next run.\n- Always verify the Obsidian note was created by checking the file exists after delegation.\n- When searching YouTube for a video topic on peer105, instruct it to pick a recent, high-quality video (not too long, preferably under 30 min) relevant to the topic.",
       "skills": [],
       "skill": null,
       "model": null,
@@ -204,21 +204,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "0 6,10,14,18,22 * * *",
-        "display": "0 6,10,14,18,22 * * *"
+        "expr": "0 7,10,14,18,22 * * *",
+        "display": "0 7,10,14,18,22 * * *"
       },
-      "schedule_display": "0 6,10,14,18,22 * * *",
+      "schedule_display": "0 7,10,14,18,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 4
+        "completed": 7
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-06-20T06:00:00+02:00",
-      "last_run_at": "2026-06-19T22:05:29.583160+02:00",
+      "next_run_at": "2026-06-21T07:00:00+02:00",
+      "last_run_at": "2026-06-20T22:09:30.109050+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -226,7 +226,81 @@
       "origin": null,
       "enabled_toolsets": null,
       "workdir": null
+    },
+    {
+      "id": "4290847cf173",
+      "name": "N56VV Nightly Cooling Period",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cooling-period.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * *",
+        "display": "0 1 * * *"
+      },
+      "schedule_display": "0 1 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-20T12:41:33.634799+02:00",
+      "next_run_at": "2026-06-21T01:00:00+02:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null
+    },
+    {
+      "id": "3d9f08a47adf",
+      "name": "N56VV Cooling Stats Report",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cooling-post-report.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "10 6 * * *",
+        "display": "10 6 * * *"
+      },
+      "schedule_display": "10 6 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-20T13:47:41.105424+02:00",
+      "next_run_at": "2026-06-21T06:10:00+02:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null
     }
   ],
-  "updated_at": "2026-06-20T00:30:32.177771+02:00"
+  "updated_at": "2026-06-21T00:30:22.556018+02:00"
 }

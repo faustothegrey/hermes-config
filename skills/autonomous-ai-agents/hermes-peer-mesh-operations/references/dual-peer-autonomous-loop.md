@@ -10,11 +10,12 @@ Full protocol for cron-driven dual-peer advancement. This is the master document
 3. CHECK health of both peers (mcp_hermes_peers + heartbeat logs)
 4. DECIDE — pick ONE small step for EACH peer
 5. EXECUTE both steps (SSH for deployment, call_peer for API-level tasks)
-6. DOCUMENT both in their Obsidian notes (Operation Log section)
-7. ARCHIVE to Knowledge Base — write Obsidian note in Hermes/Knowledge/
-8. UPDATE Research Queue — mark consumed items
-9. SEND ONE RECAP EMAIL covering both peers via himalaya
-10. SELF-REGULATE — one step per peer per wake-up
+6. **VERIFY peer side-effects — do not trust self-reports.** After a peer says "file created at path X", confirm via the appropriate method: shared filesystem → `read_file`/`ls -la` locally; separate host → check `get_peer_run` output for explicit success evidence. See "Peer self-reports" pitfall below for details.
+7. DOCUMENT both in their Obsidian notes (Operation Log section)
+8. ARCHIVE to Knowledge Base — write Obsidian note in Hermes/Knowledge/ (use absolute path `/home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/`)
+9. UPDATE Research Queue — mark consumed items
+10. SEND ONE RECAP EMAIL covering both peers via himalaya (retry once on transient DNS failure)
+11. SELF-REGULATE — one step per peer per wake-up
 ```
 
 ## Call for content (Research Queue)
@@ -44,6 +45,71 @@ The user provides input via an Obsidian Markdown file: `[[Hermes/Research Queue.
 - One item consumed per tick. If both types available in the queue, the loop alternates.
 - Item gets moved from "Da fare" → "In corso" at start of execution → "[x]" in "Completati" on success.
 - If the queue is empty, the loop continues with autonomous initiative: finding videos via search, choosing research topics independently.
+
+### Queue empty-state detection
+
+When the Research Queue's "Da fare" section contains only:
+```markdown
+- [ ] ...
+```
+that is a **placeholder ellipsis**, not a genuine task. Skip it and proceed with autonomous initiative. Do not attempt to process it.
+
+To detect emptiness programmatically:
+```python
+import re
+da_fare_items = re.findall(r'- \[ \] (.+)', queue_text)
+genuine_items = [i for i in da_fare_items if i.strip() != '...']
+if not genuine_items:
+    print("QUEUE_EMPTY")
+```
+
+### Autonomous initiative — finding content when queue is empty
+
+When the queue is empty, both peers need topics chosen autonomously. Use this decision tree:
+
+**For Peer105 (find a video):**
+1. Consider the running theme from previous sessions (e.g., SBCs, RISC-V, edge AI)
+2. Search for YouTube videos: `web_search("topic YouTube review 2026")` — pick terms that match the existing doc trail
+3. From results, find the video that's most review/analysis oriented (avoid short clips, trailers)
+4. Verify transcript availability on peer105: `ssh root@192.168.178.105 "node -e '...fetchTranscript(videoId)...'"`
+5. Only proceed if transcript returns OK with segments
+
+**For Peer106 (choose a research topic):**
+1. Best approach: **complement peer105's topic**. If peer105 just processed a RISC-V video, research the RISC-V SBC ecosystem from web sources
+2. Second best: continue the running theme (SBC market, edge AI, embedded ML)
+3. Third: search for a new connected topic that bridges to the next possible video topic
+
+**Autonomous content pipeline (demonstrated in Loop #5):**
+```
+peer105: "RISC-V 2026 Update" video → digest with RVA23, K3, Jupiter 2
+peer106: RISC-V SBC ecosystem research → Milk-V Jupiter 2 specs, ARM/x86/RISC-V comparison
+→ Both notes reciprocally backlinked in Knowledge Base
+```
+
+### fetch.cjs output directory quirk
+
+The Node.js fetcher script (`/root/transcript-worker/fetch.cjs`) uses its third argument as a **directory path**, not a file path. When calling:
+
+```bash
+cd /root/transcript-worker && node fetch.cjs <VIDEO_ID> /tmp/peer105
+```
+
+The output is:
+```
+/tmp/peer105/
+  transcript-<VIDEO_ID>.json
+  transcript-<VIDEO_ID>.txt
+```
+
+If you pass a path that looks like a filename (e.g., `/tmp/peer105/riscv2026_raw.json`), the script creates it as a **directory** (via `mkdirSync({recursive: true})`) and writes the transcripts *inside* it:
+
+```
+/tmp/peer105/riscv2026_raw.json/           ← this is a directory!
+  transcript-z6gHC-R59lw.json
+  transcript-z6gHC-R59lw.txt
+```
+
+**Always pass a directory path as the third argument**, then read the `.txt` file from inside it. Use `ls -la` on the output dir to discover the actual filenames if unsure. The `.txt` file contains the clean joined transcript text (14K+ chars typical for a full video). The `.json` file has segments with timestamps.
 
 ### Pace / speed limits
 
@@ -113,6 +179,36 @@ mcp_hermes_peers peer_health peer=peer106
 ~/.hermes/peer-monitor/peer105-health.jsonl
 ~/.hermes/peer-monitor/peer106-health.jsonl
 ```
+
+## Pitfalls
+
+### Peer self-reports are not verified facts
+
+**Always verify side-effects after delegation returns.** Both peer105 and peer106 can return "file created and verified" while the file does not exist where expected.
+
+**Two filesystem scenarios:**
+
+1. **Shared filesystem** (peers on the same machine, or NFS/SSHFS mount) — Use `read_file` or `ls -la` on the orchestrator to confirm the file exists locally.
+
+2. **Separate physical hosts** (peers at different IPs) — Each peer has its own filesystem. A file created on peer106 cannot be stat'd from the orchestrator's shell. **Verify via `get_peer_run` output instead.** The `output` field of a completed run contains the peer's final message — look for explicit success evidence like `"Nota creata: Projects/Something/..."` or `"Research Queue aggiornata"`. If the output lacks a verifiable outcome (e.g., only a generic "done"), re-run the task with the instruction to include the created file path in the final message.
+
+   To monitor progress mid-run on long tasks (3+ minutes), use `get_peer_events` to see which tools the peer has started/completed without waiting for full completion:
+
+   ```
+   mcp_hermes_peers get_peer_events peer=peer106 run_id=RUN_ID max_events=5
+   ```
+
+   Events include tool name, preview, duration, and error status — enough to know whether the peer is stuck or making headway.
+
+### Delegation instructions must use explicit absolute paths
+
+When instructing a peer to create an Obsidian note, use the full absolute path `/home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/` — not a relative or project-specific alias. Peers may interpret relative paths differently or write to a non-existent subdirectory without error.
+
+**Verification when the peer is on a separate host:** Instead of a local `ls -la` (which will fail because the file is on the peer's machine), include an instruction in the delegation prompt asking the peer to "confirm the file path in your final response." The `get_peer_run` output will then contain the verifiable path. Do NOT rely on `ls -la` from the orchestrator shell for files on other machines.
+
+### Research Queue and peer105 both writing the same file
+
+When both peers are asked to update `Research Queue.md`, only one should be responsible for the queue update — do not instruct both peers to mark items as done. Have the orchestrator update the queue after verification.
 
 ## Decision rules
 

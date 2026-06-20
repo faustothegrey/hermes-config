@@ -149,6 +149,176 @@ See `references/2026-06-13-system-cleanup-usb-disk.md` for a concrete session tr
 
 When maintaining local health watchdogs that send system-load alerts, keep notifications concise and action-oriented. If the user asks to reduce noise, emit only the anomalous metric(s) that crossed thresholds (the reasons list), not a full system snapshot, top-process list, or unrelated stats. Full diagnostics can remain in logs or be gathered on demand.
 
+## Persistent anomaly log
+
+The `heavy_load_watchdog.sh` now writes structured **start/resolve** events to
+`~/.hermes/anomalies/anomalies.jsonl` so every anomaly is persisted for later query:
+
+```
+start  → {"event":"start","id":"20260620_181111","ts":"...","reasons":"IO pressure=28.25","critical":0}
+resolve→ {"event":"resolve","id":"20260620_181111","ts":"...","duration_min":6}
+```
+
+When the user asks "anomalia ancora in corso?" or "quali anomalie ci sono state?":
+1. Read the anomaly log for recent start/resolve pairs
+2. Check the watchdog state file (`heavy-load-watchdog.state`) — if `prev_count > 0`, an anomaly is active *now*
+3. Check fact_store for stored anomaly records
+4. Verify live system metrics for confirmation
+
+Log notable resolved anomalies to fact_store so WARM memory catches them without file I/O.
+
+See `references/anomaly-logging.md` for the full implementation: state file fields, threshold table, integration points in the watchdog script, and the three injection points (start/resolve/setup).
+
+## Proactive thermal mitigation — rtcwake cooling period
+
+When the system (especially an old laptop) runs dangerously hot under sustained load and a physical fix isn't immediately possible, schedule a nightly cooling period: shut down for several hours using `rtcwake -m off` so the CPU gets complete thermal recovery.
+
+### Quick recipe
+
+```bash
+# Shutdown now, wake after 5 hours
+sudo rtcwake -m off -s 18000
+```
+
+### Hermes cron integration pattern
+
+1. Create `~/.hermes/scripts/cooling-period.sh` with the rtcwake command
+2. Schedule with `no_agent=true` via `hermes cron create --schedule "0 1 * * *" --no-agent --script cooling-period.sh`
+3. Audit existing cronjobs against the forbidden window (1:00-6:00)
+4. Move borderline jobs (+1h after wake time for margin)
+5. Document in Obsidian vault
+
+See `references/rtcwake-cooling-period.md` for the full pattern: prerequisites, no_agent script setup, cronjob auditing procedure, Obsidian documentation template, verification steps, and known pitfalls.
+
+### Thermal stats monitoring (pre/post comparison)
+
+For fine-tuning the cooling period (duration, effectiveness, edge cases), add pre/post metrics capture:
+
+**Architecture**: three scripts form a pipeline:
+- `cooling-stats.sh [--pre|--post]` — captures snapshot of CPU temp (package + per-core), ACPI temp, HDD temp (smartctl), fan RPM, load, memory, uptime, boot_id. Writes to `~/.hermes/cooling-stats/YYYY-MM-DD--{pre,post}.log`
+- `cooling-compare.sh` — reads today's pre and post logs, produces a delta table with ↓↑ arrows per metric, checks boot_id to confirm reboot happened
+- `cooling-post-report.sh` — wrapper that runs post capture then compare (used as cron script)
+
+**Integration**:
+1. Update `cooling-period.sh` to call `cooling-stats.sh --pre` before `sudo rtcwake`
+2. Create a new cron job at 06:10 (10 min after wake): `cooling-post-report.sh` with `no_agent=true, deliver=origin`
+
+The report arrives at origin every morning and shows exactly how much each temperature component dropped during the cooling window. See `references/rtcwake-cooling-period.md` for full scripts structure.
+
+## Post-crash freeze diagnosis (after reboot)
+
+Use this when the user reports the system froze/hung and was rebooted, and wants to know why. Collect evidence from the **previous boot** before checking current state.
+
+### 1. Determine what happened on the previous boot
+
+```bash
+# Kernel logs from previous boot (most important)
+sudo journalctl -k -b -1 --no-pager | grep -i -E "(powerclamp|thermal|temp|critical|watchdog|hung_task|lockup|oom|panic|nohz tick-stop)"
+
+# Full tail of previous boot kernel log (last 40 lines)
+sudo journalctl -k -b -1 --no-pager | tail -40
+
+# Whether the previous boot ended gracefully or crashed
+sudo journalctl -b -1 --no-pager | grep -i -E "poweroff|shutdown|reboot|crash|panic|freeze" | tail -10
+
+# List all boots to see if there was an unclean shutdown
+sudo journalctl --list-boots 2>/dev/null | tail -5
+```
+
+### 2. Distinguish thermal throttling from I/O stalls from OOM
+
+**Thermal-induced freeze** (most common on old laptops):
+
+```bash
+# Markers of kernel thermal throttling in previous boot
+sudo journalctl -k -b -1 --no-pager | grep -i "intel_powerclamp"
+# "Start idle injection to reduce power" = CPU being force-idled to prevent damage
+# "Stop forced idle injection" = temperature dropped back down
+
+# NOHZ tick-stop errors often accompany thermal stress
+sudo journalctl -k -b -1 --no-pager | grep -i "tick-stop error"
+
+# Check temperature history from monitoring services
+sudo journalctl -u temp-reboot-monitor.service --since "2 hours ago" --no-pager 2>/dev/null | grep -i "WARNING\|temperature"
+```
+
+Interpretation:
+- `intel_powerclamp: Start idle injection` → kernel forced CPU to idle for thermal safety. The system may appear frozen because the CPU is being deliberately paused. This is the most reliable freeze signature.
+- `NOHZ tick-stop error` → accompanies severe thermal stress; the timer subsystem is struggling.
+- 95-105°C at time of freeze → almost certainly thermal, especially on a laptop >5 years old.
+- No thermal markers but 100% iowait/IO pressure → suspect failing disk.
+
+**I/O-induced stall** (failing HDD, many pending sectors):
+
+```bash
+# SMART data (quick check only, no long tests)
+sudo smartctl -A /dev/sda | grep -E "Reallocated|Current_Pending|Offline_Uncorrectable|UDMA_CRC|Power_On_Hours|Temperature"
+
+# IO pressure from previous boot
+sudo journalctl -b -1 --no-pager | grep -i "iowait\|io pressure\|hung_task"
+
+# If Reallocated_Sector_Ct > 100 or Current_Pending_Sector > 0, HDD is degrading
+```
+
+Interpretation:
+- Current_Pending_Sector > 0 → disk will hang for seconds reading bad areas
+- Reallocated_Sector_Ct > 500 → drive is actively failing
+- Combine with iowait ≥25% or IO pressure full ≥20
+
+**OOM / memory pressure**:
+
+```bash
+sudo journalctl -k -b -1 --no-pager | grep -i "oom\|out of memory\|killed process"
+free -h   # check current swap usage
+```
+
+### 3. Check current cooling health
+
+```bash
+# Current temperatures
+for z in /sys/class/thermal/thermal_zone*; do
+  [ -r "$z/temp" ] || continue
+  echo "$(cat $z/type 2>/dev/null): $(awk "BEGIN{printf \"%.1f\", $(cat $z/temp)/1000}") C"
+done
+
+# Fan speed via sensors
+sudo sensors 2>/dev/null | grep -i "fan\|cpu_fan"
+
+# Cooling device states (0 = not cooling, >0 = cooling active)
+for c in /sys/class/thermal/cooling_device*; do
+  echo "$(basename $c): type=$(cat $c/type 2>/dev/null), cur=$(cat $c/cur_state 2>/dev/null)"
+done
+```
+
+If fan is spinning (2000+ RPM) but temps are 75-80°C at idle, the **heatsink is clogged with dust** — no software fix, needs physical cleaning.
+
+### 4. Thermal threshold reference (Ivy Bridge / Haswell era laptops)
+
+| Range | Meaning |
+|-------|---------|
+| 35-55°C | Normal idle |
+| 55-75°C | Normal under moderate load |
+| 75-85°C | Warm but acceptable |
+| 85-90°C | Warning — sustained use not recommended |
+| 90-95°C | Thermal throttling likely imminent |
+| 95-105°C | Critical — freeze/shutdown expected |
+
+TJunction (absolute max) for common mobile i5/i7 from 2010-2015: typically 100-105°C.
+
+### 5. If temp-reboot-monitor is present
+
+Check its configuration and recent activity:
+
+```bash
+systemctl status temp-reboot-monitor.service --no-pager 2>/dev/null || true
+cat /etc/temp-reboot-monitor.conf 2>/dev/null | grep -E "REBOOT_AT_C|CONSECUTIVE_HITS|DRY_RUN"
+journalctl -u temp-reboot-monitor.service --since "1 hour ago" --no-pager 2>/dev/null | tail -20
+```
+
+Default safety pattern: if temperature stays ≥REBOOT_AT_C for N consecutive checks, schedule a delayed poweroff.
+
+See `references/2026-06-20-N56VV-thermal-freeze-diagnosis.md` for a concrete worked example.
+
 ## Pitfalls
 
 - `apt autoremove` may remove packages that are only indirectly related because apt marks them auto-installed. Mention notable removals in the final summary.

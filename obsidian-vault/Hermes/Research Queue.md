@@ -4,23 +4,21 @@ Inserisci qui i video YouTube e le query di ricerca web che vuoi che il loop dua
 
 **Formato:**
 - `https://youtube.com/watch?v=VIDEO_ID — descrizione` → peer105 scarica transcript e produce digest
+- `video "tema da cercare"` → peer105 cerca un video YouTube sul tema, lo trascrive e produce digest
 - `web "query di ricerca"` → peer106 fa web search + extract + summary
 
-Il loop consuma un item per tick (alternando tra i due peer se ci sono entrambi i tipi). Se la coda è vuota, prosegue con iniziativa autonoma.
+Il loop consuma al massimo 2 item per tick (1 video + 1 web, o 2 web se non ci sono video). Se la coda è vuota, skippa.
 
 ---
 
 ## Da fare
 
-- [ ] ...
 
 ## In corso
 
-- [ ] ...
 
 ## Completati
 
-- [x] web "best low-power ARM SBC 2025 comparison"
-- [x] https://youtube.com/watch?v=StYdYsPAp_g — Top SBC Picks in 2026 for Engineers & Developers (Electromaker)
-- [x] web "Particle Tachion specifications review 2026"
-- [x] https://youtube.com/watch?v=7G8uC4Ri720 — Consumer SBCs in 2026 (ExplainingComputers)
+- [x] video "ultime novità intelligenza artificiale 2026"
+- [x] web "Hermes Agent AI 2026 updates features"
+- [x] web "didattica con intelligenza artificiale 2026"

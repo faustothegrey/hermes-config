@@ -482,3 +482,105 @@ La user memory è stata ridotta rimuovendo dettagli duplicati sulla voce/TTS e s
 - `[[System/fausto-N56VV Stability Monitoring]]`
 
 Principio futuro: mantenere nel prompt solo policy brevi e link Obsidian; lasciare soglie, comandi, output e test nel vault.
+
+---
+
+## Nightly Cooling Period — 2026-06-20
+
+**Breakthrough**: `rtcwake -m off` schedulato via Hermes cron ora funziona stabilmente. Strategia adottata per gestire il surriscaldamento senza intervento fisico immediato.
+
+### Cos'è
+
+N56VV va in **spegnimento programmato ogni notte da 1:00 a 6:00** per dare alla CPU 5 ore di raffreddamento completo. Questo previene accumuli termici e riduce il rischio di freeze notturni.
+
+### Implementazione
+
+```bash
+# ~/.hermes/scripts/cooling-period.sh
+#!/bin/bash
+sudo rtcwake -m off -s 18000
+```
+
+- `rtcwake -m off` spegne il sistema ma RTC rimane attivo
+- `-s 18000` = riaccensione dopo 18000 secondi (5 ore esatte)
+- Hermes cron esegue lo script all'1:00, poi la macchina si spegne
+- Alle 6:00 RTC riaccende, il sistema fa boot, Hermes (systemd) riparte
+
+### Cronjob Hermes
+
+| Campo | Valore |
+|-------|--------|
+| Nome | `N56VV Nightly Cooling Period` |
+| Job ID | `4290847cf173` |
+| Schedule | `0 1 * * *` |
+| Script | `cooling-period.sh` |
+| Modalità | `no_agent=true` (nessun LLM, solo script shell) |
+| Delivery | `local` |
+
+### Job adattati
+
+Il **Peer105+106 Autonomous Loop** è stato spostato da `0 6,10,14,18,22` a `0 7,10,14,18,22` per dare 1h di margine dopo la riaccensione delle 6:00.
+
+I job heartbeat (Peer105, Peer106) e il watchdog (heavy-load-watchdog) non sono stati modificati — semplicemente non girano quando N56VV è spento.
+
+### Perché funziona
+
+Il chip RTC della motherboard (parte del southbridge/EC) funziona anche a sistema spento, alimentato da un piccolo backup (batteria CMOS o standby). `rtcwake` programma un allarme RTC, e quando scatta, la motherboard riaccende l'alimentazione — esattamente come fa un wake-on-LAN o un wake timer del BIOS.
+
+### Dettaglio tecnico
+
+```bash
+# Verifica stato RTC
+sudo rtcwake -m show
+# o
+cat /proc/driver/rtc
+
+# Test rapido (5 minuti di cooling)
+sudo rtcwake -m off -s 300
+```
+
+Nessun rischio per i filesystem — `rtcwake -m off` fa uno shutdown pulito (acpi poweroff), non un crash. Tutti i servizi systemd si fermano normalmente prima dello spegnimento.
+
+---
+
+## Stats Monitoring System — 2026-06-20
+
+Dopo la simulazione riuscita, è stato aggiunto un sistema di rilevazione statistiche pre/post raffreddamento per il fine-tuning.
+
+### Componenti
+
+| File | Ruolo |
+|------|-------|
+| `~/.hermes/scripts/cooling-stats.sh` | Cattura snapshot termico/sistema completo |
+| `~/.hermes/scripts/cooling-compare.sh` | Confronta log pre e post in formato tabellare |
+| `~/.hermes/scripts/cooling-post-report.sh` | Wrapper: cattura post + genera report (usato dal cron) |
+
+### Metriche catturate
+
+- Temperature: CPU Package, Core 0-3, ACPI, HDD (smartctl)
+- Ventola: RPM CPU fan
+- Sistema: uptime, load average, boot_id, RAM/Swap
+- `/proc/stat` sum (per delta attività CPU)
+
+### Job
+
+| Job ID | Nome | Schedule | Script | Modalità |
+|--------|------|----------|--------|----------|
+| `4290847cf173` (esistente) | `N56VV Nightly Cooling Period` | `0 1 * * *` | `cooling-period.sh` | `no_agent=true` |
+| `3d9f08a47adf` (nuovo) | `N56VV Cooling Stats Report` | `10 6 * * *` | `cooling-post-report.sh` | `no_agent=true`, deliver `origin` |
+
+### Flusso notturno
+
+```
+01:00 → cooling-period.sh → cooling-stats.sh --pre (salva stats) → rtcwake -m off (spegnimento)
+06:00 → RTC riaccende → boot → systemd avvia Hermes
+06:10 → cooling-post-report.sh → cooling-stats.sh --post → cooling-compare.sh → report all'utente
+```
+
+### Log
+
+Tutti i file in `~/.hermes/cooling-stats/`:
+- `YYYY-MM-DD--pre.log` — stats pre-cooling
+- `YYYY-MM-DD--post.log` — stats post-cooling
+
+Il report include delta temperature, fan, boot_id verification, e viene consegnato al canale origin ogni mattina alle 06:10.

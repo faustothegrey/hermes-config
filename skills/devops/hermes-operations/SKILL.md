@@ -65,7 +65,46 @@ For local speaker/microphone checks from a Hermes CLI session:
 
 Use cron jobs for durable scheduled tasks. Use background terminal processes with `notify_on_complete=true` for bounded long commands. Keep prompts self-contained because scheduled jobs run in fresh sessions.
 
-**Pitfall — `cronjob action='run'` on LLM-driven jobs silently fails when agent slot is occupied**: If the parent session is active (you're in a conversation), the cron scheduler cannot spawn a new agent. The `action='run'` call returns `success: true` but the job never executes — `last_run_at` and `last_status` stay null. Fallback: read the job's prompt from `~/.hermes/cron/jobs.json`, extract the protocol, and execute it inline in the current session. Example: `python3 -c "import json; data=json.load(open('~/.hermes/cron/jobs.json')); [print(j['prompt']) for j in data['jobs'] if j['id']=='<job_id>']"`. This is particularly important for autonomous project loops — the user expects progress, not a silent no-op.
+### no_agent script pattern for system actions
+
+For system-level scheduled actions that don't need LLM reasoning (shutdowns, health pings, data collection, heartbeat checks), use `no_agent=true` with a script:
+
+1. Create the script under `~/.hermes/scripts/` — `.sh` files run via bash, everything else via Python
+2. Make it executable
+3. Create the cronjob with `no_agent=true` and `script=<filename>`:
+   ```
+   cronjob action=create, name="...", schedule="...", no_agent=true, script="cooling-period.sh", deliver="local"
+   ```
+4. Script stdout is delivered verbatim as the message; **empty stdout means silent** — nothing is sent
+5. **Non-zero exit or timeout sends an error alert** so silent failure isn't possible
+
+Common use cases:
+- **Shutdown/reboot scheduling**: `sudo rtcwake -m off -s <seconds>` for thermal cooling periods
+- **Health heartbeat**: lightweight shell/Python that checks a remote peer's `/health`
+- **Data collection**: gather system metrics and emit nothing (silent mode) when everything is normal
+- **Watchdog**: emit output only when a threshold is crossed, staying quiet the rest of the time
+
+### Cronjob schedule auditing against constraint windows
+
+When a new constraint window is introduced (e.g. a nightly shutdown, a maintenance window, a service blackout period):
+
+1. List all existing jobs: `cronjob action='list'`
+2. For each job, identify schedule and check if any execution falls inside the constraint window
+3. Decision matrix:
+   - If the constraint takes the machine offline (shutdown) → jobs in the window simply don't execute. Leave them — no change needed.
+   - If the machine stays online but a service is unavailable → pause or reschedule jobs that depend on that service.
+   - If a job is scheduled exactly at the edge of the window (e.g. at 06:00 while machine wakes at 06:00) → shift by +1h for margin.
+4. Document the audit results (what was changed and what was left as-is) in the system knowledge base.
+
+### Linking cron changes to external knowledge base
+
+After significant cron changes (new critical jobs, job schedule adjustments, or new constraint windows):
+
+1. Update the relevant Obsidian (or other KB) notes with full details: job ID, schedule, script path, and rationale
+2. Keep HOT memory compact — just the constraint rule and a pointer to the Obsidian notes
+3. Store the full audit in the KB so it's recoverable via session_search or Obsidian links
+
+### Pitfalls (existing)
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
