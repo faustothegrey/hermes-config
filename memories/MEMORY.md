@@ -15,3 +15,5 @@ N56VV freeze = thermal overload (CPU 95°C+). Fix: clean heatsink+fan, repaste t
 N56VV cooling 01-06 ogni notte. Stats pre/post in ~/.hermes/cooling-stats/. Report 06:10.
 §
 Anomalie watchdog su ~/.hermes/anomalies/anomalies.jsonl (JSONL: eventi start/resolve con timestamp, motivi, durata). Watchdog modificato per loggare automaticamente ogni anomalia all'inizio e alla risoluzione. Per consultare anomalie passate basta chiedere.
+§
+Cron job thermal-analysis-report (job_id: 919c3e205f8c) invia email riepilogo termico il 2026-06-23 alle 23:45. Analizza 3 giorni di snapshot da ~/.hermes/cooling-stats/ e manda report a fausto.lelli@gmail.com via himalaya (virgilio→gmail).

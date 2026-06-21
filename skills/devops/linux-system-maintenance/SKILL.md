@@ -188,6 +188,8 @@ sudo rtcwake -m off -s 18000
 4. Move borderline jobs (+1h after wake time for margin)
 5. Document in Obsidian vault
 
+**Cron job script path pitfall**: When creating a cron job with a script (`script=...`), use only the **filename** (relative to `~/.hermes/scripts/`), NOT an absolute path. The cron tool rejects absolute or home-relative paths.
+
 See `references/rtcwake-cooling-period.md` for the full pattern: prerequisites, no_agent script setup, cronjob auditing procedure, Obsidian documentation template, verification steps, and known pitfalls.
 
 ### Thermal stats monitoring (pre/post comparison)
@@ -196,6 +198,7 @@ For fine-tuning the cooling period (duration, effectiveness, edge cases), add pr
 
 **Architecture**: three scripts form a pipeline:
 - `cooling-stats.sh [--pre|--post]` — captures snapshot of CPU temp (package + per-core), ACPI temp, HDD temp (smartctl), fan RPM, load, memory, uptime, boot_id. Writes to `~/.hermes/cooling-stats/YYYY-MM-DD--{pre,post}.log`
+- `cooling-stats.sh` (no flags) — **snapshot mode**: writes to `~/.hermes/cooling-stats/YYYY-MM-DD--snapshot-HHMMSS.log`. Used for daytime periodic sampling.
 - `cooling-compare.sh` — reads today's pre and post logs, produces a delta table with ↓↑ arrows per metric, checks boot_id to confirm reboot happened
 - `cooling-post-report.sh` — wrapper that runs post capture then compare (used as cron script)
 
@@ -204,6 +207,45 @@ For fine-tuning the cooling period (duration, effectiveness, edge cases), add pr
 2. Create a new cron job at 06:10 (10 min after wake): `cooling-post-report.sh` with `no_agent=true, deliver=origin`
 
 The report arrives at origin every morning and shows exactly how much each temperature component dropped during the cooling window. See `references/rtcwake-cooling-period.md` for full scripts structure.
+
+### Daytime thermal profiling
+
+When the user wants to **decide whether additional cooling periods are needed during the day**, collect a dense temperature profile over several days before making recommendations. This is a data-first approach — "con criterio".
+
+**Workflow**:
+
+1. **Set up periodic snapshot sampling** during waking hours (07:00–00:00) via cron jobs:
+   - Main job: every 30 min (07:00–23:30) → ~34 samples/day
+   - Midnight snapshot (00:00) → 1 sample/day
+   - Existing pre/post (01:00/06:10) → 2 samples/day
+   - **Total**: ~37 data points/day
+
+   Create via `cronjob` tool with `no_agent=true` and `script="cooling-stats.sh"` (filename only, no path):
+   ```
+   action=create, name=daytime-thermal-snapshot, schedule=0,30 7-23 * * *, no_agent=true, script=cooling-stats.sh
+   action=create, name=daytime-thermal-midnight, schedule=0 0 * * *, no_agent=true, script=cooling-stats.sh
+   ```
+
+2. **Collect for 2-3 days** to establish a meaningful profile (covers weekdays, different workloads).
+
+3. **Analyze the data**:
+   - Read all snapshot files from `~/.hermes/cooling-stats/`
+   - Identify peak hours, average temps, correlation with load
+   - Compare against thermal thresholds (see reference table below)
+   - Generate a daily profile: which hours approach 80-85°C+
+
+4. **Decide with the user**:
+   - Is a single midday cool-off (e.g., 30-60 min at lunch) enough?
+   - Are multiple windows needed (e.g., 14:00 and 19:00)?
+   - Can the gap be closed with lighter workload scheduling instead?
+
+5. **Once cool-off windows are decided, schedule them** using the same rtcwake pattern as the nightly period (but shorter durations, e.g. 600-1800s for 10-30 min).
+
+**Pitfalls**:
+- Do not skip the collection phase — making cool-off decisions without data leads to either overheating or unnecessary downtime.
+- On machines that already run at 80°C+ at partial load, do not wait 3 days; start conservatively with one midday cool-off and refine.
+- Snapshot mode produces files, not console output — check `~/.hermes/cooling-stats/` for results.
+- Cron jobs with `no_agent=true` are silent on completion (no delivery to chat); this is correct for monitoring — the data piles up in the stats directory.
 
 ## Post-crash freeze diagnosis (after reboot)
 

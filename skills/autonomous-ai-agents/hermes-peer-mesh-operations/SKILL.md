@@ -1,7 +1,7 @@
 ---
 name: hermes-peer-mesh-operations
 description: "Operate a LAN mesh of Hermes Agent API-server peers: onboarding, readiness checks, safe experience exchange, synthesis, and feedback loops."
-version: 1.0.0
+version: 1.1.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos]
@@ -99,7 +99,7 @@ curl http://PEER_HOST:8642/health
 6. Verify readiness/authentication, not just liveness:
 
 ```bash
-curl -H "Authorization: Bearer $HERMES_PEER_KEY" \
+curl -H "Authorization: Bearer $HERM...EY" \
   http://PEER_HOST:8642/v1/capabilities
 ```
 
@@ -107,7 +107,16 @@ Expected readiness shape: HTTP 200 plus a Hermes API Server capabilities object.
 
 7. If `/health` is ok but `/v1/capabilities` returns `invalid_api_key`, check that the peer's `API_SERVER_KEY` matches the local peer key and restart the peer gateway/API server after changing env/config.
 
-8. Optionally run a tiny authenticated model/tool probe before trusting the peer for work.
+8. **Check rate-limit headers (v2 protocol update 2026-06-21, round-002):** Free-tier models can return HTTP 429 (rate limited) that looks like 401 (auth failure) to naive timeout handlers. Distinguish by inspecting response headers:
+
+   ```
+   X-RateLimit-Remaining: 0
+   Retry-After: 60
+   ```
+
+   A 429 with `Retry-After` means the peer is alive and auth works — it's just throttled. A 401 with no rate-limit headers is a real auth problem. The canonical round-001 onboarding failure ("401 when /health is ok") is still the primary issue, but 429 masquerading as 401 is a close second.
+
+9. Optionally run a tiny authenticated model/tool probe before trusting the peer for work.
 
 ### SSH key deployment pitfall
 
@@ -140,6 +149,48 @@ Pitfall: `/health` can keep returning ok from a stale process while authenticate
 6. Send a compact synthesis digest back to peers for review/correction.
 7. Incorporate peer feedback into a final synthesis.
 8. Only then decide whether anything belongs in memory or skills.
+
+### Cron session adaptation
+
+When the exchange runs as a cron job, the `hermes_peers` MCP tools are NOT auto-loaded (MCP servers connect on `/reload-mcp`, which doesn't happen in cron sessions). Fall back to direct HTTP via **Python's `urllib.request`** — it is more reliable than bash curl for multi-step peer workflows because:
+
+- No quoting/shell-escaping issues with env vars in Bearer tokens.
+- Cleaner error handling (proper HTTP status codes, exception types).
+- Session creation and chat can be orchestrated in a single Python file.
+
+Avoid bash pipelines that source `.env` and chain `curl` with Authorization headers — they produce brittle command strings that break on special characters in API keys.
+
+### Timestamped session titles
+
+When creating API server sessions for peer chat (POST `/api/sessions`), include a timestamp in the title to avoid uniqueness conflicts:
+
+```python
+import time
+title = f"peer-exchange-round-002-{int(time.time())}"
+```
+
+The API server enforces title uniqueness — plain titles like `"peer-exchange-round-002"` cause a 400 `invalid_title` error on the second creation.
+
+### Partial mesh resilience
+
+The protocol must handle peers going offline between rounds. Do NOT block the exchange on one unreachable peer:
+
+1. Check health — if HTTP 000 or connection timeout, move on.
+2. Save an offline report documenting the diagnostic (ping, port test, HTTP code).
+3. Continue with remaining peers.
+4. Include a note in the synthesis: "[peer] was unreachable — needs human investigation."
+5. Do not fail the entire exchange.
+
+Round-002 experience: 1 of 2 peers was unreachable (no route to host, 100% ping loss). The exchange completed successfully with the one healthy peer.
+
+### Empty-response failure pattern (rate-limiting mid-turn)
+
+When a constrained peer's free-tier model hits rate limiting mid-turn, tool results come back but the assistant response is truncated to empty. The agent appears to hang or produce nothing. Workarounds:
+
+- Keep tool calls small — few per turn, not chained sequences.
+- Use `execute_code` for workflows needing 3+ sequential tool calls (Python runtime handles timing better than the chat loop).
+- Add "wait 60 seconds between steps" explicitly in task prompts — do not rely on retry logic alone.
+- Cron prompts for API-bound tasks: `skills: ["retry-wrapper", "your-task-skill"]` + "retry on failure with exponential backoff, max 3 attempts." This avoids the dead-helper problem where a single API hiccup stalls a whole cron pipeline.
 
 Recommended file layout:
 
@@ -322,6 +373,7 @@ The `call_peer` tool-verification pattern: when a peer's tool capability is unkn
 - `scripts/send-recap-email.py` — reusable Python SMTP_SSL email sender; falls back from himalaya when IMAP DNS is unreachable.
 
 - `references/round-001-lessons.md` — condensed lessons from the first local peer exchange round, including readiness/auth pitfalls and peer feedback.
+- `references/round-002-lessons.md` — round 002 lessons: rate-limit header checking, partial mesh resilience, Python-over-bash for cron peer workflows, empty-response throttling pattern, cross-platform skill sharing.
 - `references/constrained-peer-watchdog.sh` — minimal bash watchdog template for resource-constrained peers with transient model failures.
 - `references/exchange-protocol.md` — reusable exchange protocol: round-1 self-report prompt, peer setup checklist, verification ladder, normalized report schema, synthesis output shape, and feedback prompt template.
 - `references/memory-architecture-5-layer.md` — shared 5-layer memory model (hot/warm/cold/procedural/vault) adopted across peers. Includes holographic provider details, activation steps, and numpy pitfall (Hermes issue #17350).
