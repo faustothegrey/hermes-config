@@ -5,3 +5,5 @@ fausto-N56VV fixed restarts are disabled; sustained thermal danger alerts via Te
 PREFERENCE: peer105/106 loop must be slow. Max 3-4 video/giorno, ~10 articoli/giorno. Niente batch, niente stress test. Le macchine ARM hanno RAM minima e swappano già a riposo.
 §
 Nightly cooling period: 1:00 AM - 6:00 AM. N56VV si spegne/riposa in questa finestra.
+§
+Preferisce soluzioni artigianali/trasparenti ("un'altra soluzione artigianale") a strumenti opachi o "magici" (Tailscale definito "un po magico"). Preferisce capire come funziona quello che usa.

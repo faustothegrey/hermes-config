@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 12
+        "completed": 13
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-06-23T00:30:00+02:00",
-      "last_run_at": "2026-06-21T00:31:57.471832+02:00",
+      "next_run_at": "2026-06-24T00:30:00+02:00",
+      "last_run_at": "2026-06-22T00:31:57.532100+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 1660
+        "completed": 1849
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-06-22T00:35:27.639419+02:00",
-      "last_run_at": "2026-06-22T00:30:27.639419+02:00",
+      "next_run_at": "2026-06-23T00:35:28.675966+02:00",
+      "last_run_at": "2026-06-23T00:30:28.675966+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -95,15 +95,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 59
+        "completed": 78
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-06-22T01:00:00+02:00",
-      "last_run_at": "2026-06-22T00:00:25.801921+02:00",
+      "next_run_at": "2026-06-23T01:00:00+02:00",
+      "last_run_at": "2026-06-23T00:00:27.176105+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -132,15 +132,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 51
+        "completed": 70
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-06-22T01:00:00+02:00",
-      "last_run_at": "2026-06-22T00:00:25.728975+02:00",
+      "next_run_at": "2026-06-23T01:00:00+02:00",
+      "last_run_at": "2026-06-23T00:00:27.306954+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -169,15 +169,15 @@
       "schedule_display": "0 7,10,14,18,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 12
+        "completed": 17
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-06-22T07:00:00+02:00",
-      "last_run_at": "2026-06-21T22:00:36.771889+02:00",
+      "next_run_at": "2026-06-23T07:00:00+02:00",
+      "last_run_at": "2026-06-22T22:00:32.104883+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -206,15 +206,15 @@
       "schedule_display": "0 1 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T12:41:33.634799+02:00",
-      "next_run_at": "2026-06-22T01:00:00+02:00",
-      "last_run_at": "2026-06-21T01:00:25.350075+02:00",
+      "next_run_at": "2026-06-23T01:00:00+02:00",
+      "last_run_at": "2026-06-22T01:00:29.120321+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -243,15 +243,15 @@
       "schedule_display": "10 6 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T13:47:41.105424+02:00",
-      "next_run_at": "2026-06-22T06:10:00+02:00",
-      "last_run_at": "2026-06-21T06:10:53.347738+02:00",
+      "next_run_at": "2026-06-23T06:10:00+02:00",
+      "last_run_at": "2026-06-22T06:10:49.147840+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -274,21 +274,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "0,30 7-23 * * *",
-        "display": "0,30 7-23 * * *"
+        "expr": "*/5 7-23 * * *",
+        "display": "*/5 7-23 * * *"
       },
-      "schedule_display": "0,30 7-23 * * *",
+      "schedule_display": "*/5 7-23 * * *",
       "repeat": {
         "times": null,
-        "completed": 34
+        "completed": 129
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-06-22T07:00:00+02:00",
-      "last_run_at": "2026-06-21T23:30:24.745491+02:00",
+      "next_run_at": "2026-06-23T07:00:00+02:00",
+      "last_run_at": "2026-06-22T23:55:26.463296+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -317,15 +317,15 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:05.668069+02:00",
-      "next_run_at": "2026-06-23T00:00:00+02:00",
-      "last_run_at": "2026-06-22T00:00:25.885512+02:00",
+      "next_run_at": "2026-06-24T00:00:00+02:00",
+      "last_run_at": "2026-06-23T00:00:27.416768+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -337,7 +337,7 @@
     {
       "id": "919c3e205f8c",
       "name": "thermal-analysis-report",
-      "prompt": "Hai ricevuto i dati di monitoraggio termico del N56VV degli ultimi 3 giorni (21-23 giugno 2026) dalla directory ~/.hermes/cooling-stats/.\n\nIl tuo compito:\n\n1. ANALIZZA i dati \u2014 calcola:\n   - Media temperature CPU pkg per fascia oraria (mattina 7-12, pomeriggio 12-18, sera 18-00)\n   - Picco massimo registrato (quando e quanto)\n   - Minimo registrato (quando e quanto)\n   - Andamento della ventola (RPM) in relazione alla temperatura\n   - Temperature del disco\n   - Correlazione tra carico (load) e temperatura\n   - Confronto pre/post cool-off notturno per ogni notte (quanto \u00e8 sceso)\n\n2. PRODUCI un report in italiano chiaro, ben formattato (anche in stile tabellare)\n\n3. INVIALO via email:\n   Scrivi il contenuto in /tmp/thermal-report-20260623.eml\n   Poi invia con: cat /tmp/thermal-report-20260623.eml | himalaya message send -- -\n   Formato email:\n     From: fausto.lelli@virgilio.it\n     To: fausto.lelli@gmail.com\n     Subject: \ud83d\udcca Report termico N56VV \u2014 3 giorni di monitoraggio\n\n4. Se i dati mostrano che la CPU supera stabilmente gli 80\u00b0C in certe fasce orarie, raccomanda uno o pi\u00f9 cool-off aggiuntivi specificando orario e durata suggerita.\n\nIMPORTANTE: Scrivi il file .eml e invialo. Non fermarti prima.",
+      "prompt": "Hai ricevuto i dati di monitoraggio termico del N56VV degli ultimi 3 giorni (21-23 giugno 2026) dallo script thermal-report.sh.\n\nNOTA IMPORTANTE: Il 22 Giugno 2026 alle ~17:30 \u00e8 stata installata una ventola USB esterna per assistere il raffreddamento. Il baselime pre-ventola era CPU pkg 81\u00b0C a idle (load 0.22, fan interno 3300 RPM, disk 52\u00b0C). I dati precedenti a quell'ora sono PRE-ventola, quelli successivi sono POST-ventola.\n\nAnalizza:\n1. Temperature medie CPU e disk nei 3 giorni\n2. Confronto temperature PRE vs POST ventola esterna (stessa fascia oraria, stesso carico)\n3. Eventuali anomalie termiche (spike >= 85\u00b0C, freeze risk >= 95\u00b0C)\n4. Andamento fan RPM interno\n5. Se la ventola esterna mostra un apprezzabile calo termico\n\nScrivi un report in italiano, invialo come email a fausto.lelli@gmail.com via himalaya (From: fausto.lelli@virgilio.it).",
       "skills": [
         "linux-system-maintenance"
       ],
@@ -372,7 +372,51 @@
       "origin": null,
       "enabled_toolsets": null,
       "workdir": null
+    },
+    {
+      "id": "c9a6557a16fc",
+      "name": "peer-exchange-friday",
+      "prompt": "Today is Friday \u2014 weekly peer experience exchange day.\n\nRead ~/.hermes/peer-status/status.json and identify which peers are currently \"online\".\n\nFor each online peer, run a call_peer with the standard exchange prompt. The protocol is:\n\n1. Check each peer's health and capabilities\n2. For each healthy peer, send the self-report prompt\n3. Collect the responses into ~/.hermes/peer-exchange/round-N/\n4. Write a synthesis: common lessons, unique lessons, failures, recommendations\n5. Send a compact digest back to each peer for review\n6. Save the synthesis to ~/.hermes/peer-exchange/\n\nTrack which peers have already been exchanged this week by checking ~/.hermes/peer-exchange/.exchange-tracker.json. It's a JSON dict: {\"peer105\": \"2026-06-26\", ...}. Skip peers that already have an exchange date this week (the Friday date).\n\nAfter ALL online peers are processed for this Friday, update the tracker with today's date for each peer processed.\n\nDo NOT reveal secrets, API keys, env dumps, private content, or credentials in any exchange message. Skip any peer that is offline or returns errors \u2014 move on to the next.\n\nKeep exchanges brief and focused on operational/technical lessons.",
+      "skills": [
+        "hermes-peer-mesh-operations"
+      ],
+      "skill": "hermes-peer-mesh-operations",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 * * * 5",
+        "display": "0 * * * 5"
+      },
+      "schedule_display": "0 * * * 5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-22T22:19:56.780991+02:00",
+      "next_run_at": "2026-06-26T00:00:00+02:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal",
+        "file",
+        "web",
+        "delegation"
+      ],
+      "workdir": null
     }
   ],
-  "updated_at": "2026-06-22T00:30:27.639693+02:00"
+  "updated_at": "2026-06-23T00:30:28.676531+02:00"
 }

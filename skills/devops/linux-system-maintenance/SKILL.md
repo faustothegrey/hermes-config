@@ -247,6 +247,30 @@ When the user wants to **decide whether additional cooling periods are needed du
 - Snapshot mode produces files, not console output — check `~/.hermes/cooling-stats/` for results.
 - Cron jobs with `no_agent=true` are silent on completion (no delivery to chat); this is correct for monitoring — the data piles up in the stats directory.
 
+### Verifying a cooling modification
+
+When the user installs a physical cooling improvement (external fan, heatsink cleaning, thermal paste, undervolt, fan curve change), use this workflow to detect whether it made a tangible difference.
+
+**Immediate actions upon installation:**
+
+1. **Capture a pre-modification baseline**: read the most recent `cooling-stats.sh` snapshot from `~/.hermes/cooling-stats/` that matches the current load level (idle vs busy). Record CPU pkg temp, fan RPM, and disk temp in memory + fact_store so future sessions can reference it.
+
+2. **Find a control point** from a previous day: look for a snapshot at the same time-of-day with similar load from an earlier date. A simple `ls ~/.hermes/cooling-stats/ | grep "YYYY-MM-DD--snapshot-HH"` can confirm whether yesterday's data exists at the comparable timestamp.
+
+3. **Update any scheduled analysis jobs** that will report on the affected period. For example, if there's a `thermal-analysis-report` cron job scheduled, update its prompt to include the pre-modification baseline and ask for an explicit pre/post comparison. This ensures the next automated report mentions the delta.
+
+4. **Increase temporal resolution**: bump the daytime sampling from every 30 min to **every 5 min** (schedule `*/5 7-23 * * *`). The cooling-stats.sh script is lightweight (sysfs reads + one smartctl) — running it every 5 min has negligible system impact. Keep the higher rate for at least 24-48 hours, then restore the original 30-min cadence.
+
+**Interpreting the results:**
+
+- **Same-time-of-day, same-load** comparison is the most reliable signal. Idle temps on an old laptop are very consistent day-to-day (N56VV shows 81°C ±1°C at idle every day) — any deviation beyond ±1-2°C at idle is real.
+- Under load, a 3-8°C drop is a tangible win even if it doesn't look dramatic. Every degree below 85°C means more headroom before thermal throttling (95°C+).
+- If you only have post-mod data and the user asks for a verdict before 24h, provide the best available comparison (yesterday's same-time snapshot) with appropriate caveats about load differences.
+- If the fan was the fix for repeated thermal freezes, also monitor the anomaly log (`~/.hermes/anomalies/anomalies.jsonl`) for reduced frequency of thermal/I/O-pressure events.
+
+**Restoration plan:**
+After 48 hours, ask the user whether to keep 5-min sampling (if the fan is proving effective and they want fine-grained data) or restore the original 30-min cadence. If restoring, update the cron schedule back: `0,30 7-23 * * *`.
+
 ## Post-crash freeze diagnosis (after reboot)
 
 Use this when the user reports the system froze/hung and was rebooted, and wants to know why. Collect evidence from the **previous boot** before checking current state.
