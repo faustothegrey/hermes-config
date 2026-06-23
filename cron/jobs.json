@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 13
+        "completed": 14
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-06-24T00:30:00+02:00",
-      "last_run_at": "2026-06-22T00:31:57.532100+02:00",
+      "next_run_at": "2026-06-25T00:30:00+02:00",
+      "last_run_at": "2026-06-23T00:32:05.207633+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 1849
+        "completed": 2037
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-06-23T00:35:28.675966+02:00",
-      "last_run_at": "2026-06-23T00:30:28.675966+02:00",
+      "next_run_at": "2026-06-24T00:30:14.367895+02:00",
+      "last_run_at": "2026-06-24T00:25:14.367895+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -95,15 +95,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 78
+        "completed": 97
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-06-23T01:00:00+02:00",
-      "last_run_at": "2026-06-23T00:00:27.176105+02:00",
+      "next_run_at": "2026-06-24T01:00:00+02:00",
+      "last_run_at": "2026-06-24T00:00:12.703187+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -132,15 +132,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 70
+        "completed": 89
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-06-23T01:00:00+02:00",
-      "last_run_at": "2026-06-23T00:00:27.306954+02:00",
+      "next_run_at": "2026-06-24T01:00:00+02:00",
+      "last_run_at": "2026-06-24T00:00:12.767078+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -169,15 +169,15 @@
       "schedule_display": "0 7,10,14,18,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 17
+        "completed": 22
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-06-23T07:00:00+02:00",
-      "last_run_at": "2026-06-22T22:00:32.104883+02:00",
+      "next_run_at": "2026-06-24T07:00:00+02:00",
+      "last_run_at": "2026-06-23T22:01:15.574493+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -206,15 +206,15 @@
       "schedule_display": "0 1 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T12:41:33.634799+02:00",
-      "next_run_at": "2026-06-23T01:00:00+02:00",
-      "last_run_at": "2026-06-22T01:00:29.120321+02:00",
+      "next_run_at": "2026-06-24T01:00:00+02:00",
+      "last_run_at": "2026-06-23T01:00:30.352805+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -243,15 +243,15 @@
       "schedule_display": "10 6 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T13:47:41.105424+02:00",
-      "next_run_at": "2026-06-23T06:10:00+02:00",
-      "last_run_at": "2026-06-22T06:10:49.147840+02:00",
+      "next_run_at": "2026-06-24T06:10:00+02:00",
+      "last_run_at": "2026-06-23T06:10:24.867258+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -280,15 +280,15 @@
       "schedule_display": "*/5 7-23 * * *",
       "repeat": {
         "times": null,
-        "completed": 129
+        "completed": 333
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-06-23T07:00:00+02:00",
-      "last_run_at": "2026-06-22T23:55:26.463296+02:00",
+      "next_run_at": "2026-06-24T07:00:00+02:00",
+      "last_run_at": "2026-06-23T23:55:12.450313+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -317,55 +317,16 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:05.668069+02:00",
-      "next_run_at": "2026-06-24T00:00:00+02:00",
-      "last_run_at": "2026-06-23T00:00:27.416768+02:00",
+      "next_run_at": "2026-06-25T00:00:00+02:00",
+      "last_run_at": "2026-06-24T00:00:12.834685+02:00",
       "last_status": "ok",
-      "last_error": null,
-      "last_delivery_error": null,
-      "deliver": "local",
-      "origin": null,
-      "enabled_toolsets": null,
-      "workdir": null
-    },
-    {
-      "id": "919c3e205f8c",
-      "name": "thermal-analysis-report",
-      "prompt": "Hai ricevuto i dati di monitoraggio termico del N56VV degli ultimi 3 giorni (21-23 giugno 2026) dallo script thermal-report.sh.\n\nNOTA IMPORTANTE: Il 22 Giugno 2026 alle ~17:30 \u00e8 stata installata una ventola USB esterna per assistere il raffreddamento. Il baselime pre-ventola era CPU pkg 81\u00b0C a idle (load 0.22, fan interno 3300 RPM, disk 52\u00b0C). I dati precedenti a quell'ora sono PRE-ventola, quelli successivi sono POST-ventola.\n\nAnalizza:\n1. Temperature medie CPU e disk nei 3 giorni\n2. Confronto temperature PRE vs POST ventola esterna (stessa fascia oraria, stesso carico)\n3. Eventuali anomalie termiche (spike >= 85\u00b0C, freeze risk >= 95\u00b0C)\n4. Andamento fan RPM interno\n5. Se la ventola esterna mostra un apprezzabile calo termico\n\nScrivi un report in italiano, invialo come email a fausto.lelli@gmail.com via himalaya (From: fausto.lelli@virgilio.it).",
-      "skills": [
-        "linux-system-maintenance"
-      ],
-      "skill": "linux-system-maintenance",
-      "model": null,
-      "provider": null,
-      "base_url": null,
-      "script": "thermal-report.sh",
-      "no_agent": false,
-      "context_from": null,
-      "schedule": {
-        "kind": "once",
-        "run_at": "2026-06-23T23:45:00+02:00",
-        "display": "once at 2026-06-23 23:45"
-      },
-      "schedule_display": "once at 2026-06-23 23:45",
-      "repeat": {
-        "times": 1,
-        "completed": 0
-      },
-      "enabled": true,
-      "state": "scheduled",
-      "paused_at": null,
-      "paused_reason": null,
-      "created_at": "2026-06-21T06:37:22.301424+02:00",
-      "next_run_at": "2026-06-23T23:45:00+02:00",
-      "last_run_at": null,
-      "last_status": null,
       "last_error": null,
       "last_delivery_error": null,
       "deliver": "local",
@@ -418,5 +379,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-06-23T00:30:28.676531+02:00"
+  "updated_at": "2026-06-24T00:30:13.330628+02:00"
 }
