@@ -1,13 +1,15 @@
-"Mandami una email" = usa himalaya message send con raw message (From: fausto.lelli@virgilio.it, To: fausto.lelli@gmail.com). Scrivi il contenuto in /tmp/*.eml, poi `cat /tmp/file.eml | himalaya message send -- -`. Account virgilio configurato e funzionante.
+Email via himalaya (virgilio→gmail, raw .eml → pipe). Quest briefs: English, structured (objective/timeline/tools/findings), sent at milestones.
 §
 Peer105/106 ARM Fedora30 risorse minime, SSH root. Faro beacon: beacon-listener N56VV:9191, cron */5 monitor, ~/.hermes/peer-status/. beacon.sh su 105/106 (@reboot), peer128 (cron */2 con detection LAN). Skill: faro-peer-beacon.
 §
-Prima di agire: check (1) HOT memory, (2) WARM fact_store, (3) session_search, (4) Obsidian vault. Solo se manca/datata → live. Conferma utente se datata.
-§
 Research Queue [[Hermes/Research Queue.md]] → loop dual-peer. YouTube/video→peer105, web→peer106. Loop manda email riepilogo a gmail via himalaya. Trigger: "aggiungi temi". Ritmo max 4 video + 10 articoli/giorno.
 §
-N56VV: COOLING WINDOW 01:00-06:00 ogni notte (si spegne/riposa). Ventola USB 22-Giu. Freeze oltre 95°C. Baseline 81°C idle. Stats ~/.hermes/cooling-stats/. Cron report termico job_id:919c3e205f8c (23-Giu 23:45), virgilio→gmail.
+N56VV: COOLING WINDOW 02:00-04:00 (notturno, 2h) + 12:00-16:00 (diurno, 4h) — Opzione A. Ventola USB 22-Giu. Freeze oltre 95°C. Baseline 81°C idle. Stats ~/.hermes/cooling-stats/. Cron report termico: notturno job_id:3d9f08a47adf (04:10), diurno job_id:81db87817660 (16:10), entrambi virgilio→gmail. Cooling period ha precedenza su ogni altro cron job.
 §
-Anomalie watchdog su ~/.hermes/anomalies/anomalies.jsonl (JSONL: eventi start/resolve con timestamp, motivi, durata). Watchdog modificato per loggare automaticamente ogni anomalia all'inizio e alla risoluzione. Per consultare anomalie passate basta chiedere.
+Anomalies at ~/.hermes/anomalies/anomalies.jsonl (JSONL start/resolve events, timestamp, reason, duration). Watchdog auto-logs detection & resolution.
 §
 Frase magica "apriti sedano" → apre 2222 + 3001 per 20 min. Keepalive: utente risponde "Sisisi" su Telegram per resettare timer +20 min.
+§
+Quest system (skill: quest-system). Up to 3 parallel quests, round-robin. Advancement cron job_id:04fd5a313c48 every 4h. Resources ~/.hermes/quest-resources.json (peer105 4vids/day, peer106 10searches/day). Status in Obsidian Hermes/Quests/<quest>.md. First quest: Diagram Drawing Skills for LLMs.
+§
+User work style: research-before-build ("first see what the world offers"). Optimize resources, don't reinvent wheels — check existing tools/peers first. Expects candor: tell them when a goal isn't clear. When a new quest arrives while one is active, ask: replace or queue?

@@ -14,6 +14,7 @@ STDOUT:
 │ hermes-memory-archit… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ hermes-peer-mesh-ope… │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ kanban-codex-lane     │ autonomous-ai-agents │ local    │ local    │ enabled │
+│ quest-system          │ autonomous-ai-agents │ local    │ local    │ enabled │
 │ baoyu-article-illust… │ creative             │ official │ official │ enabled │
 │ baoyu-comic           │ creative             │ official │ official │ enabled │
 │ comfyui               │ creative             │ builtin  │ builtin  │ enabled │
@@ -51,7 +52,7 @@ STDOUT:
 │ subagent-driven-deve… │ software-development │ local    │ local    │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 6 builtin, 32 local — 44 enabled, 0 disabled
+6 hub-installed, 6 builtin, 33 local — 45 enabled, 0 disabled
 
 
 

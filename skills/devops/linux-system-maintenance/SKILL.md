@@ -184,11 +184,55 @@ sudo rtcwake -m off -s 18000
 
 1. Create `~/.hermes/scripts/cooling-period.sh` with the rtcwake command
 2. Schedule with `no_agent=true` via `hermes cron create --schedule "0 1 * * *" --no-agent --script cooling-period.sh`
-3. Audit existing cronjobs against the forbidden window (1:00-6:00)
+3. Audit existing cronjobs against the forbidden window (1:00-6:00) — see cron conflict checklist below
 4. Move borderline jobs (+1h after wake time for margin)
 5. Document in Obsidian vault
 
 **Cron job script path pitfall**: When creating a cron job with a script (`script=...`), use only the **filename** (relative to `~/.hermes/scripts/`), NOT an absolute path. The cron tool rejects absolute or home-relative paths.
+
+### Dual cooling periods pattern
+
+When one nightly cooling window is insufficient and a **daytime cooling period** is also needed (e.g. the system stays above 80°C for 14+ consecutive hours), set up two separate rtcwake scripts and cron jobs:
+
+1. **Notturno** (short, e.g. 2h at 02:00-04:00) — just enough to reset the thermal baseline, frees overnight hours for work
+2. **Diurno** (longer, e.g. 4h at 12:00-16:00) — covers the peak ambient heat of the afternoon
+
+Implementation steps:
+
+1. **Create two scripts** in `~/.hermes/scripts/`:
+   - `cooling-period.sh` — rtcwake with short duration (e.g. `-s 7200` for 2h)
+   - `cooling-period-diurno.sh` — rtcwake with longer duration (e.g. `-s 14400` for 4h), calls `cooling-stats.sh --pre-diurno` before shutdown
+
+2. **Create two cron jobs** with `no_agent=true`:
+   - Nightly: `schedule="0 2 * * *"` (02:00 shutdown, wake at 04:00)
+   - Diurnal: `schedule="0 12 * * *"` (12:00 shutdown, wake at 16:00)
+
+3. **Extend cooling-stats.sh** to support `--pre-diurno`/`--post-diurno` suffixed log files (same metrics, different log filename suffix)
+
+4. **Create per-period report scripts**:
+   - `cooling-compare-diurno.sh` — reads `pre-diurno`/`post-diurno` logs, identical format to the nightly compare
+   - `cooling-post-report-diurno.sh` — wrapper that captures post-diurno stats then runs the diurno compare
+
+5. **Create separate report cron jobs** for each period:
+   - Nightly report: `schedule="10 4 * * *"` (04:10, after 02:00-04:00 cooling)
+   - Diurnal report: `schedule="10 16 * * *"` (16:10, after 12:00-16:00 cooling)
+
+### Cron conflict checklist for dual cooling
+
+When implementing two cooling windows, systematically audit every existing cron job. Use this table format:
+
+| Cron job | Schedule | Falls in cooling window? | Action |
+|---|---|---|---|
+| N56VV Nightly Cooling | `0 1 * * *` | Yes (old) | Move to `0 2 * * *` |
+| Research Loop | `0 14 * * *` | Yes (14:00 in 12:00-16:00) | Move to `0 11 * * *` or `0 16 * * *` |
+| Stats snapshot | `*/5 7-23 * * *` | Partially (12-16) | Extend range to `*/5 4-12,16-23,0-2 * * *` |
+| Heartbeat, watchdog, backup | varies | Falls when machine is off | Leave — cron simply won't fire, no harm |
+
+Rules:
+- **Jobs that run on the same machine that shuts down** — leaving them in a cooling window is harmless; they simply don't fire while the machine is off. No queue buildup (standard cron, not anacron).
+- **Jobs borderline at wake-up time** — shift by at least +5 min to avoid startup race. `+10 min` is safer.
+- **Thermal snapshot range must match wake hours** — if the machine is off 12:00-16:00 and 02:00-04:00, the snapshot range must be `4-12,16-23,0-2` (or equivalent).
+- **Research loops, report generators** — these have real work to do; move them to timeslots just before or just after the cooling windows so they don't miss runs.
 
 See `references/rtcwake-cooling-period.md` for the full pattern: prerequisites, no_agent script setup, cronjob auditing procedure, Obsidian documentation template, verification steps, and known pitfalls.
 
@@ -197,16 +241,30 @@ See `references/rtcwake-cooling-period.md` for the full pattern: prerequisites, 
 For fine-tuning the cooling period (duration, effectiveness, edge cases), add pre/post metrics capture:
 
 **Architecture**: three scripts form a pipeline:
-- `cooling-stats.sh [--pre|--post]` — captures snapshot of CPU temp (package + per-core), ACPI temp, HDD temp (smartctl), fan RPM, load, memory, uptime, boot_id. Writes to `~/.hermes/cooling-stats/YYYY-MM-DD--{pre,post}.log`
+- `cooling-stats.sh [--pre|--post|--pre-diurno|--post-diurno]` — captures snapshot of CPU temp (package + per-core), ACPI temp, HDD temp (smartctl), fan RPM, load, memory, uptime, boot_id. Writes to `~/.hermes/cooling-stats/YYYY-MM-DD--{pre,post,pre-diurno,post-diurno}.log`
 - `cooling-stats.sh` (no flags) — **snapshot mode**: writes to `~/.hermes/cooling-stats/YYYY-MM-DD--snapshot-HHMMSS.log`. Used for daytime periodic sampling.
-- `cooling-compare.sh` — reads today's pre and post logs, produces a delta table with ↓↑ arrows per metric, checks boot_id to confirm reboot happened
-- `cooling-post-report.sh` — wrapper that runs post capture then compare (used as cron script)
+- `cooling-compare.sh` / `cooling-compare-diurno.sh` — reads today's pre and post logs for one cooling cycle, produces a delta table with ↓↑ arrows per metric, checks boot_id to confirm reboot happened
+- `cooling-post-report.sh` / `cooling-post-report-diurno.sh` — wrappers that run post capture then compare (used as cron scripts)
 
-**Integration**:
+**Supported modes** (cooling-stats.sh):
+- `--pre` — saves as `pre.log` (nightly cooling)
+- `--post` — saves as `post.log` (nightly cooling)
+- `--pre-diurno` — saves as `pre-diurno.log` (diurnal cooling)
+- `--post-diurno` — saves as `post-diurno.log` (diurnal cooling)
+
+This lets you run up to two independent cooling cycles per day, each with its own measurement set.
+
+**Integration for a single nightly cooling period**:
 1. Update `cooling-period.sh` to call `cooling-stats.sh --pre` before `sudo rtcwake`
 2. Create a new cron job at 06:10 (10 min after wake): `cooling-post-report.sh` with `no_agent=true, deliver=origin`
 
-The report arrives at origin every morning and shows exactly how much each temperature component dropped during the cooling window. See `references/rtcwake-cooling-period.md` for full scripts structure.
+**Integration for dual cooling periods** (notturno + diurno):
+1. Create `cooling-period.sh` → calls `--pre`, rtcwake 7200s (02:00-04:00)
+2. Create `cooling-period-diurno.sh` → calls `--pre-diurno`, rtcwake 14400s (12:00-16:00)
+3. Create report cron: `10 4 * * *` → script `cooling-post-report.sh` (notturno)
+4. Create report cron: `10 16 * * *` → script `cooling-post-report-diurno.sh` (diurno)
+
+The report arrives at origin every morning and afternoon and shows exactly how much each temperature component dropped during the cooling window. See `references/rtcwake-cooling-period.md` for full scripts structure, cron conflict checklist methodology (see "Dual cooling periods pattern" section above), and pitfalls.
 
 ### Daytime thermal profiling
 
@@ -239,7 +297,7 @@ When the user wants to **decide whether additional cooling periods are needed du
    - Are multiple windows needed (e.g., 14:00 and 19:00)?
    - Can the gap be closed with lighter workload scheduling instead?
 
-5. **Once cool-off windows are decided, schedule them** using the same rtcwake pattern as the nightly period (but shorter durations, e.g. 600-1800s for 10-30 min).
+5. **Once cool-off windows are decided, schedule them** using the same rtcwake pattern as the nightly period (but shorter durations, e.g. 600-1800s for 10-30 min). For full dual-cooling setup with two daily windows + per-period thermal reports + cron conflict audit, see the **"Dual cooling periods pattern"** section above and `references/rtcwake-cooling-period.md`.
 
 **Pitfalls**:
 - Do not skip the collection phase — making cool-off decisions without data leads to either overheating or unnecessary downtime.

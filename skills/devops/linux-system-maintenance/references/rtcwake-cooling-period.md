@@ -123,6 +123,114 @@ Expected: CPU idles at 35-55°C after 5h of cooldown, vs 75-80°C before the coo
 - After wake, systemd services start normally. Jobs scheduled exactly at wake time may run late. Add a 1-hour margin for safety.
 - `hermes cron` jobs with `deliver: local` produce no visible output — check via `hermes cron list` or the job's output log on disk.
 
+## Dual cooling periods — full methodology
+
+### When to add a second cooling window
+
+The system stays above 80°C for 14+ consecutive hours despite the nightly cooling period. The external/ambient temperature is rising enough to blunt passive cooling effectiveness. Fan is at max RPM (e.g. 3300 RPM) with no headroom.
+
+### The pattern: notturno (short) + diurno (longer)
+
+| Finestra | Orario | Durata | Obiettivo |
+|---|---|---|---|
+| Notturno | 02:00–04:00 | 2h (7200s) | Reset termico, non serve più di tanto |
+| Diurno | 12:00–16:00 | 4h (14400s) | Copre il picco di calore pomeridiano |
+
+La macchina lavora in due fasce: 04:00–12:00 (mattina) e 16:00–02:00 (sera/notte).
+
+### Implementation steps
+
+#### 1. Script: cooling-period.sh (notturno, 2h)
+
+```bash
+#!/bin/bash
+/home/fausto/.hermes/scripts/cooling-stats.sh --pre
+sudo rtcwake -m off -s 7200
+```
+
+Cron: `0 2 * * *` (02:00 shutdown, wake at 04:00)
+
+#### 2. Script: cooling-period-diurno.sh (diurno, 4h)
+
+```bash
+#!/bin/bash
+/home/fausto/.hermes/scripts/cooling-stats.sh --pre-diurno
+sudo rtcwake -m off -s 14400
+```
+
+Cron: `0 12 * * *` (12:00 shutdown, wake at 16:00)
+
+#### 3. Extend cooling-stats.sh
+
+Add two new modes alongside the existing `--pre`/`--post`:
+
+```bash
+elif [ "$MODE" = "--pre-diurno" ]; then
+  SUFFIX="pre-diurno"
+elif [ "$MODE" = "--post-diurno" ]; then
+  SUFFIX="post-diurno"
+```
+
+This produces log files:
+- `~/.hermes/cooling-stats/YYYY-MM-DD--pre-diurno.log`
+- `~/.hermes/cooling-stats/YYYY-MM-DD--post-diurno.log`
+
+#### 4. Create per-period comparison scripts
+
+**cooling-compare-diurno.sh** — identical logic to `cooling-compare.sh` but reads `--pre-diurno` and `--post-diurno` log files. Same delta table, same boot_id verification.
+
+**cooling-post-report-diurno.sh** — wrapper:
+
+```bash
+#!/bin/bash
+/home/fausto/.hermes/scripts/cooling-stats.sh --post-diurno > /dev/null 2>&1
+/home/fausto/.hermes/scripts/cooling-compare-diurno.sh
+```
+
+#### 5. Create report cron jobs
+
+```yaml
+Notturno report: schedule="10 4 * * *"  no_agent=true  script=cooling-post-report.sh
+Diurno report:   schedule="10 16 * * *" no_agent=true  script=cooling-post-report-diurno.sh
+```
+
+Both deliver to `origin` so the user gets the delta report after each cooling period.
+
+### Cron conflict checklist — worked example
+
+When implementing dual cooling on a machine with 10+ existing cron jobs, audit every one against BOTH windows.
+
+**Cooling windows: 02:00-04:00 (notturno), 12:00-16:00 (diurno)**
+
+| # | Job | Schedule | Falls in window? | Action |
+|---|---|---|---|---|
+| 1 | Nightly Cooling | `0 1 * * *` | Was 01:00-06:00 | Move to `0 2 * * *` with 7200s |
+| 2 | Diurnal Cooling | (new) | `0 12 * * *` | Create — leads into 12:00-16:00 |
+| 3 | Stats Report (nott.) | `10 6 * * *` | Was 06:10 | Move to `10 4 * * *` (04:10) |
+| 4 | Stats Report (diurno) | (new) | `10 16 * * *` | Create (16:10, after diurno) |
+| 5 | Thermal Snapshot | `*/5 7-23 * * *` | Partial (12-16 in window) | Extend to `*/5 4-12,16-23,0-2` |
+| 6 | Research Loop | `0 7,10,14,18,22` | 14:00 in diurno window | Move 14→11 or 14→16 |
+| 7 | Heartbeat (peer105) | `0 * * * *` | Falls while machine off | Leave — cron won't fire |
+| 8 | Heartbeat (peer106) | `0 * * * *` | Same | Leave |
+| 9 | Watchdog | `every 5m` | Same | Leave |
+| 10 | Config backup | `30 0 * * *` | No (00:30) | Leave |
+
+**Rules applied:**
+- Jobs on the same machine (7-9) that would fire during cooling: **leave**. The machine is off, cron doesn't fire, no queue, no harm.
+- Thermal snapshot (5): **extend range** to include both work periods and exclude both cooling periods.
+- Research loop (6): **move** the 14:00 slot to 11:00 (before diurno cooling) or 16:00 (after). At 16:00 the machine has rebooted and services are stable.
+- Report jobs (3-4): **move** from old post-notturno time to new times that match the new windows.
+
+### Stats file naming for dual cycles
+
+```
+~/.hermes/cooling-stats/2026-06-24--pre.log          # notturno, captured 02:00
+~/.hermes/cooling-stats/2026-06-24--post.log         # notturno, captured 04:10
+~/.hermes/cooling-stats/2026-06-24--pre-diurno.log   # diurno, captured 12:00
+~/.hermes/cooling-stats/2026-06-24--post-diurno.log  # diurno, captured 16:10
+~/.hermes/cooling-stats/2026-06-24--snapshot-100000.log  # daytime sample
+```
+
 ## Stats monitoring — pre/post thermal data collection
 
 ### When to add this

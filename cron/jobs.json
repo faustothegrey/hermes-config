@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 14
+        "completed": 15
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-06-25T00:30:00+02:00",
-      "last_run_at": "2026-06-23T00:32:05.207633+02:00",
+      "next_run_at": "2026-06-26T00:30:00+02:00",
+      "last_run_at": "2026-06-24T00:31:42.451869+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 2037
+        "completed": 2185
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-06-24T00:30:14.367895+02:00",
-      "last_run_at": "2026-06-24T00:25:14.367895+02:00",
+      "next_run_at": "2026-06-25T00:35:02.062515+02:00",
+      "last_run_at": "2026-06-25T00:30:02.062515+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -95,15 +95,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 97
+        "completed": 112
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-06-24T01:00:00+02:00",
-      "last_run_at": "2026-06-24T00:00:12.703187+02:00",
+      "next_run_at": "2026-06-25T01:00:00+02:00",
+      "last_run_at": "2026-06-25T00:00:59.750026+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -132,15 +132,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 89
+        "completed": 104
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-06-24T01:00:00+02:00",
-      "last_run_at": "2026-06-24T00:00:12.767078+02:00",
+      "next_run_at": "2026-06-25T01:00:00+02:00",
+      "last_run_at": "2026-06-25T00:00:59.828831+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -163,21 +163,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "0 7,10,14,18,22 * * *",
-        "display": "0 7,10,14,18,22 * * *"
+        "expr": "0 7,10,11,16,18,22 * * *",
+        "display": "0 7,10,11,16,18,22 * * *"
       },
-      "schedule_display": "0 7,10,14,18,22 * * *",
+      "schedule_display": "0 7,10,11,16,18,22 * * *",
       "repeat": {
         "times": null,
-        "completed": 22
+        "completed": 28
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-06-24T07:00:00+02:00",
-      "last_run_at": "2026-06-23T22:01:15.574493+02:00",
+      "next_run_at": "2026-06-25T07:00:00+02:00",
+      "last_run_at": "2026-06-24T22:01:59.972790+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -200,21 +200,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "0 1 * * *",
-        "display": "0 1 * * *"
+        "expr": "0 2 * * *",
+        "display": "0 2 * * *"
       },
-      "schedule_display": "0 1 * * *",
+      "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T12:41:33.634799+02:00",
-      "next_run_at": "2026-06-24T01:00:00+02:00",
-      "last_run_at": "2026-06-23T01:00:30.352805+02:00",
+      "next_run_at": "2026-06-25T02:00:00+02:00",
+      "last_run_at": "2026-06-24T01:00:15.806762+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -225,7 +225,7 @@
     },
     {
       "id": "3d9f08a47adf",
-      "name": "N56VV Cooling Stats Report",
+      "name": "N56VV Cooling Stats Report (notturno)",
       "prompt": "",
       "skills": [],
       "skill": null,
@@ -237,21 +237,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "10 6 * * *",
-        "display": "10 6 * * *"
+        "expr": "10 4 * * *",
+        "display": "10 4 * * *"
       },
-      "schedule_display": "10 6 * * *",
+      "schedule_display": "10 4 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T13:47:41.105424+02:00",
-      "next_run_at": "2026-06-24T06:10:00+02:00",
-      "last_run_at": "2026-06-23T06:10:24.867258+02:00",
+      "next_run_at": "2026-06-25T04:10:00+02:00",
+      "last_run_at": "2026-06-24T06:10:49.774231+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -274,21 +274,21 @@
       "context_from": null,
       "schedule": {
         "kind": "cron",
-        "expr": "*/5 7-23 * * *",
-        "display": "*/5 7-23 * * *"
+        "expr": "*/5 4-12,16-23,0-2 * * *",
+        "display": "*/5 4-12,16-23,0-2 * * *"
       },
-      "schedule_display": "*/5 7-23 * * *",
+      "schedule_display": "*/5 4-12,16-23,0-2 * * *",
       "repeat": {
         "times": null,
-        "completed": 333
+        "completed": 495
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-06-24T07:00:00+02:00",
-      "last_run_at": "2026-06-23T23:55:12.450313+02:00",
+      "next_run_at": "2026-06-25T00:35:00+02:00",
+      "last_run_at": "2026-06-25T00:30:01.069548+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -317,15 +317,15 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:05.668069+02:00",
-      "next_run_at": "2026-06-25T00:00:00+02:00",
-      "last_run_at": "2026-06-24T00:00:12.834685+02:00",
+      "next_run_at": "2026-06-26T00:00:00+02:00",
+      "last_run_at": "2026-06-25T00:00:59.986966+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -377,7 +377,123 @@
         "delegation"
       ],
       "workdir": null
+    },
+    {
+      "id": "0679e3f4aace",
+      "name": "N56VV Diurnal Cooling Period",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cooling-period-diurno.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 12 * * *",
+        "display": "0 12 * * *"
+      },
+      "schedule_display": "0 12 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-24T07:06:36.835256+02:00",
+      "next_run_at": "2026-06-25T12:00:00+02:00",
+      "last_run_at": "2026-06-24T12:00:07.429823+02:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null
+    },
+    {
+      "id": "81db87817660",
+      "name": "N56VV Diurnal Cooling Stats Report",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "cooling-post-report-diurno.sh",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "10 16 * * *",
+        "display": "10 16 * * *"
+      },
+      "schedule_display": "10 16 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-24T07:06:39.024766+02:00",
+      "next_run_at": "2026-06-25T16:10:00+02:00",
+      "last_run_at": "2026-06-24T16:10:37.091766+02:00",
+      "last_status": "error",
+      "last_error": "Script exited with code 126\nstderr:\n/home/fausto/.hermes/scripts/cooling-post-report-diurno.sh: line 12: /home/fausto/.hermes/scripts/cooling-compare-diurno.sh: Permission denied",
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": null,
+      "workdir": null
+    },
+    {
+      "id": "04fd5a313c48",
+      "name": "Quest Advancement (round-robin)",
+      "prompt": "You are the quest advancement agent. Your job: read all active quests from ~/Documents/Obsidian Vault/Hermes/Quests/ and advance ONE of them by one step.\n\nRULES:\n1. Scan all .md files in the Quests folder for ones with \"Status: ACTIVE\"\n2. Sort them by \"Last Activity\" ascending (oldest first)\n3. Check \"Ticks Used Today\" \u2014 skip any that already have >= 2\n4. Pick the first eligible quest and advance it\n5. Log the step in the quest file: tool, input, output, learning\n6. Increment Ticks Used Today by 1\n7. If the step requires user input, change Status to WAITING_USER and compose an email to the user at fausto.lelli@gmail.com (via himalaya \u2014 write a .eml to /tmp/ and pipe to `himalaya message send -- -`) explaining what's needed\n8. If all active quests are WAITING_USER or at max ticks, do nothing\n\nTOOL RESOURCE BUDGET (shared across all quests, tracked in ~/.hermes/quest-resources.json):\n- peer105 YouTube: max 4 videos/day\n- peer106 web search: max 10 searches/day\nIf the budget is exhausted for today, defer the step and note it in the quest log. Reset budgets at 00:00.\n\nReset all quests' Ticks Used Today to 0 on the first tick after midnight.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 */4 * * *",
+        "display": "0 */4 * * *"
+      },
+      "schedule_display": "0 */4 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 4
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-24T08:42:49.614082+02:00",
+      "next_run_at": "2026-06-25T04:00:00+02:00",
+      "last_run_at": "2026-06-25T00:01:41.642050+02:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null,
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file",
+        "skills"
+      ],
+      "workdir": null
     }
   ],
-  "updated_at": "2026-06-24T00:30:13.330628+02:00"
+  "updated_at": "2026-06-25T00:30:02.063071+02:00"
 }
