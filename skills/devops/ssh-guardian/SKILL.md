@@ -119,6 +119,24 @@ The agent should:
 - **Router port forwarding** must already point to :2222. This tool does not configure the router.
 - **Logging** — all state lives in `/tmp/` files and `/tmp/guardiano.log`. Logs survive reboot only if you move them to `~/.hermes/peer-status/` or similar.
 
+## Deployment history
+
+This system was originally authored as `guardiano-ssh` (Italian-named skill)
+before consolidation. The Italian deployment perspective and specific LAN
+configuration are preserved in
+`references/guardiano-deployment-history.md` — load it when working with
+the original Italian commands or debugging the specific LAN deployment
+at 192.168.178.84:2222.
+
+Key Italian user commands still supported:
+
+| User says | Action |
+|-----------|--------|
+| "apri 2222" / "apri SSH" | `guardiano.sh open` |
+| "chiudi 2222" / "chiudi SSH" | `guardiano.sh close` |
+| "la porta?" / "com'è la porta?" | `guardiano.sh status` |
+| "sì" / "tieni aperto" (after warning) | `guardiano.sh keepalive` |
+
 ## Related patterns
 
 - **Faro beacon protocol** (`faro-peer-beacon` skill) — passive peer uptime monitoring, complementary to guardiano (monitor status, don't control access).
