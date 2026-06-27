@@ -3,7 +3,7 @@
 **Status:** COMPLETE
 **Created:** 2026-06-24
 **Last Activity:** 2026-06-24 16:12
-**Ticks Used Today:** 2
+**Ticks Used Today:** 0
 **Goal:**
 Scoprire se esiste una skill / protocollo di ragionamento per LLM che insegni a disegnare diagrammi software a livello astratto — forme primitive, posizionamento spaziale, non-sovrapposizione, gestione linee — indipendente da tool specifici (PlantUML, Mermaid, ecc.).
 

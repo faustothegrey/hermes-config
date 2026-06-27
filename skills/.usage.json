@@ -992,13 +992,13 @@
     "created_at": "2026-06-24T06:42:10.943093+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-24T14:11:05.196175+00:00",
-    "last_used_at": "2026-06-26T06:00:57.715740+00:00",
-    "last_viewed_at": "2026-06-26T06:00:57.657556+00:00",
+    "last_used_at": "2026-06-27T06:00:13.020558+00:00",
+    "last_viewed_at": "2026-06-27T06:00:12.923089+00:00",
     "patch_count": 4,
     "pinned": false,
     "state": "active",
-    "use_count": 6,
-    "view_count": 6
+    "use_count": 7,
+    "view_count": 7
   },
   "requesting-code-review": {
     "archived_at": null,
