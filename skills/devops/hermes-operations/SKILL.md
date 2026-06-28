@@ -108,6 +108,18 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
+## macOS peer troubleshooting (macOS-specific)
+
+When a Hermes peer on macOS is unresponsive or timing out despite passing ping:
+
+1. **Always check CPU load first**: `ssh <user>@<ip> 'uptime && ps aux | sort -nrk 3 | head -10'`. Load >10 on a MacBook often indicates runaway daemons.
+2. **Kill obvious CPU hogs**: Activity Monitor, SystemUIServer, wallpaper extensions. These are safe to kill — macOS restarts them cleanly.
+3. **Watch for respawning processes**: If `pkill -f agy` works but the process comes back, it is managed by a LaunchAgent with `KeepAlive=true`. Find and disable the plist.
+4. **Pause Time Machine**: `tmutil stopbackup` works without sudo. Permanent disable needs `sudo tmutil disable` from the console by the user.
+5. **SSH as the local user**, NOT root — macOS disables root SSH by default. The user is usually the account name (e.g. `fausto`).
+
+See `references/macos-peer-troubleshooting.md` for the full diagnostic-command reference, agent-bus disable steps, SSH key setup recipe, and preemptive actions for the user.
+
 ## Kanban workers and orchestrators
 
 Use kanban workflows for multi-agent/multi-profile work queues. Orchestrators decompose and route tasks; workers execute scoped tasks and update the board with comments, blockers, heartbeats, and completion evidence.

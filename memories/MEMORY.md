@@ -13,3 +13,5 @@ Frase magica "apriti sedano" → apre 2222 + 3001 per 20 min. Keepalive: utente 
 Quest system (skill: quest-system). Up to 3 parallel quests, round-robin. Advancement cron job_id:04fd5a313c48 every 4h. Resources ~/.hermes/quest-resources.json (peer105 4vids/day, peer106 10searches/day). Status in Obsidian Hermes/Quests/<quest>.md. First quest: Diagram Drawing Skills for LLMs.
 §
 User work style: research-before-build ("first see what the world offers"). Optimize resources, don't reinvent wheels — check existing tools/peers first. Expects candor: tell them when a goal isn't clear. When a new quest arrives while one is active, ask: replace or queue?
+§
+peer128 MacBook Pro 192.168.178.128, SSH fausto@ key-auth. Tunnel SSH da N56VV (:18642→:8642) bypassa blocco TCP macOS. agent-bus plist CANCELLATO (non .disabled — macOS ripristina). Cron 2m keepalive. ProcessType: Background. peer-mesh su 127.0.0.1:18642. TODO: sudo tmutil disable + backup 312GB.

@@ -183,6 +183,35 @@ The protocol must handle peers going offline between rounds. Do NOT block the ex
 
 Round-002 experience: 1 of 2 peers was unreachable (no route to host, 100% ping loss). The exchange completed successfully with the one healthy peer.
 
+### macOS peer diagnosis (Agent Bus / Tirith architecture)
+
+Hermes peers running on macOS via the **Agent Bus** (Tirith) architecture behave differently from Linux peers:
+
+- **SSH username**: macOS short name (e.g. `fausto`), not `root`
+- **Hermes binary**: `~/.hermes/bin/tirith` — **not** in PATH, no `hermes` command
+- **Service monitor**: `~/.hermes/service-monitor-state.json` shows Agent Bus services (agent-bus, quota-api, agent-telemetry)
+- **API server**: listens on port 8642 as a Python process — verify with `lsof -iTCP -sTCP:LISTEN -P -n | grep 8642`
+
+**High-load timeout pattern**: A MacBook under extreme load (load average 20+) may fail the MCP health check even when the service is running correctly. The peer is alive (ping OK, port 8642 open, SSH works) but too busy to respond within the default timeout.
+
+Diagnosis checklist when health check times out:
+
+1. `ping -c 4 <peer-ip>` — network reachability
+2. `nc -zv -w3 <peer-ip> 8642` — port open?
+3. `ssh user@<peer-ip> uptime` — load? (20+ = overloaded, not dead)
+4. `lsof -iTCP -sTCP:LISTEN -P -n | grep 8642` — process listening?
+5. Retry the MCP health check once — it often succeeds when load settles
+
+Only conclude "peer is down" if **both** ping and port check fail. Ping OK + port open = just load — retry. See `references/macos-peer-diagnosis.md` for full detail.
+
+**Mitigation when load is too high (practical process-level steps):** When SSH access works and the Mac is clearly overloaded (load >15), you can safely kill certain processes to relieve pressure — see `references/macos-peer-diagnosis.md` → "High-load process mitigation".
+
+**Gateway-restart verification pattern:** When a user reports "I asked Hermes on the Mac to restart the gateway but it didn't respond", verify via SSH before concluding the service is down:
+1. Check if the gateway PID has actually changed: `ps aux | grep hermes | grep -v grep` — the old PID may still be running with unchanged uptime, meaning the restart command didn't take effect
+2. Check port 8642: `lsof -iTCP -sTCP:LISTEN -P -n | grep 8642`
+3. Direct curl from orchestrator: `curl -s --connect-timeout 10 http://<peer-ip>:8642/health`
+4. If PID unchanged and health returns 200, the peer was never actually down — just too slow to respond within the MCP tool's default timeout
+
 ### Empty-response failure pattern (rate-limiting mid-turn)
 
 When a constrained peer's free-tier model hits rate limiting mid-turn, tool results come back but the assistant response is truncated to empty. The agent appears to hang or produce nothing. Workarounds:
@@ -372,6 +401,7 @@ The `call_peer` tool-verification pattern: when a peer's tool capability is unkn
 - `references/dual-peer-autonomous-loop.md` — full protocol for cron-driven coordinated advancement of two constrained ARM peers, including email format, Operation Log convention, health check routine, and yt-dlp-on-Python-3.7 pitfall.
 - `scripts/send-recap-email.py` — reusable Python SMTP_SSL email sender; falls back from himalaya when IMAP DNS is unreachable.
 
+- `references/macos-peer-diagnosis.md` — macOS-specific Hermes peer diagnosis: Agent Bus layout, high-load timeout pattern, SSH username, port verification checklist.
 - `references/round-001-lessons.md` — condensed lessons from the first local peer exchange round, including readiness/auth pitfalls and peer feedback.
 - `references/round-002-lessons.md` — round 002 lessons: rate-limit header checking, partial mesh resilience, Python-over-bash for cron peer workflows, empty-response throttling pattern, cross-platform skill sharing.
 - `references/constrained-peer-watchdog.sh` — minimal bash watchdog template for resource-constrained peers with transient model failures.

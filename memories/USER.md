@@ -8,4 +8,4 @@ Cooling periods: notturno 02:00-04:00, diurno 12:00-16:00. La macchina lavora in
 §
 Preferisce soluzioni artigianali/trasparenti ("un'altra soluzione artigianale") a strumenti opachi o "magici" (Tailscale definito "un po magico"). Preferisce capire come funziona quello che usa.
 §
-User switches to English for technical/system discussions — prefers the precision. Italian fine for casual chat.
+Observant and analytical — catches systematic patterns (e.g. peer128 responds only when orchestrator checks). Action-oriented: wants fixes executed immediately, not explained. Trusts agent with SSH and system-level ops on his machines. Pragmatic about credentials — shares via controlled channels (email) to solve problems.

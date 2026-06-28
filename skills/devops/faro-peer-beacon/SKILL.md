@@ -1,11 +1,3 @@
----
-name: faro-peer-beacon
-description: "Faro — protocollo leggero per tracciare peer online/offline via beacon HTTP e monitor passivo su Hermes peer mesh."
-version: 1.0.0
-author: Hermes Agent
-tags: [faro, beacon, peer-status, monitoring, hermes-peers]
----
-
 # Faro — Peer Beacon Protocol
 
 Protocollo minimale per sapere chi è online e chi no nella peer mesh Hermes.
@@ -19,10 +11,13 @@ Protocollo minimale per sapere chi è online e chi no nella peer mesh Hermes.
 │                  │                      │                  │
 │  peer128 (MBP)   │ ─── cron */2 ──────→ │  beacon-listener │
 │  (portatile)     │   detect reconnect   │  :9191           │
-└──────────────────┘                      │  + faro-monitor  │
-                                          │  cron */5        │
-                                          │  → status.json   │
-                                          └──────────────────┘
+│                  │                      │  + faro-monitor  │
+│                  │                      │  cron */5        │
+│                  │                      │  → status.json   │
+│                  │                      │                  │
+│  keepalive pull  │ ←─ cron 1m ─────────│  (previene       │
+│  (da orchestr.)  │   curl /health      │   App Nap su MBP)│
+└──────────────────┘                      └──────────────────┘
 ```
 
 ## Componenti
@@ -57,7 +52,13 @@ Protocollo minimale per sapere chi è online e chi no nella peer mesh Hermes.
 - Usa `/tmp/faro-peer128.lock` per tracciare stato precedente
 - Logga su `~/.hermes/peer-status/beacon-client.log`
 
-### 5. Query rapida
+### 5. Keepalive Pull — Peer macOS (128)
+- Cron job `every 1m` dall'orchestratore verso il peer
+- `curl -s --connect-timeout 5 http://<peer-ip>:8642/health`
+- Previene App Nap che sospende Hermes tra beacon push
+- Zero token (no_agent=true), file `references/macos-keepalive.md`
+
+### 6. Query rapida
 - `python3 ~/.hermes/scripts/faro.py` — riepilogo stato peer
 - `python3 ~/.hermes/scripts/faro.py --online` — solo online
 - `python3 ~/.hermes/scripts/faro.py --offline` — solo offline
@@ -80,6 +81,9 @@ ssh root@<peer> "(crontab -l 2>/dev/null; echo '@reboot /root/.hermes/scripts/be
 # Peer portatile (macOS):
 scp beacon-macos.sh user@<peer>:~/.hermes/scripts/beacon.sh
 ssh user@<peer> "(crontab -l 2>/dev/null; echo '*/2 * * * * ~/.hermes/scripts/beacon.sh') | crontab -"
+
+# Keepalive pull (opzionale per macOS — previene App Nap):
+# Creare cron job no_agent sull'orchestratore: ogni 1-2 min, curl /health del peer
 ```
 
 ## Note importanti
@@ -87,3 +91,5 @@ ssh user@<peer> "(crontab -l 2>/dev/null; echo '*/2 * * * * ~/.hermes/scripts/be
 - Il beacon è volutamente **stupido**: non fa retry, non logga errori, non consuma risorse
 - Se il beacon fallisce, il monitor passivo lo becca tra 5 min via /health
 - La transizione online→offline è rilevata dal monitor passivo (3 fallimenti consecutivi = offline)
+- **Peer macOS (peer128):** App Nap può sospendere Hermes anche tra un beacon e l'altro. Servono keepalive pull dall'orchestratore ogni 1-2 minuti. Vedi `references/macos-keepalive.md` per dettagli.
+- **Frequenza polling:** Linux peers (105/106) → beacon `@reboot` + monitor passivo ogni 5 min. macOS peers (128) → beacon ogni 2 min + keepalive pull ogni 1 min dall'orchestratore.
