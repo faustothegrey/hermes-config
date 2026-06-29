@@ -11,89 +11,89 @@ STDOUT:
     Name:      Nightly Hermes configuration backup
     Schedule:  30 0 * * *
     Repeat:    ∞
-    Next run:  2026-06-30T00:30:00+02:00
+    Next run:  2026-07-01T00:30:00+02:00
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-28T00:32:44.266329+02:00  ok
+    Last run:  2026-06-29T00:32:43.950646+02:00  ok
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-06-29T00:35:48.860230+02:00
+    Next run:  2026-06-30T00:34:52.644632+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:30:48.860230+02:00  ok
+    Last run:  2026-06-30T00:29:52.644632+02:00  ok
 
   8e0ec6535bc7 [active]
     Name:      Peer105 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-06-29T01:00:00+02:00
+    Next run:  2026-06-30T01:00:00+02:00
     Deliver:   local
     Script:    peer105-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:00:46.024657+02:00  ok
+    Last run:  2026-06-30T00:00:49.913409+02:00  ok
 
   5814f1c59e75 [active]
     Name:      Peer106 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-06-29T01:00:00+02:00
+    Next run:  2026-06-30T01:00:00+02:00
     Deliver:   local
     Script:    peer106-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:00:46.103196+02:00  ok
+    Last run:  2026-06-30T00:00:49.868544+02:00  ok
 
   19c9f58c1c43 [active]
     Name:      Peer105+106 Autonomous Loop
     Schedule:  0 7,10,11,16,18,22 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T07:00:00+02:00
+    Next run:  2026-06-30T07:00:00+02:00
     Deliver:   local
-    Last run:  2026-06-28T22:00:49.067086+02:00  ok
+    Last run:  2026-06-29T22:02:01.167410+02:00  ok
 
   4290847cf173 [active]
     Name:      N56VV Nightly Cooling Period
     Schedule:  0 2 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T02:00:00+02:00
+    Next run:  2026-06-30T02:00:00+02:00
     Deliver:   local
     Script:    cooling-period.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-28T02:00:05.422054+02:00  ok
+    Last run:  2026-06-29T02:00:58.002803+02:00  ok
 
   3d9f08a47adf [active]
     Name:      N56VV Cooling Stats Report (notturno)
     Schedule:  10 4 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T04:10:00+02:00
+    Next run:  2026-06-30T04:10:00+02:00
     Deliver:   origin
     Script:    cooling-post-report.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-28T04:10:48.397793+02:00  ok
+    Last run:  2026-06-29T04:10:17.874829+02:00  ok
 
   807d66777982 [active]
     Name:      daytime-thermal-snapshot
     Schedule:  */5 4-12,16-23,0-2 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T00:35:00+02:00
+    Next run:  2026-06-30T00:35:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:30:47.922167+02:00  ok
+    Last run:  2026-06-30T00:30:51.959420+02:00  ok
 
   c90b8615686d [active]
     Name:      daytime-thermal-midnight
     Schedule:  0 0 * * *
     Repeat:    ∞
-    Next run:  2026-06-30T00:00:00+02:00
+    Next run:  2026-07-01T00:00:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:00:46.293435+02:00  ok
+    Last run:  2026-06-30T00:00:49.792414+02:00  ok
 
   c9a6557a16fc [active]
     Name:      peer-exchange-friday
@@ -108,39 +108,39 @@ STDOUT:
     Name:      N56VV Diurnal Cooling Period
     Schedule:  0 12 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T12:00:00+02:00
+    Next run:  2026-06-30T12:00:00+02:00
     Deliver:   local
     Script:    cooling-period-diurno.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-28T12:00:20.891385+02:00  ok
+    Last run:  2026-06-29T12:00:07.720102+02:00  ok
 
   81db87817660 [active]
     Name:      N56VV Diurnal Cooling Stats Report
     Schedule:  10 16 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T16:10:00+02:00
+    Next run:  2026-06-30T16:10:00+02:00
     Deliver:   origin
     Script:    cooling-post-report-diurno.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-28T16:10:14.471778+02:00  ok
+    Last run:  2026-06-29T16:10:26.382927+02:00  ok
 
   04fd5a313c48 [active]
     Name:      Quest Advancement (round-robin)
     Schedule:  0 */4 * * *
     Repeat:    ∞
-    Next run:  2026-06-29T04:00:00+02:00
+    Next run:  2026-06-30T04:00:00+02:00
     Deliver:   local
-    Last run:  2026-06-29T00:02:11.577647+02:00  ok
+    Last run:  2026-06-30T00:03:39.136823+02:00  ok
 
   7bc39d7b86eb [active]
     Name:      peer128 Keepalive
     Schedule:  every 2m
     Repeat:    ∞
-    Next run:  2026-06-29T00:30:47.559858+02:00
+    Next run:  2026-06-30T00:32:52.139038+02:00
     Deliver:   local
     Script:    peer128-tunnel.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-06-29T00:28:47.559858+02:00  ok
+    Last run:  2026-06-30T00:30:52.139038+02:00  ok
 
 
 
