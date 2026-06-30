@@ -4,7 +4,7 @@ Peer105/106 ARM Fedora30 risorse minime, SSH root. Faro beacon: beacon-listener 
 §
 Research Queue → dual-peer. YouTube/video→peer105, web→peer106. Loop manda email via himalaya. Ritmo max 4 video + 10 articoli/giorno. DA peer70 IN POI: lavoro diurno leggero (web, API, bridge) va su peer70 24/7.
 §
-N56VV: COOLING WINDOW 02:00-04:00 + 12:00-16:00. Freeze >95°C, idle 81°C. LAVORO PESANTE solo di notte (04:00-12:00 e 16:00-02:00). Da peer70 (Raspberry Pi H24) il lavoro diurno leggero scavalca su quello.
+N56VV: COOLING WINDOW 11:00-19:00 (diurnal) + 02:00-03:00 (night). LAVORO PESANTE solo nelle finestre 19:00-02:00 e 03:00-11:00. Da peer70 (Raspberry Pi H24) il lavoro diurno leggero scavalca su quello.
 §
 Anomalies at ~/.hermes/anomalies/anomalies.jsonl. Watchdog auto-logs detect/resolve.
 §

@@ -86,15 +86,23 @@ Common use cases:
 
 ### Cronjob schedule auditing against constraint windows
 
-When a new constraint window is introduced (e.g. a nightly shutdown, a maintenance window, a service blackout period):
+When a new constraint window is introduced (e.g. a nightly shutdown, a maintenance window, a service blackout period) **or an existing one is widened**:
 
 1. List all existing jobs: `cronjob action='list'`
 2. For each job, identify schedule and check if any execution falls inside the constraint window
 3. Decision matrix:
-   - If the constraint takes the machine offline (shutdown) → jobs in the window simply don't execute. Leave them — no change needed.
-   - If the machine stays online but a service is unavailable → pause or reschedule jobs that depend on that service.
-   - If a job is scheduled exactly at the edge of the window (e.g. at 06:00 while machine wakes at 06:00) → shift by +1h for margin.
-4. Document the audit results (what was changed and what was left as-is) in the system knowledge base.
+   - **Machine offline (shutdown)** → jobs in the window simply don't execute. Leave them — no change needed for timing, but note that widening a window may trap previously-valid job times. Actively reschedule those to the nearest work hour.
+   - **Machine stays online but service unavailable** → pause or reschedule jobs that depend on that service.
+   - **Job at the edge of the window** (e.g. at 06:00 while machine wakes at 06:00) → shift by +1h for margin.
+   - **Job inside a widened window** → the job was valid before, but now falls in the middle of new cooling → actively reschedule it. Spread replacement times across the remaining work windows.
+4. **Lockstep updates**: when the window size changes, also update:
+   - **Script durations** tied to the window (e.g. `rtcwake -m off -s <seconds>` in cooling-period scripts — recalculate seconds to match new window length)
+   - **Script header comments** (stale comments mislead future debugging)
+   - **Post-window report jobs** (their schedule should align with the new window end time)
+5. Document the audit results (what was changed, what was left as-is, and the exact new schedule) in memory and the system knowledge base.
+6. **Verify** by listing all jobs again after updates and confirming each schedule aligns with the new constraint window.
+
+For the N56VV thermal model (peak solar, ambient lag, heat-wave vs normal mode), script migration steps, and the 2h thermal-lag reasoning behind window sizing, see `references/thermal-cooling-windows.md`.
 
 ### Linking cron changes to external knowledge base
 

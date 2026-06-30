@@ -523,14 +523,14 @@
     "archived_at": null,
     "created_at": "2026-06-12T09:15:07.571159+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-28T04:51:37.922738+00:00",
-    "last_used_at": "2026-06-29T20:30:31.958806+00:00",
-    "last_viewed_at": "2026-06-29T20:30:31.897635+00:00",
-    "patch_count": 24,
+    "last_patched_at": "2026-06-30T18:38:02.862951+00:00",
+    "last_used_at": "2026-06-30T18:38:07.278276+00:00",
+    "last_viewed_at": "2026-06-30T18:38:07.222906+00:00",
+    "patch_count": 27,
     "pinned": false,
     "state": "active",
-    "use_count": 29,
-    "view_count": 29
+    "use_count": 31,
+    "view_count": 31
   },
   "hermes-peer-mesh-operations": {
     "archived_at": null,
@@ -992,13 +992,13 @@
     "created_at": "2026-06-24T06:42:10.943093+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-24T14:11:05.196175+00:00",
-    "last_used_at": "2026-06-29T18:00:59.762759+00:00",
-    "last_viewed_at": "2026-06-29T18:00:59.679678+00:00",
+    "last_used_at": "2026-06-30T22:01:01.619009+00:00",
+    "last_viewed_at": "2026-06-30T22:01:01.576574+00:00",
     "patch_count": 4,
     "pinned": false,
     "state": "active",
-    "use_count": 8,
-    "view_count": 8
+    "use_count": 10,
+    "view_count": 10
   },
   "requesting-code-review": {
     "archived_at": null,

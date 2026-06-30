@@ -4,7 +4,7 @@ fausto-N56VV fixed restarts are disabled; sustained thermal danger alerts via Te
 §
 PREFERENCE: peer105/106 loop must be slow. Max 3-4 video/giorno, ~10 articoli/giorno. Niente batch, niente stress test. Le macchine ARM hanno RAM minima e swappano già a riposo.
 §
-Cooling periods: notturno 02:00-04:00, diurno 12:00-16:00. La macchina lavora in due fasce: 04:00-12:00 (mattina) e 16:00-02:00 (sera/notte). Cooling period ha precedenza assoluta su ogni altro cron job.
+Cooling periods (heat-wave mode): notturno 02:00-03:00 (1h), diurno 11:00-19:00 (8h). La macchina lavora in due fasce: 03:00-11:00 (mattina) e 19:00-02:00 (sera/notte). Cooling period ha precedenza assoluta su ogni altro cron job.
 §
 Preferisce soluzioni artigianali/trasparenti ("un'altra soluzione artigianale") a strumenti opachi o "magici" (Tailscale definito "un po magico"). Preferisce capire come funziona quello che usa.
 §
