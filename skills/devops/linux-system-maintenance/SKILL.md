@@ -317,7 +317,11 @@ When the user installs a physical cooling improvement (external fan, heatsink cl
 
 3. **Update any scheduled analysis jobs** that will report on the affected period. For example, if there's a `thermal-analysis-report` cron job scheduled, update its prompt to include the pre-modification baseline and ask for an explicit pre/post comparison. This ensures the next automated report mentions the delta.
 
-4. **Increase temporal resolution**: bump the daytime sampling from every 30 min to **every 5 min** (schedule `*/5 7-23 * * *`). The cooling-stats.sh script is lightweight (sysfs reads + one smartctl) — running it every 5 min has negligible system impact. Keep the higher rate for at least 24-48 hours, then restore the original 30-min cadence.
+4. **Increase temporal resolution**: bump the daytime sampling from every 30 min to **every 5 min** (schedule `*/5 7-23 * * *`). **WARNING: `cooling-stats.sh` calls `smartctl -A /dev/sda`** — on an old spinning HDD (e.g. WD10JPVX, 70k+ power-on hours), each ATA SMART read is ~0.2s of blocking I/O. Combined with other monitoring scripts (faro-monitor, guardiano-watchdog, heavy-load-watchdog) that fire in the same 5-minute window, this can cause sustained IO pressure (25%+ iowait) and temperature spikes within 20-30 minutes of boot. **Before bumping to 5-min cadence, verify the HDD type and age.** If it's an old spinning disk, either:
+   - Remove the `smartctl` call from `cooling-stats.sh` (set `DISK_TEMP="N/A"`) and rely on CPU/ACPI temps only, OR
+   - Keep the 30-min cadence and add a separate low-frequency job (e.g. hourly) for disk temperature only.
+
+Keep the higher rate for at least 24-48 hours, then restore the original 30-min cadence.
 
 **Interpreting the results:**
 
@@ -328,6 +332,77 @@ When the user installs a physical cooling improvement (external fan, heatsink cl
 
 **Restoration plan:**
 After 48 hours, ask the user whether to keep 5-min sampling (if the fan is proving effective and they want fine-grained data) or restore the original 30-min cadence. If restoring, update the cron schedule back: `0,30 7-23 * * *`.
+
+## Post-cooling heat surge diagnosis
+
+Use this when the system comes out of a cooling period (rtcwake) and temperatures spike back to dangerous levels (85°C+) within 30-60 minutes instead of staying cool for several hours. The cooling period itself worked (CPU dropped by 10-20°C) but the benefit was rapidly undone.
+
+### Diagnostic workflow
+
+1. **Verify the cooling period actually worked** — read the pre/post logs from `~/.hermes/cooling-stats/YYYY-MM-DD--pre.log` and `...--post.log`. Confirm boot_id changed (actual reboot happened) and CPU dropped by at least 10°C.
+
+2. **Check the anomaly log at the wake-time boundary**:
+   ```
+   cat ~/.hermes/anomalies/anomalies.jsonl | grep $(date +%Y%m%d)
+   ```
+   Look for anomaly start events within 10-60 minutes of the wake time. Note the reasons (iowait, IO pressure, load) and duration.
+
+3. **Audit what runs right after boot** — list ALL cron jobs (Hermes + system) that fire in the first 30 minutes after wake time:
+   ```
+   cronjob action='list'
+   crontab -l
+   ls /etc/cron.d/
+   ```
+   Especially look for:
+   - Thermal/health snapshot jobs at `*/5` or `*/10` cadence
+   - Post-cooling report scripts (they may call `cooling-stats.sh` which calls `smartctl`)
+   - Watchdog/heartbeat scripts running every 2-5 minutes
+   - @reboot cron jobs (anacron, daily tasks)
+   - Quest advancement or LLM-driven cron jobs
+
+4. **Identify smartctl calls** — ATA SMART reads on an old spinning HDD are the most common I/O culprit. Check `/var/log/syslog` or journalctl for `sudo.*smartctl` entries clustered after wake time:
+   ```
+   journalctl --since "WAKE_TIME" --until "WAKE_TIME + 1 hour" | grep smartctl
+   ```
+   Each `smartctl -A /dev/sda` is ~0.2s of blocking ATA I/O. At 5-min cadence from 2-3 scripts (cooling-stats.sh, faro-monitor.sh, etc.), the disk can stay continuously busy.
+
+5. **Read the actual snapshot temperatures** to confirm the spike:
+   ```
+   ls -lt ~/.hermes/cooling-stats/*--snapshot-*.log | head -10
+   ```
+   Compare CPU package temps across consecutive snapshots.
+
+6. **Check for concurrent processes** that may compound the heat:
+   - Quest advancement (LLM-driven cron jobs that read Obsidian vault files)
+   - Research loops
+   - apt/anacron daily tasks running at the same time
+
+### Common fix patterns
+
+| Finding | Fix |
+|---------|-----|
+| smartctl every 5 min from cooling-stats.sh | Remove smartctl (set `DISK_TEMP="N/A"`), use sysfs CPU temps only |
+| Multiple scripts calling smartctl simultaneously | Consolidate to one low-frequency job (every 30-60 min) |
+| Thermal snapshots every 5 min | Reduce to `*/30` cadence during work hours |
+| Anacron daily jobs at wake time | Delay anacron or stagger it |
+| Watchdogs + snapshots + heartbeats all firing in same 5-min window | Spread schedules (e.g. snapshots at :00, heartbeats at :02, watchdogs at :04) |
+| Quest advancement + thermal snapshots + reports all within 10 min | Stagger start times; run quest after the boot storm settles (+30 min) |
+
+### The 94°C-in-65-minutes pattern (real case)
+
+On the N56VV (Ivy Bridge, spinning HDD, 2013 laptop):
+
+| Time since wake | Event | CPU temp |
+|----------------|-------|----------|
+| +0 min | Wake from rtcwake | — |
+| +9 min | Post-cooling snapshot | **74°C** ✓ (down from 81°C pre) |
+| +11 min | Anomaly: iowait 28%, IO pressure 37 (critical) | — |
+| +12 min | Quest advancement starts | — |
+| +34 min | Snapshot #2 | **91°C** ⚠ |
+| +65 min | Snapshot #8 | **94°C** 🔴 |
+| +74 min | Anomaly resolves (54 min sustained) | — |
+
+Root cause: `cooling-stats.sh` (via daytime-thermal-snapshot) + faro-monitor + cooling-post-report all called `smartctl -A /dev/sda` every 5 min, keeping the old HDD constantly busy with ATA commands. The CPU stayed in high iowait, generating heat faster than the fan (3400-3800 RPM) could dissipate it.
 
 ## Post-crash freeze diagnosis (after reboot)
 

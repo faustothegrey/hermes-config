@@ -4,11 +4,11 @@ Peer105/106 ARM Fedora30 risorse minime, SSH root. Faro beacon: beacon-listener 
 §
 Research Queue → dual-peer. YouTube/video→peer105, web→peer106. Loop manda email via himalaya. Ritmo max 4 video + 10 articoli/giorno. DA peer70 IN POI: lavoro diurno leggero (web, API, bridge) va su peer70 24/7.
 §
-N56VV: COOLING WINDOW 11:00-19:00 (diurnal) + 02:00-03:00 (night). LAVORO PESANTE solo nelle finestre 19:00-02:00 e 03:00-11:00. Da peer70 (Raspberry Pi H24) il lavoro diurno leggero scavalca su quello.
+N56VV cooling: NOTTURNO 02:00-03:00 (rtcwake), DIURNO 11:00-19:00. Lavoro 19:00-02:00 e 03:00-11:00. Da peer70 (RPi H24) carico diurno leggero. Fix 2026-07-01: rimosso smartctl da cooling-stats.sh (DISK_TEMP=N/A) e ridotto snapshot^M da */5 a */30 — causava IO pressure e calore dopo boot.
 §
 Anomalies at ~/.hermes/anomalies/anomalies.jsonl. Watchdog auto-logs detect/resolve.
 §
-Frase magica "apriti sedano" → apre 2222 + 3001 per 20 min. Keepalive: utente risponde "Sisisi" su Telegram per resettare timer +20 min.
+"apriti sedano" → 2222+3001 per 20 min (locale/LAN). Forwarding esterno su peer70. Keepalive: "Sisisi" resetta +20 min.
 §
 Quest system (skill: quest-system). Up to 3 parallel quests, round-robin. Advancement cron job_id:04fd5a313c48 every 4h. Resources ~/.hermes/quest-resources.json (peer105 4vids/day, peer106 10searches/day). Status in Obsidian Hermes/Quests/<quest>.md. First quest: Diagram Drawing Skills for LLMs.
 §
