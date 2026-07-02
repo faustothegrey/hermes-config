@@ -39,12 +39,12 @@ STDOUT:
   Nous Portal   ✓ logged in
     Portal URL: https://portal.nousresearch.com
     Inference:  https://inference-api.nousresearch.com/v1
-    Access exp: 2026-07-02 00:45:27 CEST
+    Access exp: 2026-07-03 00:45:33 CEST
     Key exp: "<REDACTED>"
     Refresh:    yes
   OpenAI Codex  ✓ logged in
     Auth file:  /home/fausto/.hermes/auth.json
-    Refreshed:  2026-06-22 17:47:10 CEST
+    Refreshed:  2026-07-03 00:30:34 CEST
   Qwen OAuth    ✗ not logged in (run: qwen auth qwen-oauth)
     Auth file:  /home/fausto/.qwen/oauth_creds.json
     Error:      Qwen CLI credentials not found. Run 'qwen auth qwen-oauth' first.
@@ -94,7 +94,7 @@ STDOUT:
 ◆ Gateway Service
   Status:       ✓ running
   Manager:      systemd (user)
-  PID(s):       1838
+  PID(s):       1790
 
 ◆ Scheduled Jobs
   Jobs:         14 active, 14 total
