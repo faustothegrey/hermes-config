@@ -1,9 +1,9 @@
 {
-  "last_report_path": "/home/fausto/.hermes/logs/curator/20260626-150618",
-  "last_run_at": "2026-06-26T15:06:18.569550+00:00",
-  "last_run_duration_seconds": 128.58204,
-  "last_run_summary": "auto: no changes; llm: Consolidation complete. Here is the full report.\n\n---\n\n## Summary of consolidation pass\n\n**Skills scanned:** 11 agent-created skills. **Consolidations applied:** 1. **Archives:** 1 (`guardiano-ssh`). **Skills kept as-is:** 10.\n\n### Cluster …\narchived 1 skill(s):\n  • guardiano-ssh → ssh-guardian\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin ssh-guardian",
+  "last_report_path": "/home/fausto/.hermes/logs/curator/20260703-180640",
+  "last_run_at": "2026-07-03T18:06:40.578563+00:00",
+  "last_run_duration_seconds": 4.525904,
+  "last_run_summary": "auto: no changes; llm: error: No LLM provider configured. Run `hermes model` to select a provider, or run `hermes setup` for first-time configuration.",
   "last_run_summary_shown_at": "2026-06-12T09:06:17.752667+00:00",
   "paused": false,
-  "run_count": 5
+  "run_count": 6
 }
