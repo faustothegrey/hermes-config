@@ -20,15 +20,15 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 24
+        "completed": 25
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-07-05T00:30:00+02:00",
-      "last_run_at": "2026-07-03T00:31:55.223371+02:00",
+      "next_run_at": "2026-07-06T00:30:00+02:00",
+      "last_run_at": "2026-07-04T00:32:43.517105+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 3652
+        "completed": 3800
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-07-04T00:34:58.620171+02:00",
-      "last_run_at": "2026-07-04T00:29:58.620171+02:00",
+      "next_run_at": "2026-07-05T00:35:11.646249+02:00",
+      "last_run_at": "2026-07-05T00:30:11.646249+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -95,15 +95,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 265
+        "completed": 281
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-07-04T01:00:00+02:00",
-      "last_run_at": "2026-07-04T00:00:56.619099+02:00",
+      "next_run_at": "2026-07-05T01:00:00+02:00",
+      "last_run_at": "2026-07-05T00:00:09.843129+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -132,15 +132,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 257
+        "completed": 273
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-07-04T01:00:00+02:00",
-      "last_run_at": "2026-07-04T00:00:56.777983+02:00",
+      "next_run_at": "2026-07-05T01:00:00+02:00",
+      "last_run_at": "2026-07-05T00:00:09.697813+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -169,15 +169,15 @@
       "schedule_display": "0 7,10,20,22,0 * * *",
       "repeat": {
         "times": null,
-        "completed": 81
+        "completed": 86
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-07-04T07:00:00+02:00",
-      "last_run_at": "2026-07-04T00:00:56.844506+02:00",
+      "next_run_at": "2026-07-05T07:00:00+02:00",
+      "last_run_at": "2026-07-05T00:00:09.574690+02:00",
       "last_status": "error",
       "last_error": "RuntimeError: No access token found for Nous Portal login. Run `hermes model` to re-authenticate.",
       "last_delivery_error": null,
@@ -206,15 +206,15 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 13
+        "completed": 14
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T12:41:33.634799+02:00",
-      "next_run_at": "2026-07-04T02:00:00+02:00",
-      "last_run_at": "2026-07-03T02:00:12.096297+02:00",
+      "next_run_at": "2026-07-05T02:00:00+02:00",
+      "last_run_at": "2026-07-04T02:00:03.507714+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -243,15 +243,15 @@
       "schedule_display": "10 3 * * *",
       "repeat": {
         "times": null,
-        "completed": 13
+        "completed": 14
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-20T13:47:41.105424+02:00",
-      "next_run_at": "2026-07-04T03:10:00+02:00",
-      "last_run_at": "2026-07-03T03:10:10.665900+02:00",
+      "next_run_at": "2026-07-05T03:10:00+02:00",
+      "last_run_at": "2026-07-04T03:10:51.081620+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -280,15 +280,15 @@
       "schedule_display": "*/30 3-10,19-23,0-1 * * *",
       "repeat": {
         "times": null,
-        "completed": 1885
+        "completed": 1915
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-07-04T01:00:00+02:00",
-      "last_run_at": "2026-07-04T00:30:57.799561+02:00",
+      "next_run_at": "2026-07-05T01:00:00+02:00",
+      "last_run_at": "2026-07-05T00:30:10.655078+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -317,15 +317,15 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 13
+        "completed": 14
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:05.668069+02:00",
-      "next_run_at": "2026-07-05T00:00:00+02:00",
-      "last_run_at": "2026-07-04T00:00:56.889313+02:00",
+      "next_run_at": "2026-07-06T00:00:00+02:00",
+      "last_run_at": "2026-07-05T00:00:09.742504+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -398,15 +398,15 @@
       "schedule_display": "0 11 * * *",
       "repeat": {
         "times": null,
-        "completed": 10
+        "completed": 11
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T07:06:36.835256+02:00",
-      "next_run_at": "2026-07-04T11:00:00+02:00",
-      "last_run_at": "2026-07-03T11:00:35.914882+02:00",
+      "next_run_at": "2026-07-05T11:00:00+02:00",
+      "last_run_at": "2026-07-04T11:00:17.529064+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -435,15 +435,15 @@
       "schedule_display": "10 19 * * *",
       "repeat": {
         "times": null,
-        "completed": 10
+        "completed": 11
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T07:06:39.024766+02:00",
-      "next_run_at": "2026-07-04T19:10:00+02:00",
-      "last_run_at": "2026-07-03T19:10:38.167443+02:00",
+      "next_run_at": "2026-07-05T19:10:00+02:00",
+      "last_run_at": "2026-07-04T19:10:55.019449+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -472,15 +472,15 @@
       "schedule_display": "0 */4 * * *",
       "repeat": {
         "times": null,
-        "completed": 48
+        "completed": 52
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T08:42:49.614082+02:00",
-      "next_run_at": "2026-07-04T04:00:00+02:00",
-      "last_run_at": "2026-07-04T00:00:56.978760+02:00",
+      "next_run_at": "2026-07-05T04:00:00+02:00",
+      "last_run_at": "2026-07-05T00:00:09.798354+02:00",
       "last_status": "error",
       "last_error": "RuntimeError: No access token found for Nous Portal login. Run `hermes model` to re-authenticate.",
       "last_delivery_error": null,
@@ -514,15 +514,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 1800
+        "completed": 2095
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-28T07:35:30.450190+02:00",
-      "next_run_at": "2026-07-04T00:33:01.950919+02:00",
-      "last_run_at": "2026-07-04T00:31:01.950919+02:00",
+      "next_run_at": "2026-07-05T00:30:16.466197+02:00",
+      "last_run_at": "2026-07-05T00:28:16.466197+02:00",
       "last_status": "error",
       "last_error": "Script exited with code 1\nstdout:\ntunnel: FAILED",
       "last_delivery_error": null,
@@ -537,5 +537,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-07-04T00:31:01.951481+02:00"
+  "updated_at": "2026-07-05T00:30:11.646825+02:00"
 }
