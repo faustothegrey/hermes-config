@@ -11,89 +11,89 @@ STDOUT:
     Name:      Nightly Hermes configuration backup
     Schedule:  30 0 * * *
     Repeat:    ∞
-    Next run:  2026-07-07T00:30:00+02:00
+    Next run:  2026-07-08T00:30:00+02:00
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-05T00:31:59.072870+02:00  ok
+    Last run:  2026-07-06T00:32:17.260972+02:00  error: Script timed out after 120s: /home/fausto/.hermes/scripts/hermes-config-backup-nightly.sh
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-07-06T00:35:18.292440+02:00
+    Next run:  2026-07-07T00:36:01.184732+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:30:18.292440+02:00  ok
+    Last run:  2026-07-07T00:31:01.184732+02:00  ok
 
   8e0ec6535bc7 [active]
     Name:      Peer105 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-07-06T01:00:00+02:00
+    Next run:  2026-07-07T01:00:00+02:00
     Deliver:   local
     Script:    peer105-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:00:16.015537+02:00  ok
+    Last run:  2026-07-07T00:00:58.887209+02:00  ok
 
   5814f1c59e75 [active]
     Name:      Peer106 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-07-06T01:00:00+02:00
+    Next run:  2026-07-07T01:00:00+02:00
     Deliver:   local
     Script:    peer106-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:00:15.745274+02:00  ok
+    Last run:  2026-07-07T00:00:58.943002+02:00  ok
 
   19c9f58c1c43 [active]
     Name:      Peer105+106 Autonomous Loop
     Schedule:  0 7,10,20,22,0 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T07:00:00+02:00
+    Next run:  2026-07-07T07:00:00+02:00
     Deliver:   local
-    Last run:  2026-07-06T00:00:16.115887+02:00  error: RuntimeError: No access token found for Nous Portal login. Run `hermes model` to re-authenticate.
+    Last run:  2026-07-07T00:02:12.275226+02:00  ok
 
   4290847cf173 [active]
     Name:      N56VV Nightly Cooling Period
     Schedule:  0 2 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T02:00:00+02:00
+    Next run:  2026-07-07T02:00:00+02:00
     Deliver:   local
     Script:    cooling-period.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-05T02:00:16.578385+02:00  ok
+    Last run:  2026-07-06T02:00:23.616671+02:00  ok
 
   3d9f08a47adf [active]
     Name:      N56VV Cooling Stats Report (notturno)
     Schedule:  10 3 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T03:10:00+02:00
+    Next run:  2026-07-07T03:10:00+02:00
     Deliver:   origin
     Script:    cooling-post-report.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-05T03:10:58.377618+02:00  ok
+    Last run:  2026-07-06T03:10:20.351294+02:00  ok
 
   807d66777982 [active]
     Name:      daytime-thermal-snapshot
     Schedule:  */30 3-10,19-23,0-1 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T01:00:00+02:00
+    Next run:  2026-07-07T01:00:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:30:17.422291+02:00  ok
+    Last run:  2026-07-07T00:31:00.245551+02:00  ok
 
   c90b8615686d [active]
     Name:      daytime-thermal-midnight
     Schedule:  0 0 * * *
     Repeat:    ∞
-    Next run:  2026-07-07T00:00:00+02:00
+    Next run:  2026-07-08T00:00:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:00:15.959583+02:00  ok
+    Last run:  2026-07-07T00:00:58.842031+02:00  ok
 
   c9a6557a16fc [active]
     Name:      peer-exchange-friday
@@ -108,39 +108,41 @@ STDOUT:
     Name:      N56VV Diurnal Cooling Period
     Schedule:  0 11 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T11:00:00+02:00
+    Next run:  2026-07-07T11:00:00+02:00
     Deliver:   local
     Script:    cooling-period-diurno.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-05T11:00:23.336376+02:00  ok
+    Last run:  2026-07-06T11:00:44.878229+02:00  ok
 
   81db87817660 [active]
     Name:      N56VV Diurnal Cooling Stats Report
     Schedule:  10 19 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T19:10:00+02:00
+    Next run:  2026-07-07T19:10:00+02:00
     Deliver:   origin
     Script:    cooling-post-report-diurno.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-05T19:10:02.954925+02:00  ok
+    Last run:  2026-07-06T19:10:48.943769+02:00  ok
 
   04fd5a313c48 [active]
     Name:      Quest Advancement (round-robin)
     Schedule:  0 */4 * * *
     Repeat:    ∞
-    Next run:  2026-07-06T04:00:00+02:00
+    Next run:  2026-07-07T04:00:00+02:00
     Deliver:   local
-    Last run:  2026-07-06T00:00:16.060226+02:00  error: RuntimeError: No access token found for Nous Portal login. Run `hermes model` to re-authenticate.
+    Last run:  2026-07-07T00:02:53.679978+02:00  ok
 
   7bc39d7b86eb [active]
     Name:      peer128 Keepalive
     Schedule:  every 2m
     Repeat:    ∞
-    Next run:  2026-07-06T00:32:17.288430+02:00
+    Next run:  2026-07-07T00:32:04.019262+02:00
     Deliver:   local
     Script:    peer128-tunnel.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-06T00:30:17.288430+02:00  ok
+    Last run:  2026-07-07T00:30:04.019262+02:00  error: Script exited with code 1
+stdout:
+tunnel: FAILED
 
 
 

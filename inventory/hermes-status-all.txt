@@ -36,9 +36,12 @@ STDOUT:
   Anthropic     ✗ 
 
 ◆ Auth Providers
-  Nous Portal   ✗ not logged in (run: hermes portal)
+  Nous Portal   ✓ logged in
     Portal URL: https://portal.nousresearch.com
-    Error:      No access token found for Nous Portal login.
+    Inference:  https://inference-api.nousresearch.com/v1
+    Access exp: 2026-07-07 00:46:27 CEST
+    Key exp: "<REDACTED>"
+    Refresh:    yes
   OpenAI Codex  ✓ logged in
     Auth file:  /home/fausto/.hermes/auth.json
     Refreshed:  2026-07-03 00:30:34 CEST
@@ -49,6 +52,16 @@ STDOUT:
   xAI OAuth     ✗ not logged in (run: hermes auth add xai-oauth)
     Auth file:  /home/fausto/.hermes/auth.json
     Error:      No xAI OAuth credentials stored. Select xAI Grok OAuth (SuperGrok / Premium+) in `hermes model`.
+
+◆ Nous Tool Gateway
+  Nous Portal   ✓ managed tools available
+  Web tools       ✓ active via Nous subscription
+  Image generation ✓ active via Nous subscription
+  Video generation ✓ active via Nous subscription
+  OpenAI TTS      ✓ active via Nous subscription
+  Speech-to-text  ✓ active via Nous subscription
+  Browser automation ✓ active via Nous subscription
+  Modal execution ✓ active via local
 
 ◆ API-Key Providers
   Z.AI / GLM       ✗ not configured (run: hermes model)
@@ -81,7 +94,7 @@ STDOUT:
 ◆ Gateway Service
   Status:       ✓ running
   Manager:      systemd (user)
-  PID(s):       1787
+  PID(s):       1784
 
 ◆ Scheduled Jobs
   Jobs:         14 active, 14 total
