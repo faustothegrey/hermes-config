@@ -116,6 +116,8 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
+**Pitfall — `cronjob list` does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `repeat.completed` (total run count), read `~/.hermes/cron/jobs.json` directly — it has the full internal state for every job, including `repeat.completed`, `created_at`, and the complete job definition.
+
 ## macOS peer troubleshooting (macOS-specific)
 
 When a Hermes peer on macOS is unresponsive or timing out despite passing ping:
