@@ -15,17 +15,17 @@ STDOUT:
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-10T10:19:38.023039+02:00  ok
+    Last run:  2026-07-10T22:05:15.928281+02:00  ok
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-07-10T22:04:33.715555+02:00
+    Next run:  2026-07-10T22:40:35.767626+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-10T21:59:33.715555+02:00  ok
+    Last run:  2026-07-10T22:35:35.767626+02:00  ok
 
   8e0ec6535bc7 [active]
     Name:      Peer105 Heartbeat
@@ -79,11 +79,11 @@ STDOUT:
     Name:      daytime-thermal-snapshot
     Schedule:  */30 3-10,19-23,0-1 * * *
     Repeat:    ∞
-    Next run:  2026-07-10T22:30:00+02:00
+    Next run:  2026-07-10T23:00:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-10T22:00:33.070229+02:00  ok
+    Last run:  2026-07-10T22:30:34.525832+02:00  ok
 
   c90b8615686d [active]
     Name:      daytime-thermal-midnight
@@ -136,11 +136,11 @@ STDOUT:
     Name:      peer128 Keepalive
     Schedule:  every 2m
     Repeat:    ∞
-    Next run:  2026-07-10T22:05:37.343292+02:00
+    Next run:  2026-07-10T22:38:38.888012+02:00
     Deliver:   local
     Script:    peer128-tunnel.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-10T22:03:37.343292+02:00  error: Script exited with code 1
+    Last run:  2026-07-10T22:36:38.888012+02:00  error: Script exited with code 1
 stdout:
 tunnel: FAILED
 

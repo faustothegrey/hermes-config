@@ -116,7 +116,21 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
-**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `repeat.completed` (total run count), try reading `~/.hermes/cron/jobs.json` directly — it may have the full internal state including `repeat.completed`, `created_at`, and the complete job definition. If that file does not exist, or the job is a `no_agent=True` script that writes to a git repository (e.g. a config backup that commits to a local git repo), approximate total runs from `git log --oneline` in the target repo.
+**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `run_totali`:
+
+1. First try `~/.hermes/cron/jobs.json` — it may contain `repeat.completed`, `created_at`, and the full job definition.
+2. If that file does not exist, or the job is a `no_agent=True` script, locate the output target:
+   - Read the script (`~/.hermes/scripts/<script>`) and look for `REPO_DIR` or `OUTPUT_DIR` environment variables.
+   - For config-backup patterns that commit to a local git repo, the `REPO_DIR` variable tells you where.
+3. Approximate total runs from git commits in that repo:
+   ```
+   cd "$REPO_DIR"
+   git log --reverse --oneline --format=%ci
+   # Count lines = total successful backup runs
+   ```
+4. **Watch out for timestamp mismatch**: cron's `last_run_at` reflects when the cron scheduler last fired the job. The git commit timestamps may differ if the script also runs outside cron (manual runs, other triggers). Report the cron `last_run_at` for "when did the cron job last run" — not the latest git commit time.
+
+**User preference — status queries want JSON-only response**: When the user asks for cron job status with a specific JSON schema, return ONLY the JSON with no explanatory text, no markdown, no surrounding narrative. The schema fields and their exact types are the full answer. This also applies to any structured-status query where the user explicitly defines the output format.
 
 ## macOS peer troubleshooting (macOS-specific)
 
