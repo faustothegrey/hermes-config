@@ -518,6 +518,122 @@ Default safety pattern: if temperature stays ≥REBOOT_AT_C for N consecutive ch
 
 See `references/2026-06-20-N56VV-thermal-freeze-diagnosis.md` for a concrete worked example.
 
+## SSH Guardian — Temporary Port Access via Messaging Channel
+
+Alternative to port knocking, VPN, or permanent port forwarding. Uses an
+authenticated messaging channel (Telegram, Discord, etc.) as the side channel
+to temporarily open a firewall rule for SSH port 2222. Zero persistent exposure.
+
+### Architecture
+
+```
+                       ┌─────────────────────────────────┐
+User ──Telegram──→ Hermes Agent ──→ guardiano.sh open     │
+  "apri 2222"          (this session)  │                  │
+                                       ▼                  │
+                               ┌──────────────┐           │
+                               │  iptables     │          │
+                               │  ACCEPT :2222 │          │
+                               │  (sopra DROP) │          │
+                               └──────┬───────┘           │
+                                      │                   │
+                         cron */2 ────┤                   │
+                         guardiano-   │                   │
+                         watchdog.sh  │                   │
+                                      ▼                   │
+                              Timer check & close ────────┘
+```
+
+**Key insight:** The router port-forward points to :2222 permanently.
+iptables on the host blocks it by default (DROP rule). The agent adds an
+ACCEPT rule in front only when the user requests it via the messaging
+channel — which is already authenticated (Telegram user ID, etc.).
+
+### Components
+
+#### guardiano.sh — State machine
+
+- `open` — adds iptables ACCEPT rule for :2222, writes state file, starts 20-min timer
+- `close` — removes ACCEPT rule, clears state, sends notification
+- `keepalive` — touches `/tmp/guardiano-keepalive` flag (watchdog picks it up)
+- `status` — reads state file, reports open/closed + time remaining
+- `watchdog` — main logic: checks timer, warns at 2-min mark, closes on expiry, processes keepalive flag
+
+Scripts: `scripts/guardiano.sh` and `scripts/guardiano-watchdog.sh`.
+
+#### Installation on a new machine
+
+```bash
+# 1. SSH config — add second port
+sudo sed -i 's/^#\\?Port 22/Port 22\\nPort 2222/' /etc/ssh/sshd_config
+sudo systemctl restart sshd
+
+# 2. iptables default DROP
+sudo iptables -A INPUT -p tcp --dport 2222 -j DROP
+
+# 3. Make iptables rule persistent (distribution-dependent)
+# Debian/Ubuntu: sudo apt install iptables-persistent
+# Fedora/RHEL:   sudo dnf install iptables-services
+# Or write a @reboot cron: sudo iptables -A INPUT -p tcp --dport 2222 -j DROP
+
+# 4. Copy scripts
+cp scripts/guardiano.sh ~/.hermes/scripts/
+cp scripts/guardiano-watchdog.sh ~/.hermes/scripts/
+chmod +x ~/.hermes/scripts/guardiano.sh ~/.hermes/scripts/guardiano-watchdog.sh
+
+# 5. Cron
+(crontab -l 2>/dev/null; echo '*/2 * * * * ~/.hermes/scripts/guardiano-watchdog.sh > /dev/null 2>&1') | crontab -
+```
+
+#### User-facing commands
+
+The agent recognizes these when the user says them in any Hermes channel:
+
+| User says | Action |
+|-----------|--------|
+| "apri 2222" / "apri SSH" | `guardiano.sh open` |
+| "chiudi 2222" / "chiudi SSH" | `guardiano.sh close` |
+| "la porta?" / "com'è la porta?" | `guardiano.sh status` |
+| "sì" / "tieni aperto" (after warning) | `guardiano.sh keepalive` |
+
+#### Timing defaults
+
+| Event | Time | Trigger |
+|-------|------|---------|
+| Port opens | t+0 | User command |
+| Warning | t+18min | "⏳ scade tra 2 min, rispondi sì" |
+| Keepalive accepted | any | User "sì" → resets to t+20min |
+| Port closes | t+20min | Silent expiry; "🔒 chiusa" |
+| Manual close | any | User "chiudi" |
+
+#### SSH Guardian pitfalls
+
+- **`hermes send` requires a running Hermes session** — if the gateway is down,
+  Telegram warnings silently fail. The watchdog still closes the port on timeout.
+- **iptables rules are ephemeral** — reboot clears them unless saved or added
+  via `@reboot`. The DROP rule MUST be persistent.
+- **Keepalive race condition** — user's "sì" between watchdog ticks sits until
+  the next tick (max 2 min delay). The port stays open during that window.
+- **Multiple simultaneous openings** — single-instance state machine. Second
+  `open` while active just refreshes the timer.
+- **Router port forwarding** must already point to :2222. This tool does not
+  configure the router.
+- **Logging** — state lives in `/tmp/` files: `/tmp/guardiano-state.json`,
+  `/tmp/guardiano-keepalive`, `/tmp/guardiano.log`.
+
+The deployment history (Italian perspective, specific LAN config at
+192.168.178.84:2222) is preserved in
+`references/guardiano-deployment-history.md`.
+
+### Related access patterns
+
+- **Faro beacon protocol** (`faro-peer-beacon` skill) — passive peer uptime
+  monitoring, complementary to guardiano.
+- **Port knocking** — alternative using a sequence of connection attempts
+  instead of a messaging channel. Less reliable (packet loss breaks sequence).
+- **Tailscale/WireGuard** — full VPN overlay. More complex setup but provides
+  always-on encrypted access.
+
 ## Pitfalls
 
 - `apt autoremove` may remove packages that are only indirectly related because apt marks them auto-installed. Mention notable removals in the final summary.

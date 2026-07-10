@@ -1,9 +1,9 @@
 {
-  "last_report_path": "/home/fausto/.hermes/logs/curator/20260703-180640",
-  "last_run_at": "2026-07-03T18:06:40.578563+00:00",
-  "last_run_duration_seconds": 4.525904,
-  "last_run_summary": "auto: no changes; llm: error: No LLM provider configured. Run `hermes model` to select a provider, or run `hermes setup` for first-time configuration.",
+  "last_report_path": "/home/fausto/.hermes/logs/curator/20260710-190626",
+  "last_run_at": "2026-07-10T19:06:26.422757+00:00",
+  "last_run_duration_seconds": 223.03453,
+  "last_run_summary": "auto: no changes; llm: The consolidation is complete. Let me now write the final human summary and structured machine-readable block.\n\n---\n\n## Summary\n\n**Consolidations performed (1):**\n\n**`ssh-guardian` → `linux-system-maintenance`** — The SSH Guardian system (t…\narchived 1 skill(s):\n  • ssh-guardian → linux-system-maintenance\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin linux-system-maintenance",
   "last_run_summary_shown_at": "2026-06-12T09:06:17.752667+00:00",
   "paused": false,
-  "run_count": 6
+  "run_count": 7
 }

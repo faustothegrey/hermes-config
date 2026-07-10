@@ -116,7 +116,7 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
-**Pitfall — `cronjob list` does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `repeat.completed` (total run count), read `~/.hermes/cron/jobs.json` directly — it has the full internal state for every job, including `repeat.completed`, `created_at`, and the complete job definition.
+**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `repeat.completed` (total run count), try reading `~/.hermes/cron/jobs.json` directly — it may have the full internal state including `repeat.completed`, `created_at`, and the complete job definition. If that file does not exist, or the job is a `no_agent=True` script that writes to a git repository (e.g. a config backup that commits to a local git repo), approximate total runs from `git log --oneline` in the target repo.
 
 ## macOS peer troubleshooting (macOS-specific)
 

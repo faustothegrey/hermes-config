@@ -48,6 +48,10 @@ Use when the user asks to preserve a Hermes installation in case the machine cra
    - A smoke restore into temporary directories succeeds for non-secret config and vault contents; quote paths carefully because Obsidian vault paths often contain spaces.
 8. Report the exact repo path, commit hash, included/excluded classes, encrypted-secret recovery requirement, restore command, and any vault backup path.
 
+### Estimating backup run count from git log
+
+When asked for total runs of a cron backup job, the `cronjob(action='list')` API does not expose `run_totali`. For `no_agent=True` backup scripts that commit to a git repo on each run, use `git -C <repo_path> log --oneline` to count commits — each successful cron execution produces one commit. Verify against the cron `last_run_at` timestamp to confirm the most recent commit aligns with the recorded run time.
+
 Detailed repo layout, encryption fallback, verification checks, and restore shape: `references/hermes-config-backup-repo.md`.
 
 ## Gateway service operations
