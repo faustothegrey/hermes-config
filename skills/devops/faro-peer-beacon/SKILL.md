@@ -1,12 +1,14 @@
 ---
 name: faro-peer-beacon
 description: "Protocollo minimale per sapere chi è online e chi no nella peer mesh Hermes. Tre tipi di peer: LED (beacon-only), portatile (macOS + App Nap), sempre acceso (Raspberry Pi con gateway Hermes)."
-version: 2.0.0
+version: 2.1.0
 author: Hermes Agent
 platforms: [linux, macos]
 ---
 
 # Faro — Peer Beacon Protocol
+
+**⚠️ STATUS: BEING RETIRED.** All peers in this mesh now run Hermes API servers on :8642. Direct /health polling via MCP peer tools (`mcp_hermes_peers_list_peers`, `mcp_hermes_peers_peer_health`) replaces the Faro beacon system entirely. See migration path at bottom.
 
 Protocollo minimale per sapere chi è online e chi no nella peer mesh Hermes.
 
@@ -184,3 +186,54 @@ Dopo l'abilitazione, peer70 appare automaticamente in `mcp_hermes_peers_list_pee
 - `scripts/beacon.sh` — beacon script per Linux ARM
 - `scripts/beacon-macos.sh` — beacon script per macOS
 - `scripts/faro-monitor.sh` — monitor passivo (eseguito da cron sull'orchestratore)
+
+---
+
+## Migrazione: Faro → Direct MCP Health Polling
+
+### Motivazione
+
+Il protocollo Faro (beacon-listener su :9191, beacon.sh cron, faro-monitor) è stato progettato quando alcuni peers non avevano Hermes API server attivo. Oggi **tutti i peers espongono /health su :8642**, rendendo il beacon ridondante.
+
+### Sostituzione
+
+| Faro system | Nuovo approccio |
+|---|---|
+| beacon-listener :9191 | Eliminare — non più necessario |
+| beacon.sh su peers | Rimuovere dai crontab dei peers |
+| faro-monitor.sh cron */5 | Sostituire con MCP peer health polling |
+| `~/.hermes/peer-status/status.json` | Sostituire con `mcp_hermes_peers_list_peers(include_health=true)` |
+
+### Procedura
+
+1. **Dal coordinatore**, verificare che tutti i peers siano raggiungibili via API:
+   ```
+   mcp_hermes_peers_list_peers(include_health=True)
+   ```
+
+2. **Rimuovere beacon.sh** dai crontab dei peers (SSH su ciascuno):
+   ```bash
+   ssh root@peer105 "crontab -l | grep -v beacon.sh | crontab -"
+   ssh root@peer106 "crontab -l | grep -v beacon.sh | crontab -"
+   ssh fausto@peer128 "crontab -l | grep -v beacon.sh | crontab -"
+   ```
+
+3. **Arrestare beacon-listener** sul vecchio orchestratore:
+   ```bash
+   kill $(pgrep -f beacon-listener)  # se ancora in esecuzione
+   # Rimuovere da crontab @reboot se presente
+   ```
+
+4. **Rimuovere faro-monitor cron** dal vecchio orchestratore.
+
+5. **Cancellare i file storici** (opzionale):
+   ```
+   rm -rf ~/.hermes/peer-status/
+   ```
+
+### Cron di sostituzione (sul coordinatore)
+
+Il nuovo coordinatore imposta un cron job no_agent semplice per health polling periodico:
+- `every 5m` → `mcp_hermes_peers_list_peers(include_health=True)` per monitor passivo
+- Oppure usare un cron job LLM-driven solo quando serve analisi (transizioni, anomalie)
+- peers macOS (peer128) potrebbero ancora beneficiare di un keepalive pull ogni 2 min — da valutare quando tornano online

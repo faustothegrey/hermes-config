@@ -1,7 +1,7 @@
 ---
 name: hermes-peer-mesh-operations
 description: "Operate a LAN mesh of Hermes Agent API-server peers: onboarding, readiness checks, safe experience exchange, synthesis, and feedback loops."
-version: 1.3.0
+version: 1.4.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos]
@@ -532,3 +532,83 @@ The `call_peer` tool-verification pattern: when a peer's tool capability is unkn
 - `references/constrained-peer-watchdog.sh` — minimal bash watchdog template for resource-constrained peers with transient model failures.
 - `references/exchange-protocol.md` — reusable exchange protocol: round-1 self-report prompt, peer setup checklist, verification ladder, normalized report schema, synthesis output shape, and feedback prompt template.
 - `references/memory-architecture-5-layer.md` — shared 5-layer memory model (hot/warm/cold/procedural/vault) adopted across peers. Includes holographic provider details, activation steps, and numpy pitfall (Hermes issue #17350).
+
+## Coordinator handover protocol
+
+Use this when the user directs you to transfer the coordinating role for the entire peer mesh from one node to another (e.g. "peer70 will be the coordinating node from now on").
+
+### Overview
+
+The handover transfers: peer topology inventory, cron job ownership (peer-infrastructure category), the Faro beacon system retirement responsibility, API key knowledge, and workload distribution rules. Each peer's /health reachability is verified before the handover is considered complete.
+
+### Phase 1 — Assets inventory
+
+Before handing anything over, gather the complete state:
+
+1. **Peer topology** — `mcp_hermes_peers_list_peers(include_health=True)` gives URL, role, API key env var name, and current health for every configured peer.
+2. **Cron jobs** — `cronjob(action='list')` to inventory all jobs. Classify each job:
+   - **Local/thermal** — system-specific (cooling periods, thermal snapshots, host-local watchdogs). These stay on the old orchestrator.
+   - **Peer infrastructure** — heartbeats, research loops, quest advancement, keepalives, experience exchanges. These migrate to the new coordinator.
+3. **Legacy systems** — Faro beacon (beacon-listener, beacon.sh crontabs, faro-monitor). Note whether it's still active and whether retirement is part of the handover.
+4. **Research queue** — location (Obsidian path), format, max daily pacing (e.g. 3-4 videos, ~10 articles).
+5. **Quest system** — active quests, advancement cron schedule, Obsidian tracking paths, email brief setup.
+6. **Security** — API key env var names per peer (e.g. `HERMES_PEER_70_KEY`), peer-mesh.yaml location, any access phrases ("apriti sedano").
+7. **Facts** — fact_store entries about peers, workload distribution rules, cooling windows, user preferences about peer usage.
+8. **Memory** — HOT memory entries about peers, topology, and constraints.
+
+### Phase 2 — Handover document
+
+Write a self-contained handover brief. Structure it as:
+
+```
+# Hermes Local Network Group — Handover to <new-coordinator>
+
+1. IDENTITY & ROLE — what the new coordinator is taking over
+2. PEER INVENTORY — each peer: host specs, Hermes version, URL, API key env name, role, auth method, current health status, constraints, legacy beacon setup
+3. CRON JOBS — table of what stays (local/thermal) vs what migrates (peer infrastructure); show schedule, script, type for each
+4. LEGACY SYSTEMS — Faro beacon status and retirement plan
+5. WORKLOAD DISTRIBUTION — which peer does what, with time windows
+6. RESEARCH & QUESTS — queue location, pacing rules, quest tracking
+7. SECURITY — API key layout, peer-mesh.yaml, access phrases
+8. ACTION ITEMS — numbered steps for the new coordinator
+```
+
+### Phase 3 — Delivery to new coordinator
+
+Use **two-step delivery** — the handover document is too large for a single synchronous `call_peer`:
+
+1. **Ping first** — verify reachability with a short call:
+   ```
+   call_peer(peer="<new-coordinator>", input="Ping pre-handover. Respond with ACK and health status.", timeout=15)
+   ```
+
+2. **Save handover document locally** — write to `~/.hermes/handover-to-<peer>.md` as a reference copy on the old orchestrator.
+
+3. **Deliver via start_peer_run** — long-running task that tolerates the large handover text:
+   ```
+   start_peer_run(peer="<new-coordinator>", input="<full handover as structured sections>", timeout=600)
+   ```
+   - Keep each section short enough for the peer to process. If the handover is very long, split into numbered 1/N sections.
+   - Include explicit ACTION ITEMS so the peer processes them, not just reads passively.
+
+4. **Monitor completion** — poll `get_peer_run` for status. The run may take several minutes as the new coordinator reads its config, lists its cron jobs, and begins acting.
+
+5. **Events** — use `get_peer_events` to observe intermediate progress (tool calls, file reads, message deltas) during the run. A 404 on events mid-stream is normal — the run may still be active via the status endpoint.
+
+### Phase 4 — Post-handover
+
+After the new coordinator acknowledges and begins acting:
+
+1. **Old coordinator retains** only local/thermal cron jobs. All peer-infrastructure jobs get removed.
+2. **Old coordinator retires** the Faro beacon system (beacon-listener, beacon.sh crontabs on peers, faro-monitor).
+3. **Old coordinator becomes a regular peer** in the mesh — add it to the new coordinator's peer-mesh.yaml.
+4. **Verify** that the new coordinator's `/health` is reachable from all peers.
+5. **Document** the handover as a skill reference file under `references/handover-<date>.md`.
+
+### Pitfalls
+
+- **`call_peer` timeout on large handover**: A full handover document can be 3K-8K words. `call_peer` has a default timeout that may not be enough. Use `start_peer_run` with the full text and a generous timeout (600s).
+- **Filesystem isolation**: The handover document saved on the old orchestrator's filesystem is NOT visible to the new coordinator. The handover text must be delivered via the API call itself.
+- **Cron job migration sequencing**: Remove old cron jobs from the old coordinator only AFTER verifying the new coordinator's replacement jobs are running and healthy. Check via `get_peer_run` or `call_peer` asking for a cron list.
+- **API key transfer**: API keys stay in their respective peers' configs/env. The new coordinator needs the API_KEY values stored in its own config.yaml's mcp_servers.hermes_peers.env section. The old coordinator's config.yaml has them; extract and transfer as part of the handover instructions.
+- **peer-mesh.yaml update on new coordinator**: The new coordinator must also add the OLD coordinator as a peer entry so it can be reached. This requires the old coordinator's API key and URL.

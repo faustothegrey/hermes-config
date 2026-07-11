@@ -13,12 +13,13 @@ Il loop consuma al massimo 2 item per tick (1 video + 1 web, o 2 web se non ci s
 
 ## Da fare
 
-
 ## In corso
-
 
 ## Completati
 
+- [x] web "MetaGPT multi-agent orchestration contracts consensus protocol" → [[Projects/AgentTalk/Research/2026-07-11 — MetaGPT Prior Art.md|Digest]] — **Verdetto:** Adottare (adattare). SOP encoding + pub-sub message pool + assembly-line paradigm sono il riferimento più forte per l'orchestrazione di AgentTalk.
+
+- [x] web "Traycer versioned-stream-rpc multi-agent coding orchestrator json-schema-fingerprint" → [[Knowledge/2026-07-11 — Research — Traycer Prior Art.md|Digest]] — **Verdetto:** Adottare (adattare). Da approfondire: json-schema-fingerprint e inbox.ts
 - [x] video "ultime novità intelligenza artificiale 2026"
 - [x] web "Hermes Agent AI 2026 updates features"
 - [x] web "didattica con intelligenza artificiale 2026"

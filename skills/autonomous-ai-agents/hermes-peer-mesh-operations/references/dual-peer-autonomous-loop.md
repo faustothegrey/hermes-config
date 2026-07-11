@@ -14,7 +14,7 @@ Full protocol for cron-driven dual-peer advancement. This is the master document
 7. DOCUMENT both in their Obsidian notes (Operation Log section)
 8. ARCHIVE to Knowledge Base — write Obsidian note in Hermes/Knowledge/ (use absolute path `/home/fausto/Documents/Obsidian Vault/Hermes/Knowledge/`)
 9. UPDATE Research Queue — mark consumed items
-10. SEND ONE RECAP EMAIL covering both peers via himalaya (retry once on transient DNS failure)
+10. SEND ONE RECAP EMAIL covering both peers via Python SMTP_SSL (port 465 preferred; himalaya fallback if Python env unavailable)
 11. SELF-REGULATE — one step per peer per wake-up
 ```
 
@@ -117,33 +117,11 @@ If you pass a path that looks like a filename (e.g., `/tmp/peer105/riscv2026_raw
 - **Peer106 (Web research)**: max ~10 articles analyzed per day. One web_search + web_extract per tick is ideal.
 - **No stress tests. No batch processing. No heavy load.** These are tiny ARM machines that swap at idle.
 - Each tick does ONE small step per peer — a single video transcript, a single web query. Never queue up multiple items in one tick.
-- **cron job schedule**: `0 6,10,14,18,22 * * *` (every 4 hours, starting at 06:00). This gives each peer ~4h between ticks to recover from swap.
+- **cron job schedule**: `0 7,10,20,22,0 * * *` (ticks at 07:00, 10:00, 20:00, 22:00, midnight). Adapted to the diurnal cooling period (11:00-19:00 on N56VV). The 10:00 tick is the last before cooling shutdown; 20:00 is the first post-cooling. **Night shift spans the 22:00 → 00:00 → 07:00 window.**
 
 ## Recap email
 
-### Primary method (himalaya)
-
-```bash
-cat /tmp/peers-recap-N.eml | himalaya message send --account virgilio -- --
-```
-
-**Pitfall — `--account` position**: `--account` must go BEFORE the subcommand: `himalaya message send --account virgilio -- --`. Placing it after `message send` fails with `unexpected argument '--account'`.
-
-**Pitfall — DNS/IMAP dependency**: himalaya attempts to connect to the IMAP server (imap.virgilio.it) before sending, even for SMTP-only operations. If DNS fails temporarily (transient `failed to lookup address information`), the send command fails even though the SMTP server is reachable. A retry often works, but for deterministic delivery use the Python fallback below.
-
-### Fallback method (Python SMTP_SSL)
-
-Use when himalaya is unreachable or DNS is flaky. A script lives under this skill at `scripts/send-recap-email.py`:
-
-```bash
-python3 /path/to/send-recap-email.py /tmp/peers-recap-N.eml \
-  "Peers Loop #N — HH:MM CEST (OK)" \
-  fausto.lelli@gmail.com
-```
-
-The script reads credentials from `~/.config/himalaya/virgilio.pass` and sends via SMTP_SSL on smtp.virgilio.it:465 with zero external dependencies.
-
-Inline fallback (when the script path is unknown):
+### Primary method (Python SMTP_SSL — port 465)
 
 ```python
 python3 -c "
@@ -151,14 +129,46 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 pw = open('/home/fausto/.config/himalaya/virgilio.pass').read().strip()
 body = open('/tmp/peers-recap-N.eml').read()
-msg = MIMEText(body)
+msg = MIMEText(body, 'plain', 'utf-8')
 msg['Subject'] = 'Peers Loop #N — HH:MM CEST (OK)'
 msg['From'] = 'fausto.lelli@virgilio.it'
 msg['To'] = 'fausto.lelli@gmail.com'
-with smtplib.SMTP_SSL('smtp.virgilio.it', 465, context=ssl.create_default_context()) as s:
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+context.check_hostname = False
+context.verify_mode = ssl.CERT_NONE
+with smtplib.SMTP_SSL('smtp.virgilio.it', 465, context=context, timeout=10) as s:
     s.login('fausto.lelli@virgilio.it', pw)
     s.send_message(msg)
+print('SUCCESS')
 "
+```
+
+**Why this over himalaya**: The Python method bypasses himalaya's IMAP prerequisite entirely. `himalaya message send` tries to connect to IMAP first (even for SMTP-only operations), which fails intermittently on Virgilio DNS (`Temporary failure in name resolution`). Python SMTP_SSL goes straight to port 465 with no IMAP dependency. The SSL context must use `check_hostname=False` due to Virgilio's certificate hostname mismatch.
+
+**Cleanup after sending**:
+```bash
+rm -f /tmp/send_email*.py /tmp/research-loop-report-*.eml /tmp/email_body_*.txt
+```
+
+### Fallback method (himalaya)
+
+Use when Python cannot find the password file or the cron environment lacks the `ssl` module:
+
+```bash
+cat /tmp/peers-recap-N.eml | himalaya message send --account virgilio -- --
+```
+
+**Pitfall — `--account` position**: `--account` must go BEFORE the subcommand: `himalaya message send --account virgilio -- --`. Placing it after `message send` fails with `unexpected argument '--account'`.
+
+**Pitfall — DNS/IMAP dependency**: himalaya attempts to connect to the IMAP server (imap.virgilio.it) before sending, even for SMTP-only operations. If DNS fails temporarily (transient `failed to lookup address information`), the send command fails even though the SMTP server is reachable. Retry once before falling back to the Python method.
+
+### Script reference
+
+A reusable script lives under this skill at `scripts/send-recap-email.py`:
+```bash
+python3 /path/to/send-recap-email.py /tmp/peers-recap-N.eml \
+  "Peers Loop #N — HH:MM CEST (OK)" \
+  fausto.lelli@gmail.com
 ```
 
 ## Operation Log format (Obsidian)

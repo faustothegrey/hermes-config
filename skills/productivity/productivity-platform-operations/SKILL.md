@@ -46,6 +46,82 @@ For Gmail access checks, do not stop at “account/token file exists”. Verify 
 
 Use Himalaya for terminal IMAP/SMTP: search/read mail, draft/send messages, and manage folders. Confirm recipients and final body before sending sensitive mail.
 
+### Basic workflow
+
+List configured accounts:
+```
+himalaya account list
+```
+
+Send a new email (template workflow — preferred):
+```
+himalaya template write \
+  -H "To:user@example.com" \
+  -H "Subject:Your subject" \
+  "email body text here" | himalaya template send
+```
+
+Use `-a <account>` with both commands to target a non-default account.
+
+Send a raw .eml message (alternative — headers must be fully specified):
+```
+himalaya message send << RAW
+From: Name <sender@example.com>
+To: recipient@example.com
+Subject: Your subject
+
+email body
+RAW
+```
+
+Search and read mail:
+```
+himalaya envelope list -f INBOX
+himalaya message read <ENVELOPE_ID>
+```
+
+### Account config
+
+Config lives at `~/.config/himalaya/config.toml`. Each account block has email, display-name, IMAP backend, and SMTP backend. Passwords go via an auth script (e.g. `~/.config/himalaya/virgilio-password`).
+
+```
+[accounts.virgilio]
+email = "user@virgilio.it"
+display-name = "Name"
+default = true
+
+backend.type = "imap"
+backend.host = "imap.virgilio.it"
+...
+
+message.send.backend.type = "smtp"
+message.send.backend.host = "smtp.virgilio.it"
+message.send.backend.port = 465
+message.send.backend.encryption.type = "tls"
+...
+
+folder.aliases.sent = "Posta Inviata"
+```
+
+### Binaries and PATH
+
+Himalaya binary at `~/.local/bin/himalaya`. When called from execute_code subprocess, the sandbox PATH includes this directory, but for safety use the full path: `/home/fausto/.local/bin/himalaya`.
+
+### Virgilio SMTP pitfalls
+
+- **451 "too many invalid recipients"**: server-side transient error from smtp.virgilio.it. Authenticates fine, template is correct, but Virgilio rejects delivery. This affects ALL recipients, even @virgilio.it addresses. Resolution: retry later; if it persists check webmail for account blocks.
+- The account needs IMAP + SMTP auth via separate password prompts (same cmd). Both authenticate independently.
+- Folder aliases: `folder.aliases.sent = "Posta Inviata"` (Italian, not "Sent").
+
+### Verification
+
+- After any mutation (send, move, delete), read back or list the affected folder.
+- For send failures, distinguish client-side (wrong command, bad headers) from server-side (451, 550, etc.). Check the himalaya debug/trace output for the SMTP server's response code.
+
+### Reference
+
+Session-specific detail (Virgilio 451 reproduction, command syntax trials, password auth, folder aliases) is in `references/himalaya-email.md` under this skill.
+
 ## Airtable and Notion
 
 Use Airtable for structured record CRUD and filtering. Use Notion for pages, databases, block content, markdown import/export, and Notion Workers when available.
