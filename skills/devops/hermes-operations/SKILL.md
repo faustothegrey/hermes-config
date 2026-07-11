@@ -114,51 +114,29 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 
 ### Pitfalls
 
-**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs (`run_totali`). To get this:
+**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs (`run_totali`). To get this, try in order:
 
-1. **Primary method — count output files**: For `no_agent=True` scripts, each run saves an output file under `~/.hermes/cron/output/<job_id>/`. Count those files. This is the scheduler's tick count — most reliable.
+1. **Primary method — parse internal state** (`~/.hermes/cron/jobs.json`): The cron backend stores `repeat.completed` per job. Parse the JSON:
+   ```python
+   import json
+   with open("/home/fausto/.hermes/cron/jobs.json") as f:
+       data = json.load(f)
+   jobs = data["jobs"]  # it's a list of dicts
+   for job in jobs:
+       if job["id"] == "<job_id>":
+           run_totali = job["repeat"]["completed"]
+   ```
+   This is the scheduler's own counter — most reliable.
 
-2. **Fallback — git commit count**: For backup scripts that commit to a local git repo, read the script to find `REPO_DIR`, then count commits. **Pitfall within the pitfall**: the repo may contain manual commits or a long git history that predates the cron job. Cross-check commit count against the schedule frequency and `last_run_at`. If the git history is much longer than the cron lifetime (check `created_at` in `~/.hermes/cron/jobs.json` if it exists), filter with `git log --after="<created_at>"`.
+2. **Secondary — count output files**: For `no_agent=True` scripts, each run saves an output file under `~/.hermes/cron/output/<job_id>/`. Count those. Less reliable if the output directory was ever cleaned.
 
-3. **Fallback — parse internal state**: If `~/.hermes/cron/jobs.json` exists, parse it — it may carry `repeat.completed` per job.
+3. **Fallback — git commit count in the backup repo**: For backup-style scripts that commit to a local git repo, read the script to find `REPO_DIR`, then count commits. **Pitfall within the pitfall**: the repo may contain the entire history of the source config, predating the cron job. Cross-check against `created_at` from `jobs.json` using `git log --after="<created_at>"`.
 
 4. **Watch for timestamp mismatch**: cron's `last_run_at` is when the scheduler fired. Git timestamps or output file names may differ if the script runs outside cron. Always report cron's `last_run_at` for "when did the cron job last run."
 
-**User preference — structured-status queries get pure JSON, zero extra text**: When the user asks for a status report with a specific JSON schema (e.g. `{esito, ultimo_run, run_totali}`), return ONLY the JSON object — no markdown fences, no explanations, no surrounding narrative. The schema fields and their exact types ARE the full answer. This applies to any structured-status query where the user explicitly defines the output format.
+**User preference — structured-cron-status queries get pure JSON, zero extra text**: When the user asks for a status report with a specific JSON schema (e.g. `{"esito":"...","ultimo_run":"...","run_totali":N}`), return ONLY the JSON object — no markdown fences, no explanations, no surrounding narrative. The schema fields and their exact types ARE the full answer. This applies to any structured-status query where the user explicitly defines the output format.
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
-
-**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs. To get `run_totali`:
-
-1. **Primary method — count output files**: For most cron jobs (especially `no_agent=True` scripts), the scheduler saves a `.md` output file per run under `~/.hermes/cron/output/<job_id>/`. Count those files:
-   ```python
-   import glob
-   outdir = "/home/fausto/.hermes/cron/output/<job_id>/"
-   files = sorted(glob.glob(outdir + "*"))
-   run_totali = len(files)
-   ```
-   This is the most reliable source — each file corresponds to one scheduler tick.
-
-2. **Fallback — check internal state**: If `~/.hermes/cron/jobs.json` exists, parse it (it may carry `repeat.completed` under the job key). This is the same data the cron backend stores internally and is often more current than the output directory:
-   ```python
-   import json
-   with open("~/.hermes/cron/jobs.json") as f:
-       jobs = json.load(f)
-   # If it's a dict keyed by job_id, jobs["46e2b1f4aea4"]["repeat"]["completed"]
-   # If it's an array, search by job_id
-   ```
-
-3. **Fallback — git commit count in the backup repo**: For backup-style scripts that commit to a local git repo, read the script to find `REPO_DIR`, then count unique days with commits. **Pitfall within the pitfall**: a backup repo may contain the entire history of the *source* configuration (e.g. 45 commits spanning weeks) while only 1 cron run actually happened. Always cross-check the number of commits against the schedule frequency and `last_run_at` to detect when commits outnumber cron runs.
-
-   If the git history is much longer than the cron lifetime (check `created_at` in jobs.json), use the commit date of the cron job's `created_at` as the cutoff:
-   ```
-   git log --after="<created_at>" --format=%ai --reverse
-   ```
-
-4. **Watch out for timestamp mismatch**: cron's `last_run_at` reflects when the scheduler last fired the job. The git commit timestamps or output file names may differ if the script runs outside cron (manual runs, other triggers). Always report the cron `last_run_at` for "when did the cron job last run".
-
-5. **User preference — structured-cron-status queries get a pure JSON answer**: When the user asks for cron job status with a specific JSON schema (`{esito, ultimo_run, run_totali}` or similar), return ONLY the JSON with zero extra text — no markdown fences, no explanations, no surrounding narrative. The schema fields and their exact types are the full answer. This also applies to any structured-status query where the user explicitly defines the output format.
-5. **User preference — structured-cron-status queries get a pure JSON answer**: When the user asks for cron job status with a specific JSON schema (`{esito, ultimo_run, run_totali}` or similar), return ONLY the JSON with zero extra text — no markdown fences, no explanations, no surrounding narrative. The schema fields and their exact types are the full answer. This also applies to any structured-status query where the user explicitly defines the output format.
 
 
 
