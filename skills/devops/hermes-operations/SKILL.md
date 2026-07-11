@@ -112,7 +112,19 @@ After significant cron changes (new critical jobs, job schedule adjustments, or 
 2. Keep HOT memory compact — just the constraint rule and a pointer to the Obsidian notes
 3. Store the full audit in the KB so it's recoverable via session_search or Obsidian links
 
-### Pitfalls (existing)
+### Pitfalls
+
+**Pitfall — cronjob list does not show total run counts**: The `cronjob(action='list')` tool output shows `last_status`, `last_run_at`, and `next_run_at`, but NOT total completed runs (`run_totali`). To get this:
+
+1. **Primary method — count output files**: For `no_agent=True` scripts, each run saves an output file under `~/.hermes/cron/output/<job_id>/`. Count those files. This is the scheduler's tick count — most reliable.
+
+2. **Fallback — git commit count**: For backup scripts that commit to a local git repo, read the script to find `REPO_DIR`, then count commits. **Pitfall within the pitfall**: the repo may contain manual commits or a long git history that predates the cron job. Cross-check commit count against the schedule frequency and `last_run_at`. If the git history is much longer than the cron lifetime (check `created_at` in `~/.hermes/cron/jobs.json` if it exists), filter with `git log --after="<created_at>"`.
+
+3. **Fallback — parse internal state**: If `~/.hermes/cron/jobs.json` exists, parse it — it may carry `repeat.completed` per job.
+
+4. **Watch for timestamp mismatch**: cron's `last_run_at` is when the scheduler fired. Git timestamps or output file names may differ if the script runs outside cron. Always report cron's `last_run_at` for "when did the cron job last run."
+
+**User preference — structured-status queries get pure JSON, zero extra text**: When the user asks for a status report with a specific JSON schema (e.g. `{esito, ultimo_run, run_totali}`), return ONLY the JSON object — no markdown fences, no explanations, no surrounding narrative. The schema fields and their exact types ARE the full answer. This applies to any structured-status query where the user explicitly defines the output format.
 
 **Pitfall — `deliver: local` jobs never surface output in CLI**: When a cron job has `deliver: local`, its output is saved to disk only — it never reaches the chat. To verify these jobs, run their scripts directly with `terminal` or check the output files they produce.
 
