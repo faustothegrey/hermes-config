@@ -52,6 +52,8 @@ Use when the user asks to preserve a Hermes installation in case the machine cra
 
 When asked for total runs of a cron backup job, the `cronjob(action='list')` API does not expose `run_totali`. For `no_agent=True` backup scripts that commit to a git repo on each run, use `git -C <repo_path> log --oneline` to count commits — each successful cron execution produces one commit. Verify against the cron `last_run_at` timestamp to confirm the most recent commit aligns with the recorded run time.
 
+For the more general pattern (any no_agent script job, not just git-backed), see the Core pattern section above: counting output files under `~/.hermes/cron/output/<job_id>/` works for all script-only jobs.
+
 Detailed repo layout, encryption fallback, verification checks, and restore shape: `references/hermes-config-backup-repo.md`.
 
 ## Gateway service operations
@@ -230,6 +232,20 @@ When the user asks whether Hermes is monitoring system health in the background,
 4. Store a small state file under `~/.hermes/state/` when duplicate alerts are possible.
 5. Use `deliver='origin'` unless the user explicitly asks for another channel.
 6. Verify after creation/update with `cronjob(action='list')`.
+
+### Retrieving cron job details not exposed by the API
+
+The `cronjob(action='list')` API exposes `last_status`, `last_run_at`, `last_delivery_error`, `schedule`, and `next_run_at`, but not `total_run_count`.
+
+For `no_agent=True` script jobs, count output files under the job's output directory:
+
+```bash
+ls ~/.hermes/cron/output/<job_id>/ | wc -l
+```
+
+Each successful run produces one timestamped `.md` output file. Cross-reference the most recent file's timestamp with the API's `last_run_at` to confirm alignment. This works for all no_agent script jobs regardless of whether they write to a git repo.
+
+For jobs that commit to a git repo on each run (e.g. config backup), `git -C <repo_path> log --oneline` can also serve as a run count. See the disaster recovery section for details on estimating backup run count from git log.
 
 ### Cadence guidance
 
