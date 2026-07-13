@@ -497,14 +497,14 @@
     "archived_at": null,
     "created_at": "2026-05-29T08:08:23.495721+00:00",
     "created_by": null,
-    "last_patched_at": "2026-07-13T04:01:46.559831+00:00",
-    "last_used_at": "2026-07-13T04:01:11.733001+00:00",
-    "last_viewed_at": "2026-07-13T04:01:11.683521+00:00",
-    "patch_count": 69,
+    "last_patched_at": "2026-07-13T17:44:03.888208+00:00",
+    "last_used_at": "2026-07-13T17:43:50.148865+00:00",
+    "last_viewed_at": "2026-07-13T17:43:50.058044+00:00",
+    "patch_count": 70,
     "pinned": false,
     "state": "active",
-    "use_count": 58,
-    "view_count": 58
+    "use_count": 59,
+    "view_count": 59
   },
   "hermes-memory-architecture": {
     "archived_at": null,
@@ -524,13 +524,13 @@
     "created_at": "2026-06-12T09:15:07.571159+00:00",
     "created_by": null,
     "last_patched_at": "2026-07-11T21:51:44.794044+00:00",
-    "last_used_at": "2026-07-12T22:54:02.058388+00:00",
-    "last_viewed_at": "2026-07-12T22:54:02.000486+00:00",
+    "last_used_at": "2026-07-13T17:43:50.103494+00:00",
+    "last_viewed_at": "2026-07-13T17:43:50.010660+00:00",
     "patch_count": 35,
     "pinned": false,
     "state": "active",
-    "use_count": 44,
-    "view_count": 44
+    "use_count": 45,
+    "view_count": 45
   },
   "hermes-peer-mesh-operations": {
     "archived_at": null,
@@ -992,13 +992,13 @@
     "created_at": "2026-06-24T06:42:10.943093+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-24T14:11:05.196175+00:00",
-    "last_used_at": "2026-07-13T06:03:16.443535+00:00",
-    "last_viewed_at": "2026-07-13T06:03:16.377323+00:00",
+    "last_used_at": "2026-07-13T22:03:02.298824+00:00",
+    "last_viewed_at": "2026-07-13T22:03:02.214759+00:00",
     "patch_count": 4,
     "pinned": false,
     "state": "active",
-    "use_count": 28,
-    "view_count": 28
+    "use_count": 30,
+    "view_count": 30
   },
   "requesting-code-review": {
     "archived_at": null,

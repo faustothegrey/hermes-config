@@ -237,7 +237,20 @@ When the user asks whether Hermes is monitoring system health in the background,
 
 The `cronjob(action='list')` API exposes `last_status`, `last_run_at`, `last_delivery_error`, `schedule`, and `next_run_at`, but not `total_run_count`.
 
-For `no_agent=True` script jobs, count output files under the job's output directory:
+**Primary method — parse internal state (`~/.hermes/cron/jobs.json`)**: The cron backend stores `repeat.completed` per job. Parse the JSON:
+
+```python
+import json
+with open("/home/fausto/.hermes/cron/jobs.json") as f:
+    data = json.load(f)
+for job in data["jobs"]:
+    if job["id"] == "<job_id>":
+        run_totali = job["repeat"]["completed"]
+```
+
+This works for ALL cron jobs (not just `no_agent=true`) and is the scheduler's own counter — most reliable. The `jobs.json` file is a complete serialization of cron state, not a runtime database; reading it is safe while the scheduler is active.
+
+**Secondary method — count output files**: For `no_agent=True` script jobs, count output files under the job's output directory:
 
 ```bash
 ls ~/.hermes/cron/output/<job_id>/ | wc -l
@@ -245,7 +258,9 @@ ls ~/.hermes/cron/output/<job_id>/ | wc -l
 
 Each successful run produces one timestamped `.md` output file. Cross-reference the most recent file's timestamp with the API's `last_run_at` to confirm alignment. This works for all no_agent script jobs regardless of whether they write to a git repo.
 
-For jobs that commit to a git repo on each run (e.g. config backup), `git -C <repo_path> log --oneline` can also serve as a run count. See the disaster recovery section for details on estimating backup run count from git log.
+**Tertiary method — git log**: For jobs that commit to a git repo on each run (e.g. config backup), `git -C <repo_path> log --oneline` can also serve as a run count. See the disaster recovery section for details. **Pitfall**: the repo may contain history predating the cron job; cross-check against `created_at` from `jobs.json` using `git log --after="<created_at>"`.
+
+**Watch for timestamp mismatch**: cron's `last_run_at` is when the scheduler fired. Git timestamps or output file names may differ if the script runs outside cron. Always report cron's `last_run_at` for "when did the cron job last run."
 
 ### Cadence guidance
 
