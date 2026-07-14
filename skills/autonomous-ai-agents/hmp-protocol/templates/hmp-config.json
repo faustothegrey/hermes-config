@@ -1,0 +1,15 @@
+{
+    "peer_name": "peer70",
+    "peer_role": "coordinator",
+    "cluster_role": "primary",
+    "db_path": "~/.hermes/data/hmp/agent_messages.db",
+    "server_port": 8643,
+    "timezone": "Europe/Rome",
+    "skills": ["research", "video_digest", "quest_management"],
+    "max_concurrent_tasks": 3,
+    "max_timeout": 300,
+    "supported_types": ["research", "query", "delegate"],
+    "tasks_per_minute": 10,
+    "tags": ["coordinator", "rpi", "24-7"],
+    "agent_card_ttl": 300
+}

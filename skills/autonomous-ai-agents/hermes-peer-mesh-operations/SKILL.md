@@ -1,7 +1,7 @@
 ---
 name: hermes-peer-mesh-operations
 description: "Operate a LAN mesh of Hermes Agent API-server peers: onboarding, readiness checks, safe experience exchange, synthesis, and feedback loops."
-version: 1.4.0
+version: 1.5.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos]
@@ -27,8 +27,16 @@ Load this skill when the task involves any of:
 - Synthesizing lessons across multiple Hermes instances.
 - Feeding a digest back to peers for review.
 - Designing cron/delegation workflows for peer coordination.
+- **Designing or evolving a formal communication protocol between peers** — load companion skill `hmp-protocol` for structured message format, task lifecycle, heartbeat progress, and Agent Card discovery.
+- **Facilitating a peer-review cycle** — sending a document/draft to multiple peers, collecting feedback, integrating, and re-submitting for approval.
 
 Also load the protected `hermes-agent` skill for authoritative Hermes CLI/config/API details.
+
+## Related skills
+
+- `hmp-protocol` — formal Hermes Mesh Protocol for structured peer-to-peer communication (complements ad-hoc call_peer/start_peer_run). Defines message format, task lifecycle, heartbeat progress, Agent Cards.
+- AMB (Agent Message Bus) by @kriszmac4 — external standalone project for pull-based inter-profile messaging on a single host. Evaluated for this mesh but HMP was built instead for multi-host LAN. Not adopted.
+- `faro-peer-beacon` — minimal peer health monitoring (complementary to HMP watchdog)
 
 ## Safety policy
 
@@ -218,6 +226,21 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@PEER_IP
 ```
 
 List available keys first: `ls ~/.ssh/id_*`
+
+### Config file expanduser pitfall
+
+When storing file paths in JSON config files (e.g. `hmp-config.json`), a value like `~/.hermes/data/hmp/agent_messages.db` retains the literal `~` when loaded via `json.load()`. Any code that opens the path **must** call `os.path.expanduser()` before using it. If omitted:
+
+- A **separate, empty database** is created in the CWD under `~/` (literal tilde directory)
+- Cron scripts that read the config and construct the bus with the raw path will operate on the wrong DB
+- The real DB with all messages remains untouched — the cron appears to find "nothing to do"
+
+**Fix pattern:**
+```python
+self.db_path = os.path.expanduser(db_path or DEFAULT_DB_PATH)
+```
+
+**Detection:** when a cron script says "idle" despite messages existing in the DB, compare the bus's `db_path` with the actual DB location. Run a debug script that prints both.
 
 ## Restart/reset semantics to remember
 
@@ -413,6 +436,14 @@ Cron:
 - Use `context_from` for chained jobs but do not assume same-tick upstream completion.
 - Avoid recursive scheduling.
 - For recurring reports, output only deltas/notable changes.
+- **Remote cron via SSH wrapper**: When the cron scripts must run on a different host (e.g. peer70 has the DB but orchestrator is peer84), create a **wrapper script** in `~/.hermes/scripts/` that SSHs to the target and runs the actual script:
+  ```bash
+  # ~/.hermes/scripts/hmp-remote-message-router.sh
+  #!/usr/bin/env bash
+  exec ssh fausto@192.168.178.70 "cd ~/.hermes && python3 scripts/hmp-message-router.py"
+  ```
+  Register the cron with `script: hmp-remote-message-router.sh` and `no_agent: True` (since the wrapper just execs SSH). Prerequisite: passwordless SSH key auth from orchestrator to target.
+  **Pitfall — verify script path resolution**: cron scripts must be bare filenames (relative to `~/.hermes/scripts/`). Absolute paths are rejected.
 - **Pitfall — skill size kills cron runs**: Cron sessions have a 3-minute hard timeout. Large skills (e.g. `hermes-agent` at ~200KB of markdown) loaded via `skills: [...]` on a cron job consume most of the context window and the model may time out before producing any output. The session is created but contains only the system prompt, no assistant response. Fix: remove large reference skills from cron jobs. Cron agents only need the operational protocol, not full CLI/config reference docs.
 - **Pitfall — `cronjob action='run'` vs scheduled run**: A manual trigger via `cronjob action='run'` can create a duplicate tick that overlaps with the scheduled run and overloads the model. If the scheduled run already succeeded, the manual run may fail silently. Check Obsidian for results before concluding a cron run failed — `deliver: local` jobs never surface output in CLI.
 - **Pitfall — `cronjob action='run'` on LLM-driven jobs silently fails when agent slot is occupied**: If the parent session is active (you're in a conversation), the cron scheduler cannot spawn a new agent. The `action='run'` call returns `success: true` but the job never executes — `last_run_at` and `last_status` stay null. This is NOT an error you can fix by waiting. Fallback: read the job's prompt from `~/.hermes/cron/jobs.json`, extract the protocol, and execute it inline in the current session. Example: `python3 -c "import json; data=json.load(open('~/.hermes/cron/jobs.json')); [print(j['prompt']) for j in data['jobs'] if j['id']=='<job_id>']"`. This is particularly important for autonomous project loops that coordinate peer work — the user expects progress, not a silent no-op.
@@ -531,7 +562,57 @@ The `call_peer` tool-verification pattern: when a peer's tool capability is unkn
 - `references/round-002-lessons.md` — round 002 lessons: rate-limit header checking, partial mesh resilience, Python-over-bash for cron peer workflows, empty-response throttling pattern, cross-platform skill sharing.
 - `references/constrained-peer-watchdog.sh` — minimal bash watchdog template for resource-constrained peers with transient model failures.
 - `references/exchange-protocol.md` — reusable exchange protocol: round-1 self-report prompt, peer setup checklist, verification ladder, normalized report schema, synthesis output shape, and feedback prompt template.
+- `references/call-peer-failure-patterns.md` — diagnosis of 401 (auth mismatch) and 429 (rate limit) failure modes when calling constrained peers via call_peer.
 - `references/memory-architecture-5-layer.md` — shared 5-layer memory model (hot/warm/cold/procedural/vault) adopted across peers. Includes holographic provider details, activation steps, and numpy pitfall (Hermes issue #17350).
+
+## Peer review / document feedback workflow
+
+When the user wants to **get feedback from multiple peers** on a document, proposal, or protocol draft, follow this pattern:
+
+### Phase 1 — Scope the review
+
+1. Confirm which peers should review (not all peers may be relevant)
+2. Draft a **focused prompt** per peer that:
+   - States the document's purpose concisely
+   - Lists 5-7 **specific questions/points** to evaluate
+   - Sets explicit constraints: max words, language, deadline
+   - Prohibits research/exploration ("rispondi subito, niente ricerche")
+
+### Phase 2 — Dispatch
+
+1. Send via `call_peer` for short prompts (<500 words, quick response)
+2. Use `start_peer_run` for large prompts (full document text) with generous timeout (300s+)
+3. **Handle failures gracefully** — log each peer's response status:
+   - `401` = auth mismatch → document as peer health issue
+   - `429` = quota exhausted → document as resource constraint
+   - Timeout → document as availability issue
+4. Continue with remaining peers regardless of failures — partial mesh resilience
+
+### Phase 3 — Synthesize
+
+1. Collect all responses. For each peer note: what they validated, what they criticized, what they suggested adding
+2. Categorize feedback: **blocking** (must fix), **recommended** (should fix), **nice-to-have** (could fix)
+3. Ask the user: "Vuoi che integri tutto e poi lo ripasso ai peer per approvazione?"
+
+### Phase 4 — Integrate and re-submit
+
+1. Apply all blocking and recommended fixes
+2. Send updated version back to the same peers with changelog
+3. Ask for final approval: "Round N approvato?" or "Vedi ancora qualcosa?"
+
+### Phase 5 — Archive
+
+1. Save the final version as a skill or reference file
+2. Document key decisions (what was rejected and why)
+3. Save the review history as a reference file under the relevant skill
+
+### Pitfalls
+
+- **Don't send the full document via call_peer** — it times out for large texts. Use `start_peer_run` instead.
+- **Focused prompts beat open-ended ones.** Instead of "what do you think?", ask specific questions about each dimension.
+- **SSH quoting issues**: inline Python with f-strings inside SSH heredocs frequently breaks. Prefer writing a `.py` file via SCP and running it via `ssh HOST python3 /tmp/script.py`.
+- **Peer availability varies.** peer105/106 on free-tier LLMs may have exhausted quota. Document the failure mode, don't block.
+- **Read the actual content first.** When a user shares a URL or search result, extract and read it before forming opinions. Do not substitute related-but-different knowledge (e.g. jumping to A2A when the user found AMB). If the page can't be loaded (CAPTCHA, blocked), say so and ask the user what was there — don't guess.
 
 ## Coordinator handover protocol
 
