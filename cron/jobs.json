@@ -20,17 +20,17 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 48
+        "completed": 49
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-07-15T00:30:00+02:00",
-      "last_run_at": "2026-07-14T05:41:15.137204+02:00",
-      "last_status": "ok",
-      "last_error": null,
+      "next_run_at": "2026-07-16T00:30:00+02:00",
+      "last_run_at": "2026-07-15T00:17:50.243034+02:00",
+      "last_status": "error",
+      "last_error": "Script exited with code 2\nstderr:\nremote: warning: See https://gh.io/lfs for more information.        \nremote: warning: File secrets/hermes-secrets.tar.gz.enc is 78.75 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB        \nremote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        \nTo github.com:faustothegrey/hermes-config.git\n   83c91a1..aad7287  master -> master\n/home/fausto/.hermes/scripts/hermes-config-backup-nightly.sh: line 13: unexpected EOF while looking for matching `\"'\nstdout:\n[2026-07-15T00:15:32+02:00] Starting Hermes config backup in /home/fausto/Backups/hermes-config\nRegenerated sanitized Hermes backup from /home/fausto/.hermes into /home/fausto/Backups/hermes-config\nEncrypted secrets bundle updated. Decryption needs matching private key for /home/fausto/.ssh/id_rsa.pub\n[master aad7287] backup: update Hermes configuration\n 22 files changed, 1945 insertions(+), 113 deletions(-)\n rewrite secrets/hermes-secrets.key.enc (100%)\n create mode 100644 skills/autonomous-ai-agents/hermes-peer-mesh-operations/references/call-peer-failure-patterns.md\n create mode 100644 skills/autonomous-ai-agents/hmp-protocol/SKILL.md\n create mode 100644 skills/autonomous-ai-agents/hmp-protocol/references/HMP-SPEC-v0.2.md\n create mode 100644 skills/autonomous-ai-agents/hmp-protocol/references/deployment-round-1.md\n create mode 100644 skills/autonomous-ai-agents/hmp-protocol/scripts/hmp.py\n create mode 100644 skills/autonomous-ai-agents/hmp-protocol/templates/hmp-config.json\n create mode 100644 skills/devops/guardiano-ssh-port-knocker/references/fritzbox-upnp.md\n[2026-07-15T00:17:50+02:00] Hermes config backup completed.",
       "last_delivery_error": null,
       "deliver": "local",
       "origin": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 5346
+        "completed": 5349
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-07-15T00:17:33.122726+02:00",
-      "last_run_at": "2026-07-15T00:12:33.122726+02:00",
+      "next_run_at": "2026-07-15T00:35:37.455770+02:00",
+      "last_run_at": "2026-07-15T00:30:37.455770+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -280,15 +280,15 @@
       "schedule_display": "*/30 3-10,19-23,0-1 * * *",
       "repeat": {
         "times": null,
-        "completed": 2214
+        "completed": 2215
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-07-15T00:30:00+02:00",
-      "last_run_at": "2026-07-15T00:00:30.093720+02:00",
+      "next_run_at": "2026-07-15T01:00:00+02:00",
+      "last_run_at": "2026-07-15T00:30:36.071731+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -514,15 +514,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 5195
+        "completed": 5200
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-28T07:35:30.450190+02:00",
-      "next_run_at": "2026-07-15T00:16:36.609501+02:00",
-      "last_run_at": "2026-07-15T00:14:36.609501+02:00",
+      "next_run_at": "2026-07-15T00:31:39.488878+02:00",
+      "last_run_at": "2026-07-15T00:29:39.488878+02:00",
       "last_status": "error",
       "last_error": "Script exited with code 1\nstdout:\ntunnel: FAILED",
       "last_delivery_error": null,
@@ -556,15 +556,15 @@
       "schedule_display": "*/30 * * * * *",
       "repeat": {
         "times": null,
-        "completed": 17
+        "completed": 18
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-14T20:10:19.155562+02:00",
-      "next_run_at": "2026-07-15T00:30:00+02:00",
-      "last_run_at": "2026-07-15T00:01:31.456931+02:00",
+      "next_run_at": "2026-07-15T00:30:38+02:00",
+      "last_run_at": "2026-07-15T00:30:37.924434+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -598,15 +598,15 @@
       "schedule_display": "*/2 * * * *",
       "repeat": {
         "times": null,
-        "completed": 122
+        "completed": 130
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-14T20:10:28.168835+02:00",
-      "next_run_at": "2026-07-15T00:16:00+02:00",
-      "last_run_at": "2026-07-15T00:14:33.752513+02:00",
+      "next_run_at": "2026-07-15T00:32:00+02:00",
+      "last_run_at": "2026-07-15T00:30:37.133323+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -663,5 +663,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-07-15T00:15:32.321422+02:00"
+  "updated_at": "2026-07-15T00:30:37.924968+02:00"
 }
