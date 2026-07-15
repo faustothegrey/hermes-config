@@ -15,60 +15,60 @@ STDOUT:
     Deliver:   local
     Script:    hermes-config-backup-nightly.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T04:42:26.582066+02:00  error: Script exited with code 2
+    Last run:  2026-07-15T06:20:26.804708+02:00  error: Script exited with code 2
 stderr:
 remote: warning: See https://gh.io/lfs for more information.        
-remote: warning: File secrets/hermes-secrets.tar.gz.enc is 78.99 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB        
+remote: warning: File secrets/hermes-secrets.tar.gz.enc is 79.02 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB        
 remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
 To github.com:faustothegrey/hermes-config.git
-   2a02554..1d83353  master -> master
+   1d83353..6499359  master -> master
 /home/fausto/.hermes/scripts/hermes-config-backup-nightly.sh: line 13: unexpected EOF while looking for matching `"'
 stdout:
-[2026-07-15T04:39:29+02:00] Starting Hermes config backup in /home/fausto/Backups/hermes-config
+[2026-07-15T06:17:37+02:00] Starting Hermes config backup in /home/fausto/Backups/hermes-config
 Regenerated sanitized Hermes backup from /home/fausto/.hermes into /home/fausto/Backups/hermes-config
 Encrypted secrets bundle updated. Decryption needs matching private key for /home/fausto/.ssh/id_rsa.pub
-[master 1d83353] backup: update Hermes configuration
- 8 files changed, 68 insertions(+), 75 deletions(-)
+[master 6499359] backup: update Hermes configuration
+ 8 files changed, 52 insertions(+), 52 deletions(-)
  rewrite secrets/hermes-secrets.key.enc (100%)
-[2026-07-15T04:42:26+02:00] Hermes config backup completed.
+[2026-07-15T06:20:26+02:00] Hermes config backup completed.
 
   cb6a13495a09 [active]
     Name:      heavy-load-watchdog
     Schedule:  every 5m
     Repeat:    ∞
-    Next run:  2026-07-15T06:18:38.455720+02:00
+    Next run:  2026-07-15T09:31:00.038992+02:00
     Deliver:   telegram
     Script:    heavy_load_watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:13:38.455720+02:00  ok
+    Last run:  2026-07-15T09:26:00.038992+02:00  ok
 
   8e0ec6535bc7 [active]
     Name:      Peer105 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-07-15T07:00:00+02:00
+    Next run:  2026-07-15T10:00:00+02:00
     Deliver:   local
     Script:    peer105-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:00:36.420057+02:00  ok
+    Last run:  2026-07-15T09:00:57.179132+02:00  ok
 
   5814f1c59e75 [active]
     Name:      Peer106 Heartbeat
     Schedule:  0 * * * *
     Repeat:    ∞
-    Next run:  2026-07-15T07:00:00+02:00
+    Next run:  2026-07-15T10:00:00+02:00
     Deliver:   local
     Script:    peer106-heartbeat.py
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:00:36.464364+02:00  ok
+    Last run:  2026-07-15T09:00:57.301913+02:00  ok
 
   19c9f58c1c43 [active]
     Name:      Peer105+106 Autonomous Loop
     Schedule:  0 7,10,20,22,0 * * *
     Repeat:    ∞
-    Next run:  2026-07-15T07:00:00+02:00
+    Next run:  2026-07-15T10:00:00+02:00
     Deliver:   local
-    Last run:  2026-07-15T00:00:49.561768+02:00  ok
+    Last run:  2026-07-15T07:00:59.341264+02:00  ok
 
   4290847cf173 [active]
     Name:      N56VV Nightly Cooling Period
@@ -94,11 +94,11 @@ Encrypted secrets bundle updated. Decryption needs matching private key for /hom
     Name:      daytime-thermal-snapshot
     Schedule:  */30 3-10,19-23,0-1 * * *
     Repeat:    ∞
-    Next run:  2026-07-15T06:30:00+02:00
+    Next run:  2026-07-15T10:00:00+02:00
     Deliver:   local
     Script:    cooling-stats.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:00:36.306271+02:00  ok
+    Last run:  2026-07-15T09:30:59.691814+02:00  ok
 
   c90b8615686d [active]
     Name:      daytime-thermal-midnight
@@ -143,19 +143,19 @@ Encrypted secrets bundle updated. Decryption needs matching private key for /hom
     Name:      Quest Advancement (round-robin)
     Schedule:  0 */4 * * *
     Repeat:    ∞
-    Next run:  2026-07-15T08:00:00+02:00
+    Next run:  2026-07-15T12:00:00+02:00
     Deliver:   local
-    Last run:  2026-07-15T04:00:50.397932+02:00  ok
+    Last run:  2026-07-15T08:01:06.175621+02:00  ok
 
   7bc39d7b86eb [active]
     Name:      peer128 Keepalive
     Schedule:  every 2m
     Repeat:    ∞
-    Next run:  2026-07-15T06:18:41.692597+02:00
+    Next run:  2026-07-15T09:31:03.396741+02:00
     Deliver:   local
     Script:    peer128-tunnel.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:16:41.692597+02:00  error: Script exited with code 1
+    Last run:  2026-07-15T09:29:03.396741+02:00  error: Script exited with code 1
 stdout:
 tunnel: FAILED
 
@@ -163,21 +163,21 @@ tunnel: FAILED
     Name:      hmp-message-router
     Schedule:  */30 * * * * *
     Repeat:    ∞
-    Next run:  2026-07-15T06:30:00+02:00
+    Next run:  2026-07-15T10:00:00+02:00
     Deliver:   origin
     Script:    hmp-remote-message-router.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:01:38.189472+02:00  ok
+    Last run:  2026-07-15T09:31:01.733638+02:00  ok
 
   4e91002a67b3 [active]
     Name:      hmp-watchdog
     Schedule:  */2 * * * *
     Repeat:    ∞
-    Next run:  2026-07-15T06:18:00+02:00
+    Next run:  2026-07-15T09:32:00+02:00
     Deliver:   origin
     Script:    hmp-remote-watchdog.sh
     Mode:      no-agent (script stdout delivered directly)
-    Last run:  2026-07-15T06:16:38.769007+02:00  ok
+    Last run:  2026-07-15T09:31:00.829607+02:00  ok
 
   9350bf6cd534 [active]
     Name:      hmp-dream-engine
