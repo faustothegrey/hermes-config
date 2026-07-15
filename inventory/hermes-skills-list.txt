@@ -27,6 +27,7 @@ STDOUT:
 │ guardiano-ssh-port-k… │ devops               │ local    │ local    │ enabled │
 │ hermes-background-op… │ devops               │ local    │ local    │ enabled │
 │ hermes-operations     │ devops               │ local    │ local    │ enabled │
+│ linux-service-deploy… │ devops               │ local    │ local    │ enabled │
 │ linux-system-mainten… │ devops               │ local    │ local    │ enabled │
 │ webhook-subscriptions │ devops               │ local    │ local    │ enabled │
 │ minecraft-modpack-se… │ gaming               │ official │ official │ enabled │
@@ -51,7 +52,7 @@ STDOUT:
 │ subagent-driven-deve… │ software-development │ local    │ local    │ enabled │
 │ writing-plans         │ software-development │ local    │ local    │ enabled │
 └───────────────────────┴──────────────────────┴──────────┴──────────┴─────────┘
-6 hub-installed, 6 builtin, 32 local — 44 enabled, 0 disabled
+6 hub-installed, 6 builtin, 33 local — 45 enabled, 0 disabled
 
 
 

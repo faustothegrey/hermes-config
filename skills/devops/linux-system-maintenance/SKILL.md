@@ -169,9 +169,134 @@ Log notable resolved anomalies to fact_store so WARM memory catches them without
 
 See `references/anomaly-logging.md` for the full implementation: state file fields, threshold table, integration points in the watchdog script, and the three injection points (start/resolve/setup).
 
+## Creating a systemd service for a Python API/script
+
+Use this when you need to run a Python-based API, monitoring script, or web service as a persistent background daemon on a Linux machine (e.g. a quota-monitoring API, a local webhook receiver, a periodic data collector).
+
+### Unit file template (system service)
+
+```ini
+[Unit]
+Description=My Service Description
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fausto
+WorkingDirectory=/home/fausto/path/to/project
+ExecStart=/usr/bin/python3 /home/fausto/path/to/project/api.py
+Environment=MY_VAR=value
+EnvironmentFile=/etc/my-service.env
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/home/fausto/.hermes/logs/my-service.log
+StandardError=append:/home/fausto/.hermes/logs/my-service.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Pitfalls:**
+- Use absolute paths everywhere — systemd does not inherit user PATH or `~` expansion.
+- `Type=simple` works for long-lived Python processes that start serving immediately. If the process needs a readiness signal, consider `Type=notify`.
+- StandardOutput/Error `append:` does not rotate logs. For production, add `logrotate` or use `journald` with `StandardOutput=journal`.
+
+### EnvironmentFile for secrets
+
+Systemd's `EnvironmentFile=` expects **bare KEY=value** lines (no `export` prefix, no surrounding quotes unless they are part of the value):
+
+```ini
+# /etc/my-service.env — chmod 600
+OPENROUTER_API_KEY=sk-or-...
+```
+
+Create and protect:
+
+```bash
+sudo touch /etc/my-service.env
+sudo chmod 600 /etc/my-service.env
+```
+
+### Dual env file strategy
+
+When both shell login and systemd need the same API keys, maintain two files:
+
+| File | Format | Sourced by | Purpose |
+|------|--------|-----------|---------|
+| `~/.env` | `export KEY="value"` | `~/.profile` (`. "$HOME/.env"`) | Login shells, SSH, interactive use |
+| `/etc/my-service.env` | `KEY=value` | systemd `EnvironmentFile=` | Background service |
+
+Convert between formats by stripping `export ` prefix and surrounding quotes.
+
+### Cross-platform path fix (macOS → Linux)
+
+When a Python script hardcodes `/Users/fausto/...` paths:
+
+```python
+from pathlib import Path
+_HOME = Path.home()
+_SCRIPTS_AI = _HOME / "Software" / "scripts-ai"
+sys.path.insert(0, str(_SCRIPTS_AI / "quota-monitoring"))
+```
+
+**Pitfall:** the original file may have a second `from pathlib import Path` later. Remove the duplicate after adding the dynamic one at the top.
+
+### Shell fallback pattern (cross-platform)
+
+When a script needs a shell to source a variable but `zsh` may not exist on Linux:
+
+```python
+for _shell in ("zsh", "bash"):
+    try:
+        value = _sp.check_output(
+            [_shell, "-ic", 'echo "$MY_VAR"'],
+            stderr=_sp.DEVNULL, timeout=10
+        ).decode().strip()
+        if value:
+            break
+    except Exception:
+        continue
+else:
+    # neither shell found the variable
+```
+
+### Verification checklist
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now my-service.service
+sudo systemctl status my-service.service --no-pager
+sleep 3
+curl -s --max-time 5 http://127.0.0.1:PORT/endpoint | head -3
+tail -20 /path/to/log
+systemctl is-active my-service.service
+```
+
+### Service lifecycle commands
+
+| Action | Command |
+|--------|---------|
+| Start | `sudo systemctl start my-service.service` |
+| Stop | `sudo systemctl stop my-service.service` |
+| Restart | `sudo systemctl restart my-service.service` |
+| Enable | `sudo systemctl enable my-service.service` |
+| Status | `sudo systemctl status my-service.service --no-pager` |
+| Journal | `sudo journalctl -u my-service.service --no-pager \| tail -40` |
+| Reload | `sudo systemctl daemon-reload` |
+
+### Exit code 143 (SIGTERM)
+
+When a process exits with code 143 (128+15 = SIGTERM), this is normal for:
+- Manual kill of a test/background process
+- systemd restarting the service
+- Ctrl+C on a foreground process
+
+Not a crash. The new service instance replaced it.
+
 ## Proactive thermal mitigation — rtcwake cooling period
 
-When the system (especially an old laptop) runs dangerously hot under sustained load and a physical fix isn't immediately possible, schedule a nightly cooling period: shut down for several hours using `rtcwake -m off` so the CPU gets complete thermal recovery.
+Use this when the system (especially an old laptop) runs dangerously hot under sustained load and a physical fix isn't immediately possible, schedule a nightly cooling period: shut down for several hours using `rtcwake -m off` so the CPU gets complete thermal recovery.
 
 ### Quick recipe
 

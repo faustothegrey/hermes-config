@@ -156,6 +156,57 @@ Use native MCP configuration for stdio/HTTP MCP servers. Add, test, list, and co
 
 For s6-overlay or gateway service problems, inspect supervisor logs and process state first. Restart only the affected service when possible and preserve logs for root-cause analysis.
 
+### Deploying a custom Python HTTP API as a systemd service
+
+Use this pattern when a local Python web server (quota monitor, telemetry endpoint, internal dashboard) needs to start at boot and stay alive.
+
+**1. Fix hardcoded paths first.** If the code was written on macOS (`/Users/fausto/...`), replace absolute paths with `Path.home()`:
+```python
+from pathlib import Path
+_HOME = Path.home()
+SCRIPTS = _HOME / "Software" / "scripts-ai"
+sys.path.insert(0, str(SCRIPTS / "quota-monitoring"))
+```
+This ensures the same code works on both peer128 (Mac) and peer84 (Linux).
+
+**2. Create the service file** at `/etc/systemd/system/<service-name>.service`:
+```ini
+[Unit]
+Description=AI Quota Monitoring API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fausto
+WorkingDirectory=/home/fausto/Software/scripts-ai/quota-monitoring
+ExecStart=/usr/bin/python3 /home/fausto/Software/scripts-ai/quota-monitoring/api.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/home/fausto/.hermes/logs/<service-name>.log
+StandardError=append:/home/fausto/.hermes/logs/<service-name>.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**3. Enable, start, verify:**
+```
+sudo cp <file>.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable <service-name>.service
+sudo systemctl start <service-name>.service
+sudo systemctl status <service-name>.service   # confirm active (running)
+curl http://127.0.0.1:<port>/<endpoint>        # confirm responding
+```
+
+**4. Handle missing dependencies.** When the Python code fails to import at boot because a required library or package (`ai_quota_lib`, etc.) is missing:
+   - Report what's missing and where it should be (path, pip package name)
+   - **Stop there** — do not search extensively for it, do not try pip-install. Let the user decide how to provide the dependency.
+   - After the user installs it, start the service and verify.
+
+**5. Log verification.** Check `journalctl -u <service-name>.service` or the custom log path for errors. The service should respond to HTTP even if provider-specific fetchers fail (e.g. tmux scrape returns errors when no tmux session exists — that's expected).
+
 ## Model/provider mismatch pitfall
 
 The Hermes interactive model picker (`hermes model` without arguments) may show models from multiple providers. If the user selects a model whose slug belongs to a different provider than the active one, every API call fails permanently — not transient throttling, but a hard config error.

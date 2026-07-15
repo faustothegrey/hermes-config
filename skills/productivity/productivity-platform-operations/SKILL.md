@@ -139,7 +139,62 @@ Use open data sources for geocoding, nearby POIs, routes, distances, and time zo
 
 ## Obsidian
 
-Use filesystem-first markdown operations. Resolve the vault path from `OBSIDIAN_VAULT_PATH` or a known default. Avoid passing unexpanded shell variables to file tools.
+Use filesystem-first markdown operations. The vault is at `~/Documents/Obsidian Vault/` (path: `~/Documents/Obsidian Vault/Hermes/` for Hermes-specific notes). Resolve the vault path from `OBSIDIAN_VAULT_PATH` or this default. Avoid passing unexpanded shell variables to file tools.
+
+### Vault structure
+
+```
+~/Documents/Obsidian Vault/
+├── Hermes/
+│   ├── Overview.md              ← Indice principale, linka tutte le note Hermes
+│   ├── AgentTalk.md             ← Progetti/tecnologie
+│   ├── External AI CLIs.md      ← Strumenti esterni
+│   ├── Peer Mesh.md             ← Infrastruttura mesh
+│   ├── Quests/                  ← Ricerche a lungo termine (quest-system skill)
+│   │   └── <quest-name>.md
+│   ├── <project-or-topic>.md    ← Altre note operative
+│   └── ...
+├── System/                      ← Sistema e configurazione
+│   ├── Email.md
+│   ├── Scheduled Restarts.md
+│   └── ...
+└── Projects/                    ← Progetti esterni (non Hermes)
+    └── ScienceClick2.md
+```
+
+### Conventions
+
+- **Wiki-link** tutte le note collegate: `[[AgentTalk]]`, `[[Peer Mesh]]`, `[[../System/Email]]`
+- **Lingua**: italiano o inglese, a seconda del contesto (l'utente alterna)
+- **Tono**: operativo, tecnico, concreto — niente fronzoli
+- **Struttura di una nota progetto**: header → descrizione → architettura → componenti chiave → comandi → collegamenti
+- **Tabella per comandi npm/CLI**: pipe separator con `| Comando | Cosa fa |` per leggibilità
+- **Diagrammi ASCII** per flussi di comunicazione quando serve chiarezza architetturale
+
+### Workflow: documentare un progetto nuovo
+
+Quando l'utente chiede di esplorare e documentare progetti (es. "metti su Obsidian"):
+
+1. **Scopri la struttura**: lista file, leggi package.json/README, identifica sottodirectory e packages
+2. **Leggi i file chiave**: entry point, README, AGENT.md/AGENTS.md, attach-skill.md
+3. **Salva in memoria**: riassunto conciso in ~400 caratteri (strumento memory)
+4. **Crea nota Obsidian** in `Hermes/<ProjectName>.md`:
+   - Sezione architettura con componenti e relazioni
+   - Struttura directory (tree o lista)
+   - Tabella comandi principali
+   - Diagramma ASCII del flusso di comunicazione
+   - Blocco collegamenti con wikilink alle note correlate
+5. **Linka da Overview.md**: aggiungi `[[<ProjectName>]]` alla lista in `Hermes/Overview.md`
+6. **Verifica**: rileggi la nota per confermare che sia completa e ben formattata
+7. **Verifica dipendenze reali**: se la nota menziona tool/binari/dipendenze (es. "dipende da tmux"), controlla con un comando shell che siano effettivamente installati nel sistema corrente. Aggiorna la nota col risultato.
+
+### Quest tracking (vds. quest-system skill)
+
+Le quest (ricerche a lungo termine) usano la stessa struttura ma con formato e cron di advancement dedicati, documentati nella skill `quest-system`.
+
+### Pitfalls
+
+- **Memoria Hermes piena**: quando `memory(action='add')` fallisce con errore capacity, consolida prima: unisci voci sovrapposte con `replace`, rimuovi obsolete con `remove`. Poi riprova. Capacità 2,200 caratteri — tieni ogni voce a ~300-400 caratteri. Voci sullo stesso sistema (es. AgentTalk + agentalk-mcp-client) vanno fuse in una sola.
 
 ## Teams meeting pipeline
 

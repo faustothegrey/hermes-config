@@ -20,17 +20,17 @@
       "schedule_display": "30 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 52
+        "completed": 53
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-08T08:55:30.431088+02:00",
-      "next_run_at": "2026-07-16T00:30:00+02:00",
-      "last_run_at": "2026-07-15T06:20:26.804708+02:00",
+      "next_run_at": "2026-07-17T00:30:00+02:00",
+      "last_run_at": "2026-07-15T09:34:07.329988+02:00",
       "last_status": "error",
-      "last_error": "Script exited with code 2\nstderr:\nremote: warning: See https://gh.io/lfs for more information.        \nremote: warning: File secrets/hermes-secrets.tar.gz.enc is 79.02 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB        \nremote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        \nTo github.com:faustothegrey/hermes-config.git\n   1d83353..6499359  master -> master\n/home/fausto/.hermes/scripts/hermes-config-backup-nightly.sh: line 13: unexpected EOF while looking for matching `\"'\nstdout:\n[2026-07-15T06:17:37+02:00] Starting Hermes config backup in /home/fausto/Backups/hermes-config\nRegenerated sanitized Hermes backup from /home/fausto/.hermes into /home/fausto/Backups/hermes-config\nEncrypted secrets bundle updated. Decryption needs matching private key for /home/fausto/.ssh/id_rsa.pub\n[master 6499359] backup: update Hermes configuration\n 8 files changed, 52 insertions(+), 52 deletions(-)\n rewrite secrets/hermes-secrets.key.enc (100%)\n[2026-07-15T06:20:26+02:00] Hermes config backup completed.",
+      "last_error": "Script exited with code 2\nstderr:\nremote: warning: See https://gh.io/lfs for more information.        \nremote: warning: File secrets/hermes-secrets.tar.gz.enc is 79.29 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB        \nremote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        \nTo github.com:faustothegrey/hermes-config.git\n   6499359..6ff6d91  master -> master\n/home/fausto/.hermes/scripts/hermes-config-backup-nightly.sh: line 13: unexpected EOF while looking for matching `\"'\nstdout:\n[2026-07-15T09:30:59+02:00] Starting Hermes config backup in /home/fausto/Backups/hermes-config\nRegenerated sanitized Hermes backup from /home/fausto/.hermes into /home/fausto/Backups/hermes-config\nEncrypted secrets bundle updated. Decryption needs matching private key for /home/fausto/.ssh/id_rsa.pub\n[master 6ff6d91] backup: update Hermes configuration\n 10 files changed, 77 insertions(+), 91 deletions(-)\n rewrite secrets/hermes-secrets.key.enc (100%)\n[2026-07-15T09:34:07+02:00] Hermes config backup completed.",
       "last_delivery_error": null,
       "deliver": "local",
       "origin": null,
@@ -58,15 +58,15 @@
       "schedule_display": "every 5m",
       "repeat": {
         "times": null,
-        "completed": 5427
+        "completed": 5513
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-13T15:00:07.426766+02:00",
-      "next_run_at": "2026-07-15T09:31:00.038992+02:00",
-      "last_run_at": "2026-07-15T09:26:00.038992+02:00",
+      "next_run_at": "2026-07-16T00:30:44.167070+02:00",
+      "last_run_at": "2026-07-16T00:25:44.167070+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -95,15 +95,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 458
+        "completed": 467
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-18T23:04:09.237935+02:00",
-      "next_run_at": "2026-07-15T10:00:00+02:00",
-      "last_run_at": "2026-07-15T09:00:57.179132+02:00",
+      "next_run_at": "2026-07-16T01:00:00+02:00",
+      "last_run_at": "2026-07-16T00:00:35.884077+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -132,15 +132,15 @@
       "schedule_display": "0 * * * *",
       "repeat": {
         "times": null,
-        "completed": 450
+        "completed": 459
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T06:59:16.678157+02:00",
-      "next_run_at": "2026-07-15T10:00:00+02:00",
-      "last_run_at": "2026-07-15T09:00:57.301913+02:00",
+      "next_run_at": "2026-07-16T01:00:00+02:00",
+      "last_run_at": "2026-07-16T00:00:36.058704+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -169,15 +169,15 @@
       "schedule_display": "0 7,10,20,22,0 * * *",
       "repeat": {
         "times": null,
-        "completed": 139
+        "completed": 143
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-19T07:10:24.679245+02:00",
-      "next_run_at": "2026-07-15T10:00:00+02:00",
-      "last_run_at": "2026-07-15T07:00:59.341264+02:00",
+      "next_run_at": "2026-07-16T07:00:00+02:00",
+      "last_run_at": "2026-07-16T00:01:50.723188+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -280,15 +280,15 @@
       "schedule_display": "*/30 3-10,19-23,0-1 * * *",
       "repeat": {
         "times": null,
-        "completed": 2231
+        "completed": 2245
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:04.590817+02:00",
-      "next_run_at": "2026-07-15T10:00:00+02:00",
-      "last_run_at": "2026-07-15T09:30:59.691814+02:00",
+      "next_run_at": "2026-07-16T01:00:00+02:00",
+      "last_run_at": "2026-07-16T00:30:44.779233+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -317,15 +317,15 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 24
+        "completed": 25
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-21T06:35:05.668069+02:00",
-      "next_run_at": "2026-07-16T00:00:00+02:00",
-      "last_run_at": "2026-07-15T00:00:30.284203+02:00",
+      "next_run_at": "2026-07-17T00:00:00+02:00",
+      "last_run_at": "2026-07-16T00:00:35.735454+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -398,15 +398,15 @@
       "schedule_display": "0 11 * * *",
       "repeat": {
         "times": null,
-        "completed": 21
+        "completed": 22
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T07:06:36.835256+02:00",
-      "next_run_at": "2026-07-15T11:00:00+02:00",
-      "last_run_at": "2026-07-14T11:00:45.600043+02:00",
+      "next_run_at": "2026-07-16T11:00:00+02:00",
+      "last_run_at": "2026-07-15T11:00:13.777587+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -435,15 +435,15 @@
       "schedule_display": "10 19 * * *",
       "repeat": {
         "times": null,
-        "completed": 21
+        "completed": 22
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T07:06:39.024766+02:00",
-      "next_run_at": "2026-07-15T19:10:00+02:00",
-      "last_run_at": "2026-07-14T19:10:19.733117+02:00",
+      "next_run_at": "2026-07-16T19:10:00+02:00",
+      "last_run_at": "2026-07-15T19:10:35.072834+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -472,15 +472,15 @@
       "schedule_display": "0 */4 * * *",
       "repeat": {
         "times": null,
-        "completed": 97
+        "completed": 99
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-24T08:42:49.614082+02:00",
-      "next_run_at": "2026-07-15T12:00:00+02:00",
-      "last_run_at": "2026-07-15T08:01:06.175621+02:00",
+      "next_run_at": "2026-07-16T04:00:00+02:00",
+      "last_run_at": "2026-07-16T00:02:56.637199+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -514,15 +514,15 @@
       "schedule_display": "every 2m",
       "repeat": {
         "times": null,
-        "completed": 5357
+        "completed": 5528
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-06-28T07:35:30.450190+02:00",
-      "next_run_at": "2026-07-15T09:31:03.396741+02:00",
-      "last_run_at": "2026-07-15T09:29:03.396741+02:00",
+      "next_run_at": "2026-07-16T00:32:44.167827+02:00",
+      "last_run_at": "2026-07-16T00:27:47.004020+02:00",
       "last_status": "error",
       "last_error": "Script exited with code 1\nstdout:\ntunnel: FAILED",
       "last_delivery_error": null,
@@ -556,15 +556,15 @@
       "schedule_display": "*/30 * * * * *",
       "repeat": {
         "times": null,
-        "completed": 48
+        "completed": 82
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-14T20:10:19.155562+02:00",
-      "next_run_at": "2026-07-15T10:00:00+02:00",
-      "last_run_at": "2026-07-15T09:01:58.480400+02:00",
+      "next_run_at": "2026-07-16T00:30:47+02:00",
+      "last_run_at": "2026-07-16T00:30:46.293675+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -598,15 +598,15 @@
       "schedule_display": "*/2 * * * *",
       "repeat": {
         "times": null,
-        "completed": 365
+        "completed": 624
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-14T20:10:28.168835+02:00",
-      "next_run_at": "2026-07-15T09:32:00+02:00",
-      "last_run_at": "2026-07-15T09:29:00.615843+02:00",
+      "next_run_at": "2026-07-16T00:32:00+02:00",
+      "last_run_at": "2026-07-16T00:30:46.070256+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -640,15 +640,15 @@
       "schedule_display": "0 0 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-14T20:10:29.302533+02:00",
-      "next_run_at": "2026-07-16T00:00:00+02:00",
-      "last_run_at": "2026-07-15T00:00:38.575476+02:00",
+      "next_run_at": "2026-07-17T00:00:00+02:00",
+      "last_run_at": "2026-07-16T00:00:37.864414+02:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -663,5 +663,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-07-15T09:30:59.692623+02:00"
+  "updated_at": "2026-07-16T00:30:46.294258+02:00"
 }

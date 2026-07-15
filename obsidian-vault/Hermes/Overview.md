@@ -13,6 +13,8 @@ Note operative locali per Hermes Agent sul PC di Fausto.
 - [[Discord Voice]]
 - [[Chrome secondary display fullscreen]]
 - [[../Projects/ScienceClick2]]
+- [[AgentTalk]]
+- [[AI Quota Monitoring]]
 - [[../System/Email]]
 - [[../System/Scheduled Restarts]]
 - [[../System/Services]]

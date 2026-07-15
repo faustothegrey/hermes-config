@@ -237,28 +237,44 @@ When the user asks whether Hermes is monitoring system health in the background,
 
 The `cronjob(action='list')` API exposes `last_status`, `last_run_at`, `last_delivery_error`, `schedule`, and `next_run_at`, but not `total_run_count`.
 
-**Primary method — parse internal state (`~/.hermes/cron/jobs.json`)**: The cron backend stores `repeat.completed` per job. Parse the JSON:
+**Primary method — search state.db session history**: The `cronjob(action='list')` API does not expose `repeat.completed`. However, the cron scheduler periodically serializes full job state (including `repeat.completed`) as tool output JSON stored in `state.db`. Query the message store for the most recent snapshot:
 
 ```python
-import json
-with open("/home/fausto/.hermes/cron/jobs.json") as f:
-    data = json.load(f)
-for job in data["jobs"]:
-    if job["id"] == "<job_id>":
-        run_totali = job["repeat"]["completed"]
+import sqlite3, json, re
+db = sqlite3.connect(os.path.expanduser("~/.hermes/state.db"))
+cur = db.cursor()
+cur.execute("""
+    SELECT content FROM messages
+    WHERE content LIKE ? AND content LIKE ?
+    ORDER BY id DESC LIMIT 1
+""", (f"%{job_id}%", "%completed%"))
+row = cur.fetchone()
+if row:
+    data = json.loads(row[0])
+    output = data.get("output", "")
+    m = re.search(r'"completed"\s*:\s*(\d+)', output)
+    run_totali = int(m.group(1))
 ```
 
-This works for ALL cron jobs (not just `no_agent=true`) and is the scheduler's own counter — most reliable. The `jobs.json` file is a complete serialization of cron state, not a runtime database; reading it is safe while the scheduler is active.
+This works for ALL cron jobs. **Pitfall**: the stored JSON may be a cached older snapshot; verify `last_run_at` in the same JSON matches the live API value.
 
-**Secondary method — count output files**: For `no_agent=True` script jobs, count output files under the job's output directory:
+**Secondary method — curator backup snapshots**: Hermes auto-backups skill state including `cron-jobs.json` under `~/.hermes/skills/.curator_backups/<date>/cron-jobs.json`. Each backup contains `repeat.completed` at that point in time:
 
 ```bash
-ls ~/.hermes/cron/output/<job_id>/ | wc -l
+grep '"id": "<job_id>"' -A5 ~/.hermes/skills/.curator_backups/*/cron-jobs.json | grep completed
 ```
 
-Each successful run produces one timestamped `.md` output file. Cross-reference the most recent file's timestamp with the API's `last_run_at` to confirm alignment. This works for all no_agent script jobs regardless of whether they write to a git repo.
+Useful for historical trend analysis; the most recent backup may be up to a week stale.
 
-**Tertiary method — git log**: For jobs that commit to a git repo on each run (e.g. config backup), `git -C <repo_path> log --oneline` can also serve as a run count. See the disaster recovery section for details. **Pitfall**: the repo may contain history predating the cron job; cross-check against `created_at` from `jobs.json` using `git log --after="<created_at>"`.
+**Tertiary method — count output files**: For `no_agent=True` script jobs, count output files under the job's output directory if it exists:
+
+```bash
+ls ~/.hermes/cron/output/<job_id>/ 2>/dev/null | wc -l
+```
+
+Each successful run produces one timestamped output file. **Note**: `~/.hermes/cron/output/` may not exist for all jobs; when missing, fall back to the primary method.
+
+**Quaternary method — git log**: For jobs that commit to a git repo on each run, `git -C <repo_path> log --oneline` can serve as a run count. **Pitfall**: the repo may contain history predating the cron job; cross-check against `created_at` from the curator backup using `git log --after="<created_at>"`.
 
 **Watch for timestamp mismatch**: cron's `last_run_at` is when the scheduler fired. Git timestamps or output file names may differ if the script runs outside cron. Always report cron's `last_run_at` for "when did the cron job last run."
 
